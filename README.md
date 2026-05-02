@@ -6,7 +6,8 @@ The rack must already be flashed with [gregjhogan's pre-AP EPAS firmware patch](
 
 ## Files
 
-- `tesla_steering_test.py` — Tkinter GUI. Slider sets target angle, sends `0x488` at 50 Hz with valid checksum and counter, listens for `0x370 EPAS_sysStatus`. Hard angle clamp ±90°, rate limit 50°/sec, big red E-STOP, ESC key, multiple watchdog failsafes.
+- `move.py` — **Simplest possible.** ~120 lines. Run `python move.py 15` and the wheel goes to +15°. Ctrl-C to disengage. No GUI, no rate limit, no watchdog. Heavily commented so you can read and understand the entire CAN protocol.
+- `tesla_steering_test.py` — Full Tkinter GUI. Slider sets target angle, sends `0x488` at 50 Hz with valid checksum and counter, listens for `0x370 EPAS_sysStatus`. Hard angle clamp ±90°, rate limit 50°/sec, big red E-STOP, ESC key, multiple watchdog failsafes.
 - `can_sniffer.py` — Passive CAN bus listener. Auto-detects baud rate (500/250/125 kbps), highlights known Tesla IDs, decodes `0x370` so you can verify wiring before sending anything.
 
 ## Hardware tested with
