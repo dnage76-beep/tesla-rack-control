@@ -1,0 +1,275 @@
+================================================================
+  TESLA RACK TEST -- LIVE NARRATION SCRIPT
+  Jacked-up bench test, BENCH_MODE = False
+================================================================
+
+Read this aloud as you test. One line at a time. Wait for the
+condition described before moving to the next line.
+
+Two people: OPERATOR (at the laptop) and SPOTTER (at the wheel).
+
+================================================================
+  PHASE 1: SAFETY CHECK BEFORE ANYTHING ELECTRICAL
+================================================================
+
+OPERATOR: "Confirming car is in Park."
+SPOTTER:  "Confirmed Park."
+
+OPERATOR: "Confirming parking brake is on."
+SPOTTER:  "Confirmed parking brake on."
+
+OPERATOR: "Confirming front wheels are off the ground and free
+           to spin."
+SPOTTER:  Spins each front wheel by hand.
+SPOTTER:  "Both wheels spin freely. Confirmed off ground."
+
+OPERATOR: "Rear wheels chocked?"
+SPOTTER:  "Chocked."
+
+OPERATOR: "Anyone or anything within 3 feet of the front wheels?"
+SPOTTER:  Walks around the front of the car.
+SPOTTER:  "Clear."
+
+================================================================
+  PHASE 2: BRING UP THE BUS
+================================================================
+
+OPERATOR: "Putting Tesla in Drive Ready. Foot on brake."
+        (Press brake, key fob in pocket, dashboard reads 'Drive
+         Ready' or equivalent.)
+
+OPERATOR: "Plugging SYS TEC into laptop USB."
+OPERATOR: "Plugging SYS TEC into Tesla OBD-II port."
+
+OPERATOR: "Opening sniffer first to confirm bus."
+        Run:  python can_sniffer.py
+        Press Enter at the prompt.
+
+OPERATOR: Wait for "TESLA CHASSIS CAN CONFIRMED" in green.
+        Wait for "0x370 EPAS_sysStatus" line in the table.
+
+OPERATOR: "Sniffer confirms chassis CAN. Asking spotter to verify
+           angle decode."
+
+SPOTTER:  Turns steering wheel SLIGHTLY left, then SLIGHTLY right.
+
+OPERATOR: Watches "measured ang" in the sniffer's bottom panel.
+        Should change as the wheel moves.
+
+OPERATOR: "Measured angle tracks wheel. Bus is good. Closing
+           sniffer."
+
+OPERATOR: Press Ctrl-C to stop the sniffer.
+
+================================================================
+  PHASE 3: PASSIVE LISTEN ON THE FULL TEST PROGRAM
+================================================================
+
+OPERATOR: "Launching test GUI. Will NOT engage yet."
+        Run:  python tesla_steering_test.py
+
+OPERATOR: "Clicking CONNECT."
+        (Clicks CONNECT button.)
+
+OPERATOR: Watch top right of GUI.
+        Should turn from red "DISCONNECTED" to yellow
+        "WAITING FOR 0x370" then green "EPAS LINK OK".
+
+OPERATOR: "EPAS LINK OK confirmed. RX counter climbing."
+        (Confirm RX number > 0 and rising.)
+
+OPERATOR: "EAC Status reads INHIBITED. That's expected before
+           engaging. Last Error reads NONE."
+
+OPERATOR: "Bus Errors reads 0. Good."
+
+================================================================
+  PHASE 4: ENGAGE AT ZERO ANGLE (LOW STAKES TEST)
+================================================================
+
+OPERATOR: "Going to engage at 0 degrees. No motion expected --
+           the rack is already centered. We're just testing
+           that the rack accepts our control message."
+
+SPOTTER:  Stands clear of the front wheels. Watches the wheel
+        from the side.
+
+OPERATOR: "Hand on E-STOP button. Clicking ENGAGE in 3, 2, 1."
+
+OPERATOR: Click ENGAGE.
+
+OPERATOR: Watches EAC Status.
+        Should transition: INHIBITED -> AVAILABLE -> ACTIVE
+        within 1-2 seconds.
+
+CASE A:  EAC Status goes ACTIVE (green). Wheels stay still.
+        OPERATOR: "EAC ACTIVE. No motion. System engaged.
+                   This is correct."
+
+CASE B:  EAC Status flickers AVAILABLE/INHIBITED.
+        OPERATOR: "Flickering. Disengaging."
+        OPERATOR: Click DISENGAGE or hit ESC.
+        OPERATOR: Take a screenshot of the status panel and
+                  text Derek before continuing.
+
+CASE C:  EAC Status reads FAULT.
+        OPERATOR: "Fault. Last Error reads [READ THE ERROR]."
+        OPERATOR: Click DISENGAGE.
+        OPERATOR: Text Derek the error code.
+
+OPERATOR: If Case A: "Holding for 5 seconds."
+        Wait 5 seconds with EAC steady at ACTIVE.
+
+OPERATOR: "All good. Going to disengage and try a small angle."
+OPERATOR: Click DISENGAGE.
+
+================================================================
+  PHASE 5: FIRST MOTION TEST -- +5 DEGREES
+================================================================
+
+OPERATOR: "Setting target to +5 degrees. Will engage. Wheel
+           should turn slowly to +5."
+
+SPOTTER:  Watches wheel from the side. Keeps fingers OUT of
+        the spokes.
+
+OPERATOR: Move slider to +5.0 OR type 5 in the angle box and
+        press SET.
+
+OPERATOR: "Hand on E-STOP. Clicking ENGAGE in 3, 2, 1."
+OPERATOR: Click ENGAGE.
+
+OPERATOR: Watch the GUI:
+        - EAC Status should be ACTIVE (green).
+        - Commanded angle should ramp from 0 to +5.
+        - Measured angle should follow within ~1 degree.
+
+SPOTTER:  Reports wheel direction.
+        "Wheel turning [LEFT/RIGHT]. Stopped at about [X]
+         degrees."
+
+OPERATOR: "Note the sign convention. Positive = [LEFT/RIGHT
+           per spotter]. Writing this down."
+
+(WRITE DOWN: "+ degrees = wheel turns ____.")
+
+OPERATOR: "Holding for 3 seconds. Then back to zero."
+
+OPERATOR: Move slider to 0.
+
+OPERATOR: Watches wheel return to center.
+
+================================================================
+  PHASE 6: TEST THE OTHER DIRECTION -- -5 DEGREES
+================================================================
+
+OPERATOR: "Going to -5 degrees. Wheel should turn the OPPOSITE
+           way."
+
+OPERATOR: Slider to -5.
+
+SPOTTER:  Reports.
+        "Wheel turning [opposite direction]. Stopped at about
+         [-X] degrees."
+
+OPERATOR: "Sign convention confirmed."
+
+OPERATOR: Slider back to 0.
+
+================================================================
+  PHASE 7: BIGGER ANGLES
+================================================================
+
+OPERATOR: "Going to +30 degrees. Bigger swing. Watching for
+           any jerking or fault."
+
+OPERATOR: Slider to +30. (The script's internal rate limiter
+        will ramp at 50 deg/sec, so it takes about 0.6 seconds
+        to get there.)
+
+SPOTTER:  Watches motion. "Smooth?" or "Jerky?"
+
+OPERATOR: If smooth: continue.
+        If jerky or sounds bad: hit E-STOP, text Derek.
+
+OPERATOR: After 3 seconds at +30, slide to -30.
+
+OPERATOR: After 3 seconds at -30, slide to 0.
+
+OPERATOR: "Test complete. Disengaging."
+OPERATOR: Click DISENGAGE.
+OPERATOR: Click DISCONNECT.
+
+================================================================
+  PHASE 8: TEST THE FAILSAFES
+================================================================
+
+OPERATOR: "Now testing the safety net. Reconnecting."
+OPERATOR: Click CONNECT, wait for EPAS LINK OK.
+OPERATOR: Click ENGAGE.
+
+OPERATOR: "Slider to +20. Then I'm hitting ESC."
+OPERATOR: Slide to +20.
+OPERATOR: While wheel is mid-turn, press ESC on the keyboard.
+
+OPERATOR: Should see EAC drop to INHIBITED instantly.
+        Wheel should stop where it is. Status bar should
+        read "E-STOP: ESC key".
+
+OPERATOR: "ESC failsafe works. Disconnecting to clear."
+OPERATOR: Click DISCONNECT.
+OPERATOR: Click CONNECT, wait for EPAS LINK OK.
+OPERATOR: Click ENGAGE.
+
+OPERATOR: "Now testing the angle clamp."
+OPERATOR: Type 100 in the angle box. Press SET.
+
+OPERATOR: Should see "REFUSED: 100.0 exceeds +/- 90" in the
+        log.
+OPERATOR: "Angle clamp works."
+
+OPERATOR: Slider to 0. Click DISENGAGE. Click DISCONNECT.
+
+================================================================
+  PHASE 9: SHUTDOWN
+================================================================
+
+OPERATOR: "Closing GUI."
+OPERATOR: Close the window.
+
+OPERATOR: "Unplug SYS TEC from OBD-II."
+OPERATOR: Unplugs.
+
+OPERATOR: "Tesla off."
+SPOTTER:  Puts car back in Park if it isn't, removes foot from
+        brake, lets car shut down.
+
+OPERATOR: "Test complete. Writing notes."
+
+================================================================
+  POST-TEST NOTES TO RECORD
+================================================================
+
+[ ] Sign convention: positive degrees = wheel turns ____
+[ ] Max smooth angle tested: +/- _____ degrees
+[ ] Any jerking observed? Y/N at what angle: _____
+[ ] Any flickering EAC status? Y/N when: _____
+[ ] Total elapsed test time: _____ minutes
+[ ] Anything weird the script didn't predict: _____
+
+================================================================
+  IF ANYTHING FAILED
+================================================================
+
+Take a phone photo of:
+1. The GUI status panel (EAC Status, Last Error, Measured,
+   Commanded, Bus Errors, RX count)
+2. The Event Log at the bottom of the GUI
+3. The black command prompt window behind the GUI
+
+Text all three to Derek with a one-line description of what
+happened. Don't try to debug it -- send the photos first.
+
+Derek's number: 847-226-3311
+
+================================================================
