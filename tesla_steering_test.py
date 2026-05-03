@@ -91,10 +91,18 @@ LOOP_OVERRUN_LIMIT_MS = 100     # 100 Hz loop overrun before E-STOP
 # the passive-listen step shows correct angle tracking, flip to True.
 DIVERGENCE_TRIP_ENABLED = False
 
-# Bench mode: inject fake vehicle speed so rack does not fault on MIN_SPEED.
-# Only enable when running with the rack out of the car or with ignition off.
-BENCH_MODE = False
-BENCH_FAKE_SPEED_KPH = 30.0     # Above min-speed threshold, below alarms
+# Bench mode: inject fake vehicle speed (0x155 ESP_B) so the rack runs its
+# full-torque curve instead of the standstill curve. The rack scales torque
+# output by speed; at 0 km/h it outputs ~30-40% to avoid fighting drivers.
+#
+# Per Derek's 2026-05-03 decision: enabled on Jordan's rig with wheels
+# LOADED on ground (no jack stands). Risks acknowledged:
+#   - tire scrub forces at standstill can stress tie rods and rack motor
+#   - stock ESP module is also sending 0x155 -- our message contends with it
+#   - instrument cluster may show a ghost speed
+# Set BENCH_MODE = False after testing if you ever want to drive normally.
+BENCH_MODE = True
+BENCH_FAKE_SPEED_KPH = 30.0     # Above MIN_SPEED gate, below alarm thresholds
 
 # IN_CAR_MODE: True if the rack is in the car with stock GTW and EPB modules on
 # the bus (they will keep sending 0x101 and 0x214). False if the rack is on the

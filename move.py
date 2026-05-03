@@ -68,6 +68,18 @@ SEND_RATE_HZ = 50            # How often to send 0x488. 50 matches what
                              # at least ~20 Hz; below that it faults.
 SEND_PERIOD_S = 1.0 / SEND_RATE_HZ   # = 0.02 s = 20 ms between frames
 
+# Bench mode: also inject a fake 0x155 ESP_B vehicle-speed message at 50 Hz.
+# The rack scales its torque output by speed; at 0 km/h it intentionally
+# limits torque (~30-40% of max) so it doesn't fight a stationary driver.
+# Spoofing speed = 30 km/h unlocks the rack's full torque curve.
+#
+# WARNING: only enable when wheels are loaded and you accept the risk of
+# tire scrub forces and rack motor stress at standstill. Stock ESP module
+# is also broadcasting 0x155 saying 0 km/h, so our message contends with
+# theirs on the bus.
+BENCH_MODE = True            # Set True to inject fake speed (Jordan's setup)
+BENCH_FAKE_SPEED_KPH = 30.0  # Above MIN_SPEED gate, below alarm thresholds
+
 
 # ============================================================================
 # STEP 1: read the angle the user typed
@@ -124,7 +136,24 @@ except Exception as e:
     sys.exit(1)
 
 print(f"Connected. Sending 0x488 at {SEND_RATE_HZ} Hz, target = {target_angle_deg:+.1f} deg.")
+if BENCH_MODE:
+    print(f"BENCH_MODE on: also sending fake 0x155 ESP_B at {BENCH_FAKE_SPEED_KPH:.0f} km/h.")
 print("Press Ctrl-C to stop.")
+
+
+# Build a fake 0x155 ESP_B (8 bytes) with vehicleSpeed signal set.
+# Encoding from tesla_can.dbc ESP_B: vehicleSpeed at bits 24|13 LE,
+# factor 0.04, offset -40 km/h. raw = (kph + 40) / 0.04, lives in
+# bytes 3 (low 8) + byte 4 low-5 bits (high 5).
+def build_fake_esp_speed(kph):
+    raw = int(round((kph + 40.0) / 0.04)) & 0x1FFF
+    data = bytearray(8)
+    data[3] = raw & 0xFF
+    data[4] = (raw >> 8) & 0x1F
+    return bytes(data)
+
+esp_data = build_fake_esp_speed(BENCH_FAKE_SPEED_KPH)
+ID_ESP_B = 0x155
 
 
 # ============================================================================
@@ -173,6 +202,15 @@ try:
             is_extended_id=False,
         )
         bus.send(msg)
+
+        # In bench mode, also send a fake speed message so the rack
+        # thinks the car is moving and unlocks full torque.
+        if BENCH_MODE:
+            bus.send(can.Message(
+                arbitration_id=ID_ESP_B,
+                data=esp_data,
+                is_extended_id=False,
+            ))
 
         # Increment the counter for next time. Mask to keep it 4-bit.
         counter = (counter + 1) & 0x0F
