@@ -31,6 +31,13 @@ careful you want to be.
      python-can, install SYS TEC driver, run the test
      program.
 
+  3b. FLASH_AND_TROUBLESHOOTING.pdf  (NEW)
+     4-page guide. Use this if the rack stays at INHIBITED
+     and won't move when you send commands. Walks through
+     re-running the BogGyver EPAS flasher on the comma 3X,
+     verifying the patch took, and a full troubleshooting
+     matrix for every common failure mode.
+
   4. move.py                   <-- SIMPLEST RUN
      ~120 lines, every line commented. Run it like:
         python move.py 15

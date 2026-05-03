@@ -18,6 +18,7 @@ The rack must already be flashed with [gregjhogan's pre-AP EPAS firmware patch](
 - `WIRING_DIAGRAM.pdf` — One-page printable. SYS TEC DB9 ↔ Tesla OBD-II pin-by-pin with safety notes.
 - `PINOUT_VERIFICATION.pdf` — Two-page procedure for confirming chassis CAN is on OBD-II pins 1/9 (multimeter checks + sniffer test).
 - `INSTRUCTION_MANUAL.pdf` — Two-page Windows install + first-run guide.
+- `FLASH_AND_TROUBLESHOOTING.pdf` — Four-page guide for re-flashing the EPAS rack via the comma 3X (BogGyver `tesla_unity_releaseC3` branch). Use when the rack stays at INHIBITED. Includes pre-flight checklist, MD5 diagnosis, UI button vs SSH command-line paths, post-flash verification, bench test procedure, and a 14-row troubleshooting matrix.
 - `SETUP.md` — Longer text reference for installing the SYS TEC driver and python-can.
 
 ## Hardware tested with
