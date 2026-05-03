@@ -77,7 +77,10 @@ SEND_PERIOD_S = 1.0 / SEND_RATE_HZ   # = 0.02 s = 20 ms between frames
 # tire scrub forces and rack motor stress at standstill. Stock ESP module
 # is also broadcasting 0x155 saying 0 km/h, so our message contends with
 # theirs on the bus.
-BENCH_MODE = True            # Set True to inject fake speed (Jordan's setup)
+BENCH_MODE = False           # Off for jacked-up testing (the right setup).
+                             # Only set True for rack-on-bench (no stock ESP)
+                             # or as an override on ground (unreliable due
+                             # to contention with stock ESP module).
 BENCH_FAKE_SPEED_KPH = 30.0  # Above MIN_SPEED gate, below alarm thresholds
 
 
