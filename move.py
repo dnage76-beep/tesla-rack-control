@@ -68,6 +68,11 @@ SEND_RATE_HZ = 50            # How often to send 0x488. 50 matches what
                              # at least ~20 Hz; below that it faults.
 SEND_PERIOD_S = 1.0 / SEND_RATE_HZ   # = 0.02 s = 20 ms between frames
 
+# Smoothing: low-pass filter the target angle so the rack ramps in smoothly
+# instead of slamming to the commanded value. tau is the time-constant in
+# seconds; 0.15 means it reaches ~63% of the target in 150ms, ~95% in 450ms.
+RAMP_TAU_S = 0.15
+
 # Bench mode: also inject a fake 0x155 ESP_B vehicle-speed message at 50 Hz.
 # The rack scales its torque output by speed; at 0 km/h it intentionally
 # limits torque (~30-40% of max) so it doesn't fight a stationary driver.
@@ -166,45 +171,43 @@ ID_ESP_B = 0x155
 counter = 0   # 4-bit counter, has to increment each frame mod 16. Anti-replay.
               # If we don't increment, the rack ignores us.
 
-# Pre-compute the angle's raw value once, since it's not changing.
-# The DBC formula: raw = (degrees + offset) * scale_factor, where
-# offset = 1638.35 and scale_factor = 10. This puts the 15-bit field
-# at 16384 when the angle is zero, and gives 0.1 deg of resolution.
-angle_raw = int(round((target_angle_deg + 1638.35) * 10.0))
+# We ramp the commanded angle from 0 to target with a low-pass filter,
+# so the rack doesn't slam. current_angle starts at 0 and approaches
+# target_angle_deg over RAMP_TAU_S seconds.
+current_angle = 0.0
 
-# Clamp to the 15-bit unsigned range. We already clamped degrees above
-# but this is belt-and-suspenders -- a 16-bit overflow into byte 0 bit 7
-# would set the haptic-request flag, which we don't want.
-angle_raw = max(0, min(0x7FFF, angle_raw))
-
-# Pre-compute the two angle bytes. They're constant for the whole run.
-b0 = (angle_raw >> 8) & 0x7F   # high 7 bits (top bit reserved for haptic = 0)
-b1 = angle_raw & 0xFF          # low 8 bits
+# Pre-compute the LPF coefficient. dt = SEND_PERIOD_S = 20 ms.
+# alpha = dt / (tau + dt). At tau=0.15s: alpha ~= 0.118.
+ALPHA = SEND_PERIOD_S / (RAMP_TAU_S + SEND_PERIOD_S)
 
 try:
+    next_send = time.monotonic()
     while True:
+        # Stage 1: low-pass filter the target. Each iteration, current_angle
+        # moves a small fraction (ALPHA) closer to target_angle_deg.
+        current_angle += ALPHA * (target_angle_deg - current_angle)
+
+        # Convert current_angle to the rack's raw 15-bit unsigned encoding.
+        # raw = (degrees + 1638.35) * 10, center is 0x4000 = 16384.
+        angle_raw = int(round((current_angle + 1638.35) * 10.0))
+        angle_raw = max(0, min(0x7FFF, angle_raw))
+        b0 = (angle_raw >> 8) & 0x7F   # high 7 bits, top bit reserved for haptic
+        b1 = angle_raw & 0xFF          # low 8 bits
+
         # Build byte 2: upper 2 bits = controlType, lower 4 bits = counter.
-        # controlType = 1 means "ANGLE_CONTROL active" -- this is what
-        # tells the rack "engage steering, take this angle". If we set
-        # controlType = 0 the rack disengages and ignores the angle.
+        # controlType = 1 means "ANGLE_CONTROL active".
         b2 = (1 << 6) | (counter & 0x0F)
 
-        # Build byte 3: checksum. Tesla's algorithm is the sum of the
-        # message ID's two bytes plus all the data bytes except the
-        # checksum itself, modulo 256. For 0x488 the ID contribution
-        # is 0x88 + 0x04 = 0x8C, but I write it explicitly so it's
-        # obvious what's happening.
+        # Build byte 3: checksum = sum of address bytes + data bytes, mod 256.
+        # 0x488 = 0x04 0x88, so the ID contribution is 0x8C.
         b3 = (0x88 + 0x04 + b0 + b1 + b2) & 0xFF
 
-        # Wrap the four bytes in a CAN message object and send.
-        # is_extended_id=False means we're using a standard 11-bit
-        # ID (which 0x488 is) rather than the 29-bit extended format.
-        msg = can.Message(
+        # Send the steering frame.
+        bus.send(can.Message(
             arbitration_id=0x488,
             data=[b0, b1, b2, b3],
             is_extended_id=False,
-        )
-        bus.send(msg)
+        ))
 
         # In bench mode, also send a fake speed message so the rack
         # thinks the car is moving and unlocks full torque.
@@ -215,25 +218,32 @@ try:
                 is_extended_id=False,
             ))
 
-        # Increment the counter for next time. Mask to keep it 4-bit.
         counter = (counter + 1) & 0x0F
 
-        # Sleep so we send at exactly 50 Hz. time.sleep takes seconds,
-        # so 0.02 = 20 ms. python's sleep isn't perfectly precise but
-        # it's close enough for the rack to not care.
-        time.sleep(SEND_PERIOD_S)
+        # Hybrid sleep: sleep most of the way, busy-wait the last 2 ms for
+        # accurate 50 Hz timing. Python's time.sleep on Windows has ~15 ms
+        # granularity which makes plain sleep(0.02) jittery.
+        next_send += SEND_PERIOD_S
+        BUSY_WAIT_S = 0.002
+        sleep_s = next_send - time.monotonic()
+        if sleep_s > BUSY_WAIT_S:
+            time.sleep(sleep_s - BUSY_WAIT_S)
+        while time.monotonic() < next_send:
+            pass
 
 except KeyboardInterrupt:
-    # Ctrl-C lands here. Try to leave the rack in a clean disengaged
-    # state by sending one final frame with controlType=0. Without
-    # this, the rack would keep our last commanded angle until its
-    # own watchdog times out (about 200 ms).
+    # Ctrl-C lands here. Send a few frames with controlType=0 to cleanly
+    # disengage. Without this, the rack holds our last commanded angle
+    # until its own watchdog times out (~200 ms).
     print("\nDisengaging...")
+    angle_raw = int(round((current_angle + 1638.35) * 10.0))
+    angle_raw = max(0, min(0x7FFF, angle_raw))
+    b0 = (angle_raw >> 8) & 0x7F
+    b1 = angle_raw & 0xFF
     b2 = (0 << 6) | (counter & 0x0F)   # controlType = 0 = disabled
     b3 = (0x88 + 0x04 + b0 + b1 + b2) & 0xFF
     try:
-        # Send a few disengage frames in a row to make sure the rack
-        # gets at least one even if there's bus contention.
+        # Send a few disengage frames in a row.
         for _ in range(5):
             bus.send(can.Message(
                 arbitration_id=0x488,

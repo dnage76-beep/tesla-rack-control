@@ -85,6 +85,12 @@ ANGLE_DIVERGENCE_LIMIT_DEG = 15.0  # commanded vs measured before E-STOP
 RX_TIMEOUT_MS = 500             # Lose 0x370 for this long -> E-STOP
 LOOP_OVERRUN_LIMIT_MS = 100     # 100 Hz loop overrun before E-STOP
 
+# Smoothing: a low-pass filter on the slider's target so dragging the slider
+# rapidly doesn't cause a moving-goalpost effect for the rate limiter.
+# Time-constant TAU in seconds; roughly the 63%-of-step settling time.
+# 0.15 = 150 ms feels responsive but not jittery. Lower = snappier, higher = smoother.
+TARGET_FILTER_TAU_S = 0.15
+
 # The 0x370 measured-angle decode is now verified against the DBC, but until
 # you confirm on the bench that the GUI's "Measured Angle" tracks the real
 # wheel position when turned by hand, leave the divergence trip OFF. After
@@ -261,7 +267,8 @@ class RackStatus:
 
 @dataclass
 class ControlState:
-    target_angle_deg: float = 0.0   # what user typed / set on slider
+    target_angle_deg: float = 0.0   # raw input from user (slider/typed)
+    filtered_target_deg: float = 0.0  # low-pass smoothed target
     commanded_angle_deg: float = 0.0  # rate-limited actual command
     engaged: bool = False
     estop: bool = False
@@ -386,11 +393,25 @@ class CanWorker(threading.Thread):
                 return
 
     def _apply_rate_limit(self, dt_s: float):
-        """Move commanded_angle toward target_angle, no faster than rate cap."""
+        """Two-stage smoothing:
+          stage 1: low-pass filter raw target into filtered_target_deg
+                   (so dragging the slider doesn't yank the rate limiter)
+          stage 2: rate-limit commanded_angle_deg toward filtered_target
+                   (max +/- MAX_RATE_DEG_PER_SEC * dt)
+        """
+        # Stage 1: low-pass on raw target.
+        # alpha = dt / (tau + dt). Standard 1st-order discrete LPF.
+        # When tau >> dt, alpha is small (slow response). When tau << dt,
+        # alpha approaches 1 (no filtering). At dt=20ms and tau=150ms,
+        # alpha ~= 0.118 -- about 12% of the gap closed each frame.
+        raw = max(-HARD_ANGLE_LIMIT_DEG,
+                  min(HARD_ANGLE_LIMIT_DEG, self.ctrl.target_angle_deg))
+        alpha = dt_s / (TARGET_FILTER_TAU_S + dt_s)
+        self.ctrl.filtered_target_deg += alpha * (raw - self.ctrl.filtered_target_deg)
+
+        # Stage 2: rate-limit commanded toward filtered target.
         max_delta = MAX_RATE_DEG_PER_SEC * dt_s
-        target = self.ctrl.target_angle_deg
-        # Hard clamp the target as well
-        target = max(-HARD_ANGLE_LIMIT_DEG, min(HARD_ANGLE_LIMIT_DEG, target))
+        target = self.ctrl.filtered_target_deg
         cur = self.ctrl.commanded_angle_deg
         if target > cur + max_delta:
             cur += max_delta
@@ -522,9 +543,19 @@ class CanWorker(threading.Thread):
             if BENCH_MODE:
                 deadlines.append(next_esp)
             sleep_until = min(deadlines)
-            sleep_s = max(0.0, sleep_until - time.monotonic())
-            if sleep_s > 0:
-                time.sleep(min(sleep_s, 0.005))
+
+            # Hybrid sleep: time.sleep() on Windows has ~15ms granularity, so
+            # sleep(0.005) often actually sleeps 15ms = a missed frame.
+            # Sleep most of the way to the deadline, then busy-wait the last 2ms
+            # for sub-ms accuracy. CPU cost is tiny (< 1% of one core).
+            BUSY_WAIT_S = 0.002
+            now = time.monotonic()
+            sleep_s = sleep_until - now
+            if sleep_s > BUSY_WAIT_S:
+                time.sleep(sleep_s - BUSY_WAIT_S)
+            # Busy-wait the last bit
+            while time.monotonic() < sleep_until:
+                pass
 
         self.disconnect()
 
@@ -703,9 +734,13 @@ class App(tk.Tk):
             if self.status.rx_count == 0:
                 self._log_local("REFUSED: no 0x370 yet, cannot engage blind")
                 return
-            self.ctrl.commanded_angle_deg = self.status.measured_angle_deg
-            self.ctrl.target_angle_deg = self.status.measured_angle_deg
-            self.var_slider.set(self.status.measured_angle_deg)
+            # Sync all three angle values to current measured so engaging
+            # doesn't cause a "pop" as the filter catches up from 0.
+            cur = self.status.measured_angle_deg
+            self.ctrl.commanded_angle_deg = cur
+            self.ctrl.filtered_target_deg = cur
+            self.ctrl.target_angle_deg = cur
+            self.var_slider.set(cur)
             self.ctrl.engaged = True
             self.btn_engage.config(text="DISENGAGE", bg="#ea580c")
             self._log_local(f"ENGAGED at {self.status.measured_angle_deg:+.1f} deg")
