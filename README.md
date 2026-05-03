@@ -6,9 +6,19 @@ The rack must already be flashed with [gregjhogan's pre-AP EPAS firmware patch](
 
 ## Files
 
+### Code
+
 - `move.py` — **Simplest possible.** ~120 lines. Run `python move.py 15` and the wheel goes to +15°. Ctrl-C to disengage. No GUI, no rate limit, no watchdog. Heavily commented so you can read and understand the entire CAN protocol.
 - `tesla_steering_test.py` — Full Tkinter GUI. Slider sets target angle, sends `0x488` at 50 Hz with valid checksum and counter, listens for `0x370 EPAS_sysStatus`. Hard angle clamp ±90°, rate limit 50°/sec, big red E-STOP, ESC key, multiple watchdog failsafes.
 - `can_sniffer.py` — Passive CAN bus listener. Auto-detects baud rate (500/250/125 kbps), highlights known Tesla IDs, decodes `0x370` so you can verify wiring before sending anything.
+
+### Documentation (read these before running anything)
+
+- `READ_ME_FIRST.txt` — Plain-English overview of the project status and the order to do things in.
+- `WIRING_DIAGRAM.pdf` — One-page printable. SYS TEC DB9 ↔ Tesla OBD-II pin-by-pin with safety notes.
+- `PINOUT_VERIFICATION.pdf` — Two-page procedure for confirming chassis CAN is on OBD-II pins 1/9 (multimeter checks + sniffer test).
+- `INSTRUCTION_MANUAL.pdf` — Two-page Windows install + first-run guide.
+- `SETUP.md` — Longer text reference for installing the SYS TEC driver and python-can.
 
 ## Hardware tested with
 
