@@ -32,6 +32,7 @@ SPOTTER:  "Clear."
 
 ================================================================
   PHASE 2: BRING UP THE BUS
+  CY: Completed 03 May 2026 23:12
 ================================================================
 
 OPERATOR: "Putting Tesla in Drive Ready. Foot on brake."
@@ -63,6 +64,7 @@ OPERATOR: Press Ctrl-C to stop the sniffer.
 
 ================================================================
   PHASE 3: PASSIVE LISTEN ON THE FULL TEST PROGRAM
+  CY: Completed 03 May 2026 23:14
 ================================================================
 
 OPERATOR: "Launching test GUI. Will NOT engage yet."
@@ -80,11 +82,13 @@ OPERATOR: "EPAS LINK OK confirmed. RX counter climbing."
 
 OPERATOR: "EAC Status reads INHIBITED. That's expected before
            engaging. Last Error reads NONE."
+CY: EAC status reads AVAILABLE before engaging. Flickers between AVAILABLE and INHIBITED
 
 OPERATOR: "Bus Errors reads 0. Good."
 
 ================================================================
   PHASE 4: ENGAGE AT ZERO ANGLE (LOW STAKES TEST)
+  CY: Completed 03 May 2026 23:22
 ================================================================
 
 OPERATOR: "Going to engage at 0 degrees. No motion expected --
@@ -101,6 +105,13 @@ OPERATOR: Click ENGAGE.
 OPERATOR: Watches EAC Status.
         Should transition: INHIBITED -> AVAILABLE -> ACTIVE
         within 1-2 seconds.
+CY: EAC Status flickers between AVAILABLE and ACTIVE.
+JH: Put car in Neutral -> stays on ACTIVE,
+    Put car in Drive -> flickers between AVAILABLE and ACTIVE
+    (not 100% of the time, it sort of flickers regardless of the state)
+CY: Closest to CASE B but not exact match
+JH: Trying to steer it by hand, it is fighting
+CY: We are going to continue past CASE B into PHASE 5 without consulting Derek for now
 
 CASE A:  EAC Status goes ACTIVE (green). Wheels stay still.
         OPERATOR: "EAC ACTIVE. No motion. System engaged.
@@ -147,11 +158,30 @@ OPERATOR: Watch the GUI:
 SPOTTER:  Reports wheel direction.
         "Wheel turning [LEFT/RIGHT]. Stopped at about [X]
          degrees."
-
+JH: Right, visually 5 degrees right, 6 degrees reported by Tesla display
+    could be wrong due to applied steering offset 
+S
 OPERATOR: "Note the sign convention. Positive = [LEFT/RIGHT
            per spotter]. Writing this down."
 
 (WRITE DOWN: "+ degrees = wheel turns ____.")
+CY: Positive: right
+    When trying to confirm negative is left, it would not move, then it was twitching
+CY: EAC Status is stuck in INHIBITED, the wheel will not spin anywhere automatically
+JH (23:33): Rebooting car (safety power off)
+CY: After rebooting car and program, still stuck in INHIBITED. Last Error OUT_OF_RANGE
+CY (23:37): Stopping here, taking a screenshot of our window stuck in INHIBITED state
+            Screenshot: field_testing/03May2026_1.png
+JH (23:38): Getting out and getting in car (full restart)
+CY: Still stuck in INHIBITED
+JH: Rebooting car computers via scroll wheel reset
+CY: Still stuck in INHIBITED
+JH: Tesla reports ESP_D133 ACM Signal Implausible. Car twitching
+CY: EAC status started flickering ACTIVE to AVAILABLE
+CY: It's pretty finnicky but we got it to smoothly go from 5 to 10 degrees,
+I noticed the EAC status was ACTIVE during that occasionn
+If it flickers, it twitches. It appears every time it is on ACTIVE, it moves/twitches slightly
+
 
 OPERATOR: "Holding for 3 seconds. Then back to zero."
 
@@ -161,6 +191,7 @@ OPERATOR: Watches wheel return to center.
 
 ================================================================
   PHASE 6: TEST THE OTHER DIRECTION -- -5 DEGREES
+  CY: Skipped / done in previous phase
 ================================================================
 
 OPERATOR: "Going to -5 degrees. Wheel should turn the OPPOSITE
@@ -178,6 +209,7 @@ OPERATOR: Slider back to 0.
 
 ================================================================
   PHASE 7: BIGGER ANGLES
+  CY: Partially Complete 04 May 2026 00:02
 ================================================================
 
 OPERATOR: "Going to +30 degrees. Bigger swing. Watching for
@@ -188,11 +220,23 @@ OPERATOR: Slider to +30. (The script's internal rate limiter
         to get there.)
 
 SPOTTER:  Watches motion. "Smooth?" or "Jerky?"
+JH: Butter smooth! Way smoother compared to older versions
+CY: We got lucky with it staying in ACTIVE for the whole turn,
+it immediately started flickering after it was done.
+Maybe the turn itself was keeping it in ACTIVE.
+
+CY: Returned to 0 degrees, it was twitchy but got there in the end
+CY: Repeated 30 degree test, this time it is stuck inn AVAILABLE,
+after a while it started flickering to AVAILABLE and twitching to 30
 
 OPERATOR: If smooth: continue.
         If jerky or sounds bad: hit E-STOP, text Derek.
 
 OPERATOR: After 3 seconds at +30, slide to -30.
+JH: Smooth as butter
+CY: We again got lucky with it being in ACTIVE
+JH (00:02): Exited car
+CY: Exiting the car caused [00:02:49] E-STOP: no 0x370 for 520 ms
 
 OPERATOR: After 3 seconds at -30, slide to 0.
 
@@ -202,6 +246,7 @@ OPERATOR: Click DISCONNECT.
 
 ================================================================
   PHASE 8: TEST THE FAILSAFES
+  CY: Complete 04 May 2026 00:21
 ================================================================
 
 OPERATOR: "Now testing the safety net. Reconnecting."
@@ -214,12 +259,24 @@ OPERATOR: While wheel is mid-turn, press ESC on the keyboard.
 
 OPERATOR: Should see EAC drop to INHIBITED instantly.
         Wheel should stop where it is. Status bar should
-        read "E-STOP: ESC key".
+        read "E-STOP: ESC key"
+
+CY: Tested E-STOP using ESC key on a turn from -45 to 0 degrees.
+Upon pressing ESC: [00:14:29] E-STOP: ESC key, EAC flickers INHIBITED to AVAILABLE
 
 OPERATOR: "ESC failsafe works. Disconnecting to clear."
 OPERATOR: Click DISCONNECT.
 OPERATOR: Click CONNECT, wait for EPAS LINK OK.
 OPERATOR: Click ENGAGE.
+
+CY: E-STOP clearing does not work, need to restart the program
+[00:14:29] E-STOP: ESC key
+[00:16:21] CAN closed
+[00:16:22] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[00:16:25] clear E-STOP first (reconnect to reset)
+[00:16:27] CAN closed
+[00:16:29] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[00:16:37] clear E-STOP first (reconnect to reset)
 
 OPERATOR: "Now testing the angle clamp."
 OPERATOR: Type 100 in the angle box. Press SET.
@@ -230,8 +287,11 @@ OPERATOR: "Angle clamp works."
 
 OPERATOR: Slider to 0. Click DISENGAGE. Click DISCONNECT.
 
+CY: Spent a bunch of time here collecting footage of smooth motion
+
 ================================================================
   PHASE 9: SHUTDOWN
+  CY: Complete 04 May 2026 00:41
 ================================================================
 
 OPERATOR: "Closing GUI."
@@ -250,13 +310,17 @@ OPERATOR: "Test complete. Writing notes."
   POST-TEST NOTES TO RECORD
 ================================================================
 
-[ ] Sign convention: positive degrees = wheel turns ____
-[ ] Max smooth angle tested: +/- _____ degrees
-[ ] Any jerking observed? Y/N at what angle: _____
-[ ] Any flickering EAC status? Y/N when: _____
-[ ] Total elapsed test time: _____ minutes
-[ ] Anything weird the script didn't predict: _____
+[ ] Sign convention: positive degrees = wheel turns ____ CY: Right
+[ ] Max smooth angle tested: +/- _____ degrees CY: 5 -> 10 deg
+[ ] Any jerking observed? Y/N at what angle: _____ CY: Yes, no angle in particular
+[ ] Any flickering EAC status? Y/N when: _____ CY: Yes, most of the time
+[ ] Total elapsed test time: _____ minutes CY: About 60 minutes
+[ ] Anything weird the script didn't predict: _____ CY: E-STOP clearing does not work, EAC status can be AVAILABLE before engaging
 
+CY: From now on, for each test, organize in folders
+If the "Last Errors" are useful to log, we should probably start logging them in the GUI
+Overall, motion is really smooth and reliable once in the state of EAC Status ACTIVE,
+and the wheel appears to only turn while inn ACTIVE.
 ================================================================
   IF ANYTHING FAILED
 ================================================================
