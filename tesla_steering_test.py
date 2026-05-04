@@ -357,11 +357,26 @@ class CanWorker(threading.Thread):
         raw = ((data[4] & 0x3F) << 8) | data[5]
         angle = raw * 0.1 - 819.2
 
+        # Capture previous values so we can detect transitions.
+        prev_status = self.status.eac_status
+        prev_err = self.status.eac_error_code
+
         self.status.last_rx_monotonic = time.monotonic()
         self.status.eac_status = eac_status
         self.status.eac_error_code = eac_err
         self.status.measured_angle_deg = angle
         self.status.rx_count += 1
+
+        # Log status transitions so we can see flicker patterns in the event
+        # log (Charlie requested 04 May 2026). Skip the very first frame
+        # where prev_status was the SNA default of 4.
+        if prev_status != eac_status and prev_status != 4:
+            new_name = EAC_STATUS_NAMES.get(eac_status, "?")
+            self.log(f"EAC: {EAC_STATUS_NAMES.get(prev_status,'?')} -> {new_name}"
+                     f" (err={EAC_ERROR_CODES.get(eac_err,'?')})")
+        # Log every time the error code changes to non-zero.
+        if prev_err != eac_err and eac_err != 0:
+            self.log(f"err -> {EAC_ERROR_CODES.get(eac_err,'?')}")
 
         if eac_status == 3:
             self.trigger_estop(f"rack FAULT, EAC_ERROR={EAC_ERROR_CODES.get(eac_err, '?')}")
@@ -712,6 +727,16 @@ class App(tk.Tk):
 
     def toggle_connect(self):
         if self.worker is None:
+            # Clear stale state so reconnect after E-STOP works without
+            # restarting the program (Charlie reported this bug 04 May 2026).
+            self.ctrl.estop = False
+            self.ctrl.estop_reason = ""
+            self.ctrl.engaged = False
+            self.ctrl.bus_errors = 0
+            self.status.rx_count = 0
+            self.status.last_rx_monotonic = 0.0
+            self._log_local("state cleared, opening adapter...")
+
             self.worker = CanWorker(self.ctrl, self.status, self.log_q)
             self.worker.start()
             self.btn_conn.config(text="DISCONNECT", bg="#525252")
