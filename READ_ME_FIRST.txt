@@ -31,18 +31,36 @@ careful you want to be.
      python-can, install SYS TEC driver, run the test
      program.
 
-  3b. FLASH_AND_TROUBLESHOOTING.pdf  (NEW)
+  3b. FLASH_AND_TROUBLESHOOTING.pdf
      4-page guide. Use this if the rack stays at INHIBITED
      and won't move when you send commands. Walks through
      re-running the BogGyver EPAS flasher on the comma 3X,
      verifying the patch took, and a full troubleshooting
      matrix for every common failure mode.
 
+  3c. FLICKER_TROUBLESHOOTING.pdf  (NEW 04 May 2026)
+     4-page guide. Use this if the rack moves but the EAC
+     status flickers between AVAILABLE / ACTIVE / INHIBITED
+     and you see HIGH_ANGLE_RATE_REQ errors. Full eacErrorCode
+     table, four flicker patterns to identify yours, and five
+     concrete fixes (A through E).
+
+  3d. IMPLEMENTATION_GUIDE.pdf  (NEW 04 May 2026)
+     4-page guide. Which program to use when. Full steer.py
+     GUI tour. How to A/B test the theory-A and theory-B
+     branches on GitHub. Recommended workflow.
+
   4. move.py                   <-- SIMPLEST RUN
      ~120 lines, every line commented. Run it like:
         python move.py 15
      and the wheels go to +15 deg. Ctrl-C to disengage.
      No GUI. No rate limit. Read the file before running.
+
+  4b. steer.py                 <-- LIVE KEYBOARD CONTROL (NEW)
+     Small GUI. Hold LEFT/RIGHT arrows to steer in real time,
+     SPACE to recenter, Q/ESC to disengage. Steering-wheel
+     icon rotates with the commanded angle. Read
+     IMPLEMENTATION_GUIDE.pdf first.
 
   5. tesla_steering_test.py    <-- FULL GUI OPTION
      The dark-themed window with the slider, big red E-STOP,

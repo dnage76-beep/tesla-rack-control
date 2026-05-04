@@ -9,7 +9,8 @@ The rack must already be flashed with [gregjhogan's pre-AP EPAS firmware patch](
 ### Code
 
 - `move.py` — **Simplest possible.** ~120 lines. Run `python move.py 15` and the wheel goes to +15°. Ctrl-C to disengage. No GUI, no rate limit, no watchdog. Heavily commented so you can read and understand the entire CAN protocol.
-- `tesla_steering_test.py` — Full Tkinter GUI. Slider sets target angle, sends `0x488` at 50 Hz with valid checksum and counter, listens for `0x370 EPAS_sysStatus`. Hard angle clamp ±90°, rate limit 50°/sec, big red E-STOP, ESC key, multiple watchdog failsafes.
+- `steer.py` — **Live keyboard control GUI.** A small dark window with a steering-wheel icon that rotates with the commanded angle. Hold LEFT/RIGHT arrows to steer, SPACE to recenter, Q/ESC to disengage. ~200 lines, no admin or extra packages needed. Soft ±60° clamp, smoothed output, Q/ESC disengage.
+- `tesla_steering_test.py` — Full Tkinter GUI. Slider sets target angle, sends `0x488` at 50 Hz with valid checksum and counter, listens for `0x370 EPAS_sysStatus`. Hard angle clamp ±90°, rate limit 50°/sec, big red E-STOP, ESC key, multiple watchdog failsafes, real-time EAC transition logging.
 - `can_sniffer.py` — Passive CAN bus listener. Auto-detects baud rate (500/250/125 kbps), highlights known Tesla IDs, decodes `0x370` so you can verify wiring before sending anything.
 
 ### Documentation (read these before running anything)
@@ -19,6 +20,8 @@ The rack must already be flashed with [gregjhogan's pre-AP EPAS firmware patch](
 - `PINOUT_VERIFICATION.pdf` — Two-page procedure for confirming chassis CAN is on OBD-II pins 1/9 (multimeter checks + sniffer test).
 - `INSTRUCTION_MANUAL.pdf` — Two-page Windows install + first-run guide.
 - `FLASH_AND_TROUBLESHOOTING.pdf` — Four-page guide for re-flashing the EPAS rack via the comma 3X (BogGyver `tesla_unity_releaseC3` branch). Use when the rack stays at INHIBITED. Includes pre-flight checklist, MD5 diagnosis, UI button vs SSH command-line paths, post-flash verification, bench test procedure, and a 14-row troubleshooting matrix.
+- `FLICKER_TROUBLESHOOTING.pdf` — Four-page guide for diagnosing and fixing EAC flicker / `HIGH_ANGLE_RATE_REQ` / wheel twitching. Full eacErrorCode reference table, four flicker-pattern matchers, five fixes (A through E), and a known-good configuration checklist. Updated 04 May 2026.
+- `IMPLEMENTATION_GUIDE.pdf` — Four-page guide explaining when to use which program (sniffer / move / steer / GUI), full `steer.py` GUI tour, A/B testing procedure for the two theory branches (`theory-A-conservative-rate` and `theory-B-pure-filter`), and a recommended end-to-end workflow + post-fix validation checklist.
 - `SETUP.md` — Longer text reference for installing the SYS TEC driver and python-can.
 
 ## Hardware tested with
