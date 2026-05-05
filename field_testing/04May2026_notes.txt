@@ -7749,3 +7749,4 @@ Overall comments:
 5. We found out that something about the comma 3x connection to the CAN bus is affecting our program, it is directly correlated.
 6. You should ask us more details about our setup if you thinnk they will be useful. Also, try to think outside the box more for solutions. Software is good to focus on, but it could be hardware related as well.
 7. Jordan wonnders if using a Red Panda inn our setup could help anywhere. I don't see how but I thought I would suggest it to facilitate brainstorming.
+8. We do not have our CAN device connected to the OBD-II port. It is connected to X437 AKA TDC, located under the center screen. It is on the same CAN bus as pins 1 and 9 of the OBD-II connector.
