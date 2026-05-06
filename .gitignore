@@ -5,3 +5,6 @@ __pycache__/
 venv/
 .DS_Store
 *.log
+
+# v4 session logs
+logs/
