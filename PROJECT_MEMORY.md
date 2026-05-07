@@ -38,7 +38,10 @@ Sub-goals in priority order:
 
 | Component | Identity | Source / verification |
 |---|---|---|
-| Vehicle | 2013 Tesla Model S, post-May-31 build, pre-AP | Derek's car, identified by VIN |
+| Vehicle | 2013 Tesla Model S, post-May-31 build, pre-AP, **RWD only** | Derek's car, identified by VIN. Tesla didn't introduce Model S AWD ("dual motor") until October 2014, so a 2013 Model S is RWD-only with a single rear motor. |
+| Brake system | **Vacuum-assisted** (no iBooster) | [Tinkla Pedal Interceptor wiki](https://tinkla.us/index.php/Pedal_Interceptor): *"On preAP Tesla Model S, the braking system is vacuum based, like on regular ICE cars."* Implies no software-commanded service brake authority on this car without hardware retrofit. |
+| Throttle architecture | Two redundant 0-5V analog signals from pedal to Drive Unit | [comma pedal docs](https://github.com/commaai/openpilot/wiki/comma-pedal): *"two redundant 5V analog signals that must be captured and sent twice"*. There is no CAN-commandable throttle on this car -- a hardware pedal interceptor is required for software throttle control. |
+| Stability control firmware Dyno Mode | **Not present in 2013** firmware. Tesla shipped Dyno Mode 2019+. | Tesla Owners forum threads. |
 | Steering rack | EPAS, patched with [gregjhogan/tesla-pre-ap-epas-patch](https://github.com/gregjhogan/tesla-pre-ap-epas-patch) | Patch flashed by Jordan via the BogGyver openpilot UI |
 | Patch firmware MD5 (unmodified) | `9e51ddd80606fbdaaf604c73c8dde0d1` | Verified from `gregjhogan/tesla-pre-ap-epas-patch/patch.py` line 14 |
 | Patch byte locations | `0x031750`, `0x031892`, `0x031974` (each 4 bytes) | Verified from `patch.py:104-110` |
@@ -397,9 +400,20 @@ Path C is research-grade work that may not even succeed.
 4. **What's the Tesla recall fix doing internally?** If it's a
    firmware patch to keep EPAS active at 0 mph, the same delta
    could be reverse-engineered onto our pre-AP rack. Long-shot.
-5. **Throttle and brake CAN messages on pre-AP**: not yet
-   investigated. Tinkla's longitudinal-control documentation may
-   have leads.
+5. **Throttle and brake CAN messages on pre-AP**: not present.
+   Verified. Throttle requires a hardware pedal interceptor
+   (see V5_PLAN.md). Brake authority is limited to throttle = 0
+   regen on this car; full service-brake authority requires an
+   iBooster retrofit.
+6. **What is the comma pedal's CAN protocol exactly** (gas command
+   ID, pedal position broadcast ID, watchdog timing)? Documented in
+   `BogGyver/panda` `tesla_pedal` branch source; needs to be
+   captured into `docs/PROTOCOL.md` once we source the hardware.
+7. **What does ESP do on a partial dyno on this specific car?**
+   Theoretical: stability intervention when front/rear wheel speed
+   diverge. Empirical confirmation deferred -- per V5_PLAN.md
+   Section 4, we will not test on a partial dyno; propulsion tests
+   move to a parking lot.
 
 ---
 
@@ -446,6 +460,24 @@ Things that have been tried and proven wrong or harmful:
   fixed bits and byte 1 high-nibble bits are NOT in the DBC but
   the SCCM requires them. Always verify against real captures for
   CRC-protected commands.
+- **Driving the car on a partial dyno (only some wheels rolling)**:
+  stability control will see wheel-speed disparity (front 0 mph,
+  rear N mph), conclude the car is sliding, and intervene with
+  unpredictable side effects. The 2013 Model S has no firmware
+  Dyno Mode (that shipped 2019+). For propulsion tests, use a
+  4-wheel chassis dyno OR an empty parking lot. See V5_PLAN.md
+  Section 4 for the full reasoning.
+- **Attempting to command throttle via CAN on pre-AP Model S**: no
+  CAN-commandable throttle exists on this car. The Drive Unit
+  reads two redundant 0-5V analog signals directly from the
+  accelerator pedal. Software throttle requires a hardware pedal
+  interceptor (Tinkla / Comma / DIY). See V5_PLAN.md Section 2.
+- **Commanding software service-brake on pre-AP Model S**: the
+  brake system is vacuum-assisted, mechanically linked to the
+  pedal. There is no CAN message that applies the calipers. iBooster
+  retrofit is the only path to full brake authority. EPB can lock
+  the car at standstill but is not a service brake. See V5_PLAN.md
+  Section 3.
 
 ---
 

@@ -129,6 +129,9 @@ dependency.
   what's true, with sources cited. Read this first.
 - [ROADMAP.md](ROADMAP.md) -- phased plan from current state to RC
   car to openpilot integration.
+- [V5_PLAN.md](V5_PLAN.md) -- detailed plan for v5 (full vehicle
+  control: throttle, brake, gear, steering). On
+  `dev/v5-longitudinal` branch.
 - [docs/build/ROADMAP.pdf](docs/build/ROADMAP.pdf) -- printable
   professional version of the roadmap with wiring diagrams and
   flowcharts. Regenerate with `python docs/build/build_pdf.py`.
