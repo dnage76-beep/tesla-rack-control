@@ -687,8 +687,8 @@ def build():
     cover_table = Table([
         ["Project", "Tesla Rack Control"],
         ["Vehicle", "2013 Tesla Model S, pre-AP, post-May 2013 build"],
-        ["Current version", "v4.2.0-dev"],
-        ["Branch", "dev/v4.2-prnd"],
+        ["Current version", "v4.2.0"],
+        ["Branch", "main / release/v4.2"],
         ["Authors", "Derek Nagel · Jordan · Charlie Yonkura · Claude"],
         ["Document date", datetime.now().strftime("%Y-%m-%d")],
     ], colWidths=[1.6 * inch, 4.2 * inch])

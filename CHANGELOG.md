@@ -7,7 +7,19 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
-## [4.2.0-dev] -- in progress on `dev/v4.2-prnd`
+## [4.2.0] -- 2026-05-07
+
+### Status notes at release
+- The gear shift byte format fix (commit `eae24c4`) is bench-correct
+  -- our `build_sbw_rq` produces frames byte-identical to all 6
+  captured real stalk shift positions. Field validation in-car is
+  Phase 0 of the post-release roadmap; if shifts still don't take
+  in-car after this release, the next investigation step is in
+  `ROADMAP.md` Decision Tree (Figure 5).
+- All other v4.2 features are field-validated in the May 2026
+  session logs (sessions 232457, 233049, 000552, 000935, 002425).
+
+### Released features (consolidated from prior dev entries)
 
 ### Added (UI overhaul)
 Complete restructure of the GUI for a more professional look. All

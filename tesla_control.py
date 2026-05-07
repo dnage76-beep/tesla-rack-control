@@ -1,6 +1,6 @@
 """
-Tesla Rack Control  --  v4.2.0-dev (PRND features)
-==================================================
+Tesla Rack Control  --  v4.2.0 (PRND + gear shift + polished UI)
+================================================================
 
 Single-program steering control for the patched 2013 Tesla Model S EPAS
 rack. Drives the rack from a SYS TEC USB-CANmodul1 (model 3204001) on
@@ -176,7 +176,7 @@ from datetime import datetime
 from tkinter import font
 from typing import Optional
 
-__version__ = "4.2.0-dev"
+__version__ = "4.2.0"
 
 
 # ============================================================================
