@@ -10,7 +10,7 @@ Tesla chassis CAN: 500 kbps, 11-bit identifiers, big-endian
 
 ---
 
-## TX from `tesla_control_v4_1.py`
+## TX from `tesla_control.py`
 
 ### `0x488` DAS_steeringControl  --  4 bytes  --  50 Hz (always)
 
@@ -89,7 +89,7 @@ send only when the real source is absent:
 
 ---
 
-## RX in `tesla_control_v4_1.py`
+## RX in `tesla_control.py`
 
 ### `0x370` EPAS_sysStatus  --  8 bytes  --  ~100 Hz from rack
 
@@ -100,7 +100,7 @@ send only when the real source is absent:
 | `EPAS_internalSAS`   | byte 4 bit 5..byte 5 | big-endian 14-bit, factor 0.1, offset -819.2, units deg    |
 
 ```python
-# Decode reference from tesla_control_v4_1.py
+# Decode reference from tesla_control.py
 eac_status = (data[6] >> 5) & 0x07
 eac_err    = (data[2] >> 4) & 0x0F
 raw_14bit  = ((data[4] & 0x3F) << 8) | data[5]

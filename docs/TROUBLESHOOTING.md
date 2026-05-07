@@ -1,4 +1,4 @@
-# Troubleshooting -- `tesla_control_v4_1.py`
+# Troubleshooting -- `tesla_control.py`
 
 Symptom-driven troubleshooting for the current program. Find your
 symptom, follow the steps, collect the artifacts that point at the
@@ -128,7 +128,7 @@ If a row is at 0 Hz when it should not be:
   Did you tap into a different sub-bus (powertrain instead of
   chassis)? Run `can_sniffer.py` to confirm you see GTW messages.
 - **0x214 missing**: confirm `SYNTHESIZE_EPB = True` at the top of
-  `tesla_control_v4_1.py`. If True but the row is still 0 Hz, the
+  `tesla_control.py`. If True but the row is still 0 Hz, the
   worker thread crashed. Check the event log for `TX 0x214 failed:`
   lines.
 - **0x155 missing in car**: the real ESP module is not on this bus,

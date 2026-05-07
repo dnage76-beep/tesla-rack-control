@@ -1,4 +1,4 @@
-# Operating Guide -- `tesla_control_v4_1.py`
+# Operating Guide -- `tesla_control.py`
 
 This is the operating guide for the current program. For the CAN
 protocol reference, see `PROTOCOL.md`. For symptom-driven debugging,
@@ -104,7 +104,7 @@ dent the inside of a fender or strain a tie rod boot.
 ### Step 5: Run the program
 
 ```
-python tesla_control_v4_1.py
+python tesla_control.py
 ```
 
 A 1080x860 window opens with status, mode, diagnostic, and keepalive
@@ -267,7 +267,7 @@ can tell you. We are the only allowed transmitter on that ID.
 
 ## Configuration cheat sheet
 
-Edit the constants at the top of `tesla_control_v4_1.py`. Common
+Edit the constants at the top of `tesla_control.py`. Common
 overrides:
 
 ### Rack on the bench (no real car around)

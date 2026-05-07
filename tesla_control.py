@@ -67,7 +67,7 @@ REQUIREMENTS
     This installs USBCAN32.dll which python-can's `systec` backend uses.
 
 USAGE
-    python tesla_control_v4_1.py
+    python tesla_control.py
 
     1. Click CONNECT. Bus diagnostic panel populates within ~2 seconds.
     2. Confirm "0x488 (RX)" stays at 0.0 Hz. If it shows non-zero, you
@@ -137,6 +137,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from tkinter import font
 from typing import Optional
+
+__version__ = "4.1.0"
 
 
 # ============================================================================
@@ -776,7 +778,7 @@ class App(tk.Tk):
 
     def __init__(self):
         super().__init__()
-        self.title("Tesla Rack Control  --  v4.1  --  30 MPH MODE toggle")
+        self.title(f"Tesla Rack Control  --  v{__version__}  --  30 MPH MODE toggle")
         self.geometry("1080x860")
         self.configure(bg=self.BG)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -819,7 +821,7 @@ class App(tk.Tk):
         # ---------- Header bar ----------
         hdr = tk.Frame(self, bg=self.BG)
         hdr.pack(fill="x", padx=14, pady=(12, 6))
-        tk.Label(hdr, text="Tesla Rack Control  v4.0",
+        tk.Label(hdr, text=f"Tesla Rack Control  v{__version__}",
                  font=self.f_h1, fg=self.FG, bg=self.BG).pack(side="left")
         self.lbl_conn = tk.Label(hdr, text="DISCONNECTED",
                                  font=self.f_h2, fg=self.RED, bg=self.BG)
@@ -1345,7 +1347,7 @@ class App(tk.Tk):
 
 def banner():
     print("=" * 72)
-    print(" Tesla Rack Control v4.1  --  30 MPH MODE toggle (off at boot)")
+    print(f" Tesla Rack Control v{__version__}  --  30 MPH MODE toggle (off at boot)")
     print(" SYS TEC USB-CANmodul1 (3204001) on Windows")
     print("=" * 72)
     print(f" CAN bitrate              : {CAN_BITRATE} bps")
