@@ -89,6 +89,47 @@ send only when the real source is absent:
 
 ---
 
+### `0x6D` SBW_RQ_SCCM  --  4 bytes  --  burst on shift (v4.2+, EXPERIMENTAL)
+
+Gear shift request. Real stalk transmits at ~100 Hz continuously;
+our program bursts 10 frames at 100 Hz when the user clicks P/R/N/D,
+then 5 IDLE frames as a settling tail.
+
+| Byte | Bits  | Field                       | Encoding                                      |
+|------|-------|-----------------------------|-----------------------------------------------|
+| b0   | 2..0  | `StW_Sw_Stat3`              | zeroed                                        |
+| b0   | 7..6  | `MsgTxmtId`                 | zeroed                                        |
+| b1   | 3..0  | `TSL_RND_Posn_StW`          | 0=IDLE 1=R 2=N_UP 4=N_DOWN 8=D 15=SNA         |
+| b1   | 5..4  | `TSL_P_Psd_StW`             | 0=IDLE 1=PSD 2=INI 3=SNA                      |
+| b2   | 7..4  | `MC_SBW_RQ_SCCM`            | counter, 0..15                                |
+| b3   | 7..0  | `CRC_SBW_RQ_SCCM`           | CRC-8/AUTOSAR over 0x6D + bytes 0..2          |
+
+```python
+def tesla_crc8(data):
+    crc = 0xFF
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            crc = ((crc << 1) ^ 0x2F) & 0xFF if crc & 0x80 else (crc << 1) & 0xFF
+    return crc ^ 0xFF
+```
+
+Shift mappings used by `request_shift()`:
+
+| User clicks | TSL_RND_Posn_StW | TSL_P_Psd_StW |
+|-------------|------------------|---------------|
+| P           | IDLE (0)         | PSD (1)       |
+| R           | R (1)            | IDLE (0)      |
+| N           | N_DOWN (4)       | IDLE (0)      |
+| D           | D (8)            | IDLE (0)      |
+
+**EXPERIMENTAL**: bit layout is verified against opendbc's
+`tesla_can.dbc` (BO_ 109), but the exact CRC convention used by
+this Model S has not been verified against a real stalk capture.
+If the first shift attempt is silently ignored, run `can_sniffer.py`
+during a physical stalk shift, capture the 4 bytes, and confirm
+byte 3 matches `tesla_crc8(0x6D, b0, b1, b2)`.
+
 ## RX in `tesla_control.py`
 
 ### `0x118` DI_torque2  --  6 bytes  --  ~100 Hz from drive inverter (v4.2+)

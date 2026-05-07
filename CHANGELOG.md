@@ -9,6 +9,34 @@ project follows a loose semantic-versioning scheme (see
 
 ## [4.2.0-dev] -- in progress on `dev/v4.2-prnd`
 
+### Added (gear shift -- EXPERIMENTAL)
+- Four shift buttons in the GUI: **P / R / N / D**.
+- New CAN message: `0x6D SBW_RQ_SCCM` (Shift By Wire Request from
+  Steering Column Module). 4 bytes. Carries `TSL_RND_Posn_StW`
+  (R/N/D position) and `TSL_P_Psd_StW` (Park button), counter at
+  bit 20, CRC at bit 24.
+- New helper `tesla_crc8()` implementing CRC-8/AUTOSAR (poly 0x2F,
+  init 0xFF, XOR-out 0xFF) for any future Tesla messages that need
+  it. **Untested in-car**: if the first shift attempt is silently
+  ignored, the CRC is the most likely culprit. Capture a real
+  stalk frame on the bus and verify byte 3.
+- New helper `build_sbw_rq(rnd, p, counter)` produces a complete
+  4-byte 0x6D frame with valid CRC.
+- Worker thread method `_execute_shift_burst()`: when GUI queues a
+  shift, sends 10 active frames at 100 Hz with the requested gear
+  encoded, then 5 IDLE frames as a settling tail, then logs the
+  resulting `DI_gear` for verification.
+- Bus diagnostic adds `0x6D` row.
+
+### Added (gear shift safety gates)
+- Shift request refused unless: not in E-STOP, not engaged, no
+  shift already in flight, brake pedal pressed (when DI is on the
+  bus), real speed < 1 mph for R/D shifts.
+- Brake-not-pressed message logged loudly so the user knows what
+  to do.
+- "Shift in flight" lock prevents overlapping shift bursts from
+  rapid clicks.
+
 ### Added (PRND awareness)
 - Listens to `0x118 DI_torque2` and decodes `DI_gear`,
   `DI_gearRequest`, and `DI_vehicleSpeed` (DI's own speed estimate,

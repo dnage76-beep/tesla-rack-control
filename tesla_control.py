@@ -217,6 +217,29 @@ ID_EPB_EPAS_CONTROL     = 0x214
 ID_EPAS_SYS_STATUS      = 0x370
 ID_ESP_B_FAKE_SPEED     = 0x155
 ID_DI_TORQUE2           = 0x118  # carries DI_gear, DI_gearRequest, DI_vehicleSpeed
+ID_SBW_RQ_SCCM          = 0x6D   # gear shift request from steering column
+
+# Gear shift -- 0x6D SBW_RQ_SCCM transmission parameters.
+#
+# The real stalk sends this at ~100 Hz continuously. To request a
+# shift, we burst N frames at 10 ms intervals with the desired
+# TSL_RND_Posn_StW (or TSL_P_Psd_StW for Park button), then return
+# to IDLE for a settling tail. Empirically Tesla DI accepts shifts
+# with as few as 5 active frames; 10 is conservative.
+SBW_BURST_ACTIVE_FRAMES   = 10
+SBW_BURST_IDLE_FRAMES     = 5
+SBW_BURST_PERIOD_MS       = 10   # 100 Hz, matches real stalk
+
+# TSL_RND_Posn_StW values (verified from opendbc tesla_can.dbc, BO 109)
+TSL_RND_IDLE   = 0
+TSL_RND_R      = 1
+TSL_RND_N_UP   = 2
+TSL_RND_N_DOWN = 4
+TSL_RND_D      = 8
+
+# TSL_P_Psd_StW values
+TSL_P_IDLE     = 0
+TSL_P_PSD      = 1   # Park button pressed
 
 # TX cycle periods (ms)
 PERIOD_DAS_MS = 20              # 50 Hz
@@ -258,6 +281,7 @@ REAL_MOTION_AUTO_DISENGAGE_MPH = 1.0
 # Bus diagnostic panel: which IDs we want to display rates for, and
 # what we expect on a healthy bus.
 DIAG_IDS = [
+    (0x6D,  "SBW_RQ_SCCM (shift)",   "stalk gear request; bursts when we shift"),
     (0x101, "GTW_epasControl",       "real car GTW; ~10 Hz expected"),
     (0x108, "DI_torque1",            "drive inverter; ~100 Hz expected"),
     (0x118, "DI_torque2 (gear)",     "carries PRND; ~100 Hz expected"),
@@ -350,6 +374,50 @@ def build_epb_epas_control(counter: int) -> bytes:
     return bytes([b0, b1, b2])
 
 
+def tesla_crc8(data: bytes) -> int:
+    """Tesla CRC-8/AUTOSAR. Polynomial 0x2F, init 0xFF, XOR-out 0xFF.
+
+    Used by 0x6D SBW_RQ_SCCM (gear shift) and other Tesla messages
+    that require CRC8 instead of the simpler sum-checksum.
+
+    EXPERIMENTAL: this implementation matches the AUTOSAR spec which
+    Tesla's stalk module is known to use. If the first gear-shift
+    attempt is silently ignored by the DI module, the CRC is the
+    most likely culprit -- capture a real stalk frame on the bus
+    and verify the byte at offset 3.
+    """
+    crc = 0xFF
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            if crc & 0x80:
+                crc = ((crc << 1) ^ 0x2F) & 0xFF
+            else:
+                crc = (crc << 1) & 0xFF
+    return crc ^ 0xFF
+
+
+def build_sbw_rq(rnd_posn: int, p_pressed: int, counter: int) -> bytes:
+    """0x6D SBW_RQ_SCCM, 4 bytes. Gear shift request.
+
+    Field layout (verified from opendbc tesla_can.dbc, BO_ 109):
+      byte 0 bits 0..2 : StW_Sw_Stat3              (zeroed)
+      byte 0 bits 6..7 : MsgTxmtId                 (zeroed)
+      byte 1 bits 0..3 : TSL_RND_Posn_StW          (gear position)
+      byte 1 bits 4..5 : TSL_P_Psd_StW             (P button)
+      byte 2 bits 4..7 : MC_SBW_RQ_SCCM            (counter, 0..15)
+      byte 3 bits 0..7 : CRC_SBW_RQ_SCCM           (CRC-8/AUTOSAR)
+    """
+    b0 = 0x00
+    b1 = ((p_pressed & 0x03) << 4) | (rnd_posn & 0x0F)
+    b2 = (counter & 0x0F) << 4
+    # CRC computed over the first 3 data bytes plus the 11-bit ID.
+    # Tesla's CRC-8/AUTOSAR convention includes the address byte at
+    # the start of the input. ID 0x6D fits in one byte.
+    crc = tesla_crc8(bytes([ID_SBW_RQ_SCCM & 0xFF, b0, b1, b2]))
+    return bytes([b0, b1, b2, crc])
+
+
 def build_fake_esp_speed(speed_kph: float) -> bytes:
     """0x155 ESP_B (bench mode only). Not OEM-accurate but enough to
     clear EAC_ERROR_MIN_SPEED in lab tests."""
@@ -402,6 +470,13 @@ class ControlState:
     # keyboard input flags (set by GUI, read by worker)
     key_left: bool = False
     key_right: bool = False
+    # Gear shift request (set by GUI, consumed by worker). When set,
+    # worker bursts SBW_BURST_ACTIVE_FRAMES of 0x6D with the requested
+    # rnd/p values, then SBW_BURST_IDLE_FRAMES of IDLE, then clears
+    # to None. While shift_target is set, the GUI's gear buttons stay
+    # disabled to prevent overlapping shifts.
+    shift_target: Optional[tuple] = None  # (rnd_posn, p_pressed, label)
+    counter_sbw: int = 0
     # runtime 30 MPH MODE toggle (off by default). When True, worker
     # transmits 0x155 at 200 Hz to drown out the real ESP module and
     # convince the rack the car is moving.
@@ -776,6 +851,48 @@ class CanWorker(threading.Thread):
             cur = target
         self.ctrl.commanded_angle_deg = cur
 
+    def _execute_shift_burst(self):
+        """Send the queued shift_target as a 0x6D burst.
+
+        Blocks the worker for ~150 ms (15 frames * 10 ms) but the
+        watchdogs at the top of run() are already idle for that
+        duration since this is a one-shot user action with no
+        steering active. The 0x488 stream pauses momentarily, which
+        is fine because we refuse shifts unless we're disengaged.
+        """
+        target = self.ctrl.shift_target
+        if target is None:
+            return
+        rnd, p, label = target
+        self.log(f"SHIFT: requesting {label} via 0x6D burst")
+        try:
+            for i in range(SBW_BURST_ACTIVE_FRAMES):
+                data = build_sbw_rq(rnd, p, self.ctrl.counter_sbw)
+                self.bus.send(can.Message(
+                    arbitration_id=ID_SBW_RQ_SCCM,
+                    data=data, is_extended_id=False,
+                ))
+                self.ctrl.counter_sbw = (self.ctrl.counter_sbw + 1) & 0x0F
+                time.sleep(SBW_BURST_PERIOD_MS / 1000.0)
+            for i in range(SBW_BURST_IDLE_FRAMES):
+                data = build_sbw_rq(TSL_RND_IDLE, TSL_P_IDLE,
+                                    self.ctrl.counter_sbw)
+                self.bus.send(can.Message(
+                    arbitration_id=ID_SBW_RQ_SCCM,
+                    data=data, is_extended_id=False,
+                ))
+                self.ctrl.counter_sbw = (self.ctrl.counter_sbw + 1) & 0x0F
+                time.sleep(SBW_BURST_PERIOD_MS / 1000.0)
+        except Exception as e:
+            self.log(f"SHIFT FAILED: TX 0x6D error: {e}")
+        self.ctrl.shift_target = None
+        # Verify the shift landed (best effort -- DI may take 100-200 ms
+        # to update DI_gear after accepting the shift)
+        time.sleep(0.2)
+        if self.status.di_torque2_rx_count > 0:
+            self.log(f"SHIFT post-burst gear: "
+                     f"{DI_GEAR_NAMES.get(self.status.gear,'?')}")
+
     def run(self):
         if not self.connect():
             return
@@ -811,6 +928,16 @@ class CanWorker(threading.Thread):
 
             self._check_failsafes(now, last_loop)
             last_loop = now
+
+            # ----- Shift burst (consumes shift_target if set) -----
+            if self.ctrl.shift_target is not None and not self.ctrl.estop:
+                self._execute_shift_burst()
+                # Reset TX deadlines so we don't try to catch up after
+                # the ~250 ms burst window; just resume normal cadence.
+                next_das = time.monotonic()
+                next_gtw = next_das
+                next_epb = next_das
+                next_esp = next_das
 
             # ----- E-STOP path: send disengaged 0x488 frames and idle -----
             if self.ctrl.estop:
@@ -1098,6 +1225,41 @@ class App(tk.Tk):
         self.lbl_gear_req = self._stat(grid, 2, 1, "Gear Request", "--")
         self.lbl_di_speed = self._stat(grid, 2, 2, "DI Speed",     "-- mph")
         self.lbl_park_gate= self._stat(grid, 2, 3, "Park Gate",    "armed" if REQUIRE_PARK_TO_ENGAGE else "off")
+
+        # ---------- Gear shift (LEFT, ABOVE INPUT MODE) -----------
+        # EXPERIMENTAL v4.2 -- shifts via 0x6D SBW_RQ_SCCM burst.
+        # Heavy safety gating in request_shift().
+        sf = tk.LabelFrame(left, text=" Shift Gear (EXPERIMENTAL) ",
+                           font=self.f_h2, fg=self.FG, bg=self.PANEL,
+                           bd=1, relief="solid")
+        sf.pack(fill="x", pady=(0, 6))
+        shift_bar = tk.Frame(sf, bg=self.PANEL)
+        shift_bar.pack(fill="x", padx=10, pady=8)
+        self.btn_shift_p = tk.Button(
+            shift_bar, text="P", font=self.f_btn, width=6, relief="flat",
+            bg="#525252", fg="white",
+            command=lambda: self.request_shift("P"))
+        self.btn_shift_p.pack(side="left", padx=4)
+        self.btn_shift_r = tk.Button(
+            shift_bar, text="R", font=self.f_btn, width=6, relief="flat",
+            bg="#525252", fg="white",
+            command=lambda: self.request_shift("R"))
+        self.btn_shift_r.pack(side="left", padx=4)
+        self.btn_shift_n = tk.Button(
+            shift_bar, text="N", font=self.f_btn, width=6, relief="flat",
+            bg="#525252", fg="white",
+            command=lambda: self.request_shift("N"))
+        self.btn_shift_n.pack(side="left", padx=4)
+        self.btn_shift_d = tk.Button(
+            shift_bar, text="D", font=self.f_btn, width=6, relief="flat",
+            bg="#525252", fg="white",
+            command=lambda: self.request_shift("D"))
+        self.btn_shift_d.pack(side="left", padx=4)
+        tk.Label(sf,
+                 text=("requirements: brake pressed, real speed < 1 mph, "
+                       "rack disengaged, no shift in flight"),
+                 font=self.f_help, fg=self.DIM, bg=self.PANEL,
+                 anchor="w").pack(fill="x", padx=10, pady=(0, 6))
 
         # ---------- Mode tabs (LEFT MIDDLE) ----------
         modef = tk.Frame(left, bg=self.PANEL, bd=1, relief="solid")
@@ -1436,6 +1598,70 @@ class App(tk.Tk):
             if self.logger:
                 self.logger.event("30 MPH MODE on")
                 self.logger.sample(self.ctrl, self.status, event="30mph_on")
+
+    def request_shift(self, gear_label: str):
+        """User clicked P / R / N / D. Validate gates, then queue
+        the shift for the worker to execute.
+
+        EXPERIMENTAL: this is the first shipped version of the
+        0x6D SBW_RQ_SCCM transmission. The CRC and bit layout are
+        based on opendbc's tesla_can.dbc and the Tesla CRC-8/AUTOSAR
+        spec, but have not yet been verified against a real shift
+        capture from this car. If the first attempt is silently
+        ignored, run can_sniffer.py while shifting physically and
+        compare bytes. See PROTOCOL.md.
+        """
+        if self.worker is None:
+            self._log_local("REFUSED shift: not connected")
+            return
+        if self.ctrl.estop:
+            self._log_local("REFUSED shift: E-STOP active")
+            return
+        if self.ctrl.engaged:
+            self._log_local("REFUSED shift: disengage steering control first")
+            return
+        if self.ctrl.shift_target is not None:
+            self._log_local("REFUSED shift: another shift is in flight")
+            return
+
+        # Brake-pressed gate (skip if no DI module on bus -- bench mode)
+        if self.status.di_torque2_rx_count > 0:
+            if self.status.brake_pedal != 1:
+                self._log_local("REFUSED shift: brake pedal not pressed "
+                                "(real Tesla shifts require brake)")
+                return
+            # Speed gate: refuse R or D if real motion present
+            if (gear_label in ("R", "D")
+                    and abs(self.status.di_vehicle_speed_mph)
+                        > REAL_MOTION_AUTO_DISENGAGE_MPH):
+                self._log_local(f"REFUSED shift to {gear_label}: real speed "
+                                f"{self.status.di_vehicle_speed_mph:+.1f} mph "
+                                "(must be < 1 mph)")
+                return
+        else:
+            # On bench without DI, the shift will happen but we have no
+            # way to verify it took. Log loudly.
+            self._log_local("WARN: no DI on bus, shift will be sent blind "
+                            "(no brake / speed check possible)")
+
+        # Map label to (rnd_posn, p_pressed)
+        # P button is special: TSL_P_Psd_StW=1, TSL_RND_Posn_StW stays IDLE.
+        # R/N/D use TSL_RND_Posn_StW with the corresponding code.
+        spec_map = {
+            "P": (TSL_RND_IDLE,   TSL_P_PSD,  "P"),
+            "R": (TSL_RND_R,      TSL_P_IDLE, "R"),
+            "N": (TSL_RND_N_DOWN, TSL_P_IDLE, "N"),
+            "D": (TSL_RND_D,      TSL_P_IDLE, "D"),
+        }
+        if gear_label not in spec_map:
+            self._log_local(f"REFUSED shift: unknown gear {gear_label}")
+            return
+        self.ctrl.shift_target = spec_map[gear_label]
+        self._log_local(f"shift queued: {gear_label} (worker will burst 0x6D)")
+        if self.logger:
+            self.logger.event(f"shift requested: {gear_label}")
+            self.logger.sample(self.ctrl, self.status,
+                               event=f"shift_requested:{gear_label}")
 
     def estop(self, reason: str):
         if self.worker:
