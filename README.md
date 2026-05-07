@@ -129,6 +129,9 @@ dependency.
   what's true, with sources cited. Read this first.
 - [ROADMAP.md](ROADMAP.md) -- phased plan from current state to RC
   car to openpilot integration.
+- [docs/build/ROADMAP.pdf](docs/build/ROADMAP.pdf) -- printable
+  professional version of the roadmap with wiring diagrams and
+  flowcharts. Regenerate with `python docs/build/build_pdf.py`.
 - [docs/GUIDE.md](docs/GUIDE.md) -- setup, operating procedure,
   configuration, mode reference.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) -- symptom
