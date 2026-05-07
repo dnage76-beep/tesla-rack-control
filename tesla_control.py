@@ -7,21 +7,39 @@ rack. Drives the rack from a SYS TEC USB-CANmodul1 (model 3204001) on
 Windows, with NO comma 3X required.
 
 WHAT IS NEW IN v4.2 (vs v4.1)
-    - **PRND awareness.** Listens to 0x118 DI_torque2 and decodes
-      DI_gear, DI_gearRequest, and DI_vehicleSpeed (DI's own speed
-      estimate, useful for verifying the 30 MPH MODE spoof is not
-      propagating somewhere it shouldn't).
+    PRND awareness:
+    - Listens to 0x118 DI_torque2 and decodes DI_gear,
+      DI_gearRequest, and DI_vehicleSpeed (DI's own speed estimate,
+      useful for verifying the 30 MPH MODE spoof is not propagating
+      somewhere it shouldn't).
+    - Status panel grows to 3 rows of 4 to show Gear, Gear Request,
+      DI Speed, and Park Gate state.
+    - Bus diagnostic adds 0x118.
+    - CSV log adds gear, gear_request, di_vehicle_speed_mph columns.
+    - Gear transitions are logged to the .log file.
+
+    Safety guards (added after Derek's 30 MPH MODE in-car test
+    "freaked out" the car):
     - **Park-to-engage gate.** When 0x118 is being received and the
-      gear is not P, ENGAGE is refused with a clear message. The
-      gate is bypassed automatically when 0x118 has never been
-      received (bench mode without a real DI module on the bus).
+      gear is not P, ENGAGE is refused. Bypassed automatically when
+      0x118 has never been received (bench mode without DI on bus).
       Configurable via REQUIRE_PARK_TO_ENGAGE.
-    - **Status panel grows to 3 rows of 4** to show Gear, Gear
-      Request, DI Speed, and Park Gate state.
-    - **Bus diagnostic adds 0x118**.
-    - **CSV log adds gear, gear_request, di_vehicle_speed_mph**
-      columns for offline analysis.
-    - **Gear transitions are logged** to the .log file.
+    - **30 MPH MODE pre-flight check**. If real ESP is transmitting
+      0x155 above ESP_PREFLIGHT_REFUSE_HZ (1 Hz), the toggle refuses
+      to enable. Prevents the contention case that caused the test
+      failure.
+    - **30 MPH MODE mid-session auto-disable**. If real ESP traffic
+      appears while 30 MPH MODE is on, it disables itself within one
+      tick.
+    - **Auto-disengage on gear-out-of-P**. If engaged and the gear
+      leaves Park, the worker disengages on the next tick.
+    - **Auto-disengage on real motion**. If DI_vehicleSpeed (the
+      car's own estimate, NOT our spoof) goes above 1 mph, the worker
+      disengages. Any real motion of the car means we should not be
+      commanding the rack.
+    - **EAC-bounce watchdog**. If we see more than 5 EAC status
+      transitions in 1 second, auto-E-STOP. Catches the May 2026
+      flicker pattern automatically.
 
 WHAT IS NEW IN v4.1 (vs v4)
     - **30 MPH MODE toggle button in the GUI.** Starts OFF. When the
@@ -213,6 +231,30 @@ PERIOD_ESP_MS = 5               # 200 Hz when 30 MPH MODE on (drown out real 50 
 # present and contention is in play.
 ESP_CONTENTION_RX_THRESHOLD_HZ = 5.0
 
+# v4.2 safety guards added after Derek's 30 MPH MODE field test
+# (the car "freaked out" -- ESP contention cascaded into other ECUs).
+
+# Pre-flight: refuse to enable 30 MPH MODE if real ESP is transmitting
+# 0x155 above this rate. Set to a low value because even occasional
+# real-ESP frames are enough to cause cascading faults in other modules
+# downstream of 0x155 (stability control, regen, EPB).
+ESP_PREFLIGHT_REFUSE_HZ = 1.0
+
+# Mid-session: if 30 MPH MODE is enabled and 0x155 RX rate climbs
+# above this threshold (real ESP came alive), auto-disable.
+ESP_AUTO_DISABLE_HZ = 5.0
+
+# EAC-bounce watchdog. If we observe more than this many EAC status
+# transitions in one second, auto-E-STOP. Catches the May 2026 flicker
+# pattern automatically.
+EAC_BOUNCE_LIMIT_PER_SEC = 5
+
+# Real-motion watchdog. If DI_vehicleSpeed (the car's own estimate,
+# unaffected by our 0x155 spoof) goes above this, auto-disengage. Any
+# real motion of the car means the rack should not be under remote
+# control -- we are bench-and-jacks-only.
+REAL_MOTION_AUTO_DISENGAGE_MPH = 1.0
+
 # Bus diagnostic panel: which IDs we want to display rates for, and
 # what we expect on a healthy bus.
 DIAG_IDS = [
@@ -326,6 +368,9 @@ class RackStatus:
     gear_request: int = -1
     di_vehicle_speed_mph: float = 0.0
     di_torque2_rx_count: int = 0
+    # EAC transition timestamps for the bounce watchdog. Worker
+    # appends; the bounce check reads. Bounded to keep memory finite.
+    eac_transition_times: deque = field(default_factory=lambda: deque(maxlen=64))
 
 
 @dataclass
@@ -588,6 +633,7 @@ class CanWorker(threading.Thread):
             self.log(f"EAC: {EAC_STATUS_NAMES.get(prev_status,'?')} -> "
                      f"{EAC_STATUS_NAMES.get(eac_status,'?')} "
                      f"(err={EAC_ERROR_CODES.get(eac_err,'?')})")
+            self.status.eac_transition_times.append(time.monotonic())
             if self.logger:
                 self.logger.sample(self.ctrl, self.status,
                                    event=f"eac_transition:{EAC_STATUS_NAMES.get(eac_status,'?')}")
@@ -624,6 +670,52 @@ class CanWorker(threading.Thread):
             dt_ms = (now - last_loop) * 1000.0
             if dt_ms > (PERIOD_DAS_MS + LOOP_OVERRUN_LIMIT_MS):
                 self.trigger_estop(f"loop overrun {dt_ms:.0f} ms")
+                return
+
+        # v4.2 -- EAC bounce watchdog. Count transitions in the last
+        # second; if too many, the rack is flickering and we E-STOP
+        # rather than letting the user keep commanding into the chaos.
+        recent = sum(1 for t in self.status.eac_transition_times
+                     if now - t < 1.0)
+        if recent > EAC_BOUNCE_LIMIT_PER_SEC:
+            self.trigger_estop(
+                f"EAC bounce: {recent} transitions in last second")
+            return
+
+        # v4.2 -- real-motion auto-disengage. DI_vehicleSpeed is the
+        # car's own estimate, unaffected by our 0x155 spoof. Any real
+        # motion means we should not be commanding the rack.
+        if (self.ctrl.engaged
+                and self.status.di_torque2_rx_count > 0
+                and abs(self.status.di_vehicle_speed_mph) > REAL_MOTION_AUTO_DISENGAGE_MPH):
+            self.log(f"AUTO-DISENGAGE: real motion detected "
+                     f"({self.status.di_vehicle_speed_mph:+.1f} mph)")
+            self.ctrl.engaged = False
+            return
+
+        # v4.2 -- gear-out-of-park auto-disengage. If we engaged in P
+        # and the gear changes to anything else, drop engagement.
+        if (self.ctrl.engaged
+                and self.status.di_torque2_rx_count > 0
+                and self.status.gear != DI_GEAR_PARK
+                and self.status.gear >= 0):
+            gear_name = DI_GEAR_NAMES.get(self.status.gear, "?")
+            self.log(f"AUTO-DISENGAGE: gear left Park (now {gear_name})")
+            self.ctrl.engaged = False
+            return
+
+        # v4.2 -- mid-session ESP contention auto-disable for 30 MPH MODE.
+        # If the real ESP comes alive (or comes back) while we're in
+        # 30 MPH MODE, kill the spoof immediately.
+        if self.ctrl.thirty_mph_mode:
+            esp_rx_hz = self.stats.hz(ID_ESP_B_FAKE_SPEED)
+            if esp_rx_hz > ESP_AUTO_DISABLE_HZ:
+                self.ctrl.thirty_mph_mode = False
+                self.log(f"AUTO-DISABLE 30 MPH MODE: real ESP detected "
+                         f"({esp_rx_hz:.1f} Hz on 0x155)")
+                if self.logger:
+                    self.logger.sample(self.ctrl, self.status,
+                                       event="30mph_auto_disabled")
                 return
 
     def _apply_keyboard_input(self, dt_s: float):
@@ -1283,6 +1375,20 @@ class App(tk.Tk):
             if self.ctrl.engaged:
                 self._log_local("REFUSED: disengage before enabling 30 MPH MODE")
                 return
+            # v4.2 PRE-FLIGHT: refuse if real ESP is on the bus.
+            # The May 2026 in-car test "freaked out" the car because two
+            # transmitters on 0x155 cascaded into stability/regen/EPB
+            # faults. If we see real ESP traffic here, we must not enable.
+            esp_rx_hz = self.stats.hz(ID_ESP_B_FAKE_SPEED)
+            if esp_rx_hz > ESP_PREFLIGHT_REFUSE_HZ:
+                self._log_local(
+                    f"REFUSED 30 MPH MODE: real ESP detected on bus "
+                    f"({esp_rx_hz:.1f} Hz on 0x155). Disconnect the ESP "
+                    "module or move to a bench setup before enabling.")
+                if self.logger:
+                    self.logger.event(
+                        f"30 MPH MODE refused: real ESP at {esp_rx_hz:.1f} Hz")
+                return
             self.ctrl.thirty_mph_mode = True
             self.btn_30mph.config(text="30 MPH MODE: ON", bg="#ea580c")
             self._log_local(f"30 MPH MODE: ON (faking {BENCH_FAKE_SPEED_KPH:.0f} km/h "
@@ -1450,9 +1556,16 @@ class App(tk.Tk):
                 label = "HOLDING"
             self.wheel.draw(self.ctrl.commanded_angle_deg, label_below=label)
 
-        # Re-show ENGAGE button label if E-STOP cleared our state
-        if self.ctrl.estop and self.btn_engage["text"] != "ENGAGE":
+        # Sync ENGAGE button label to actual engaged state. The worker
+        # thread can auto-disengage from a watchdog (real motion, gear
+        # leaving P, ESP contention), so we must reflect that in the UI.
+        if not self.ctrl.engaged and self.btn_engage["text"] != "ENGAGE":
             self.btn_engage.config(text="ENGAGE", bg=self.GREEN)
+        # Sync 30 MPH MODE button to its actual state (auto-disable
+        # in worker can flip it).
+        if (not self.ctrl.thirty_mph_mode
+                and self.btn_30mph["text"] != "30 MPH MODE: OFF"):
+            self.btn_30mph.config(text="30 MPH MODE: OFF", bg="#525252")
 
         self.after(50, self._tick)
 
@@ -1479,6 +1592,14 @@ def banner():
           f"@ {1000//PERIOD_ESP_MS} Hz")
     print(f" Park-to-engage gate      : {'armed' if REQUIRE_PARK_TO_ENGAGE else 'off'}")
     print(f"   (bypassed when 0x118 DI_torque2 has not been observed)")
+    print(f" 30 MPH MODE pre-flight   : refuse if 0x155 RX > "
+          f"{ESP_PREFLIGHT_REFUSE_HZ:.0f} Hz")
+    print(f" 30 MPH MODE auto-disable : if 0x155 RX > "
+          f"{ESP_AUTO_DISABLE_HZ:.0f} Hz mid-session")
+    print(f" EAC bounce watchdog      : E-STOP if > "
+          f"{EAC_BOUNCE_LIMIT_PER_SEC} EAC transitions / second")
+    print(f" Real-motion auto-disengage: if |DI speed| > "
+          f"{REAL_MOTION_AUTO_DISENGAGE_MPH:.1f} mph")
     print(f" Log dir                  : {LOG_DIR}")
     print("=" * 72)
 

@@ -33,24 +33,43 @@ Read this document before running anything.
 `tesla_control.py` enforces multiple independent safety layers.
 Removing any one of them is acceptable; bypassing all of them is not.
 
+### Command shaping
 - **Hard angle clamp** at +/- 180 degrees in software. The rack
   rejects beyond ~60 at standstill on its own.
 - **Rate limit** at 150 deg/s. Rack rejects above ~250 at any speed.
 - **Low-pass filter** (150 ms tau) on the user input target so a
   rapidly moved slider does not become a step input to the rack.
-- **RX timeout watchdog**: lose `0x370` for >500 ms, E-STOP fires.
-- **Bus error watchdog**: >50 CAN errors, E-STOP fires.
-- **Loop overrun watchdog**: 50 Hz TX loop late by >100 ms,
-  E-STOP fires.
+
+### Watchdogs (auto-E-STOP)
+- **RX timeout watchdog**: lose `0x370` for >500 ms.
+- **Bus error watchdog**: >50 CAN error frames.
+- **Loop overrun watchdog**: 50 Hz TX loop late by >100 ms.
 - **Optional divergence watchdog**: commanded vs measured angle
-  >30 deg, E-STOP fires. Off by default until the measured-angle
-  decode is calibrated on bench.
-- **Four E-STOP paths**: red button, ESC key, Q key, window close.
-  Any one of them flips controlType=0 within 20 ms.
-- **Refusal to engage blind**: ENGAGE refuses if `0x370` has never
-  been received, so we never command a rack we can't hear back from.
+  >30 deg. Off by default until the measured-angle decode is
+  calibrated on bench.
+- **EAC-bounce watchdog (v4.2+)**: more than 5 EAC status
+  transitions in 1 second. Catches the May 2026 flicker pattern.
+
+### Watchdogs (auto-disengage; less aggressive than E-STOP)
+- **Real-motion watchdog (v4.2+)**: `DI_vehicleSpeed` >1 mph.
+  Distinct from our 30 MPH MODE spoof.
+- **Gear-out-of-park watchdog (v4.2+)**: gear leaves P while
+  engaged.
+- **30 MPH MODE auto-disable (v4.2+)**: real ESP traffic appears
+  on `0x155` while 30 MPH MODE is on.
+
+### Engagement gates (refuse to engage when violated)
+- **No 0x370 received**: prevents commanding a rack we can't hear.
+- **Park-to-engage gate (v4.2+)**: gear must be P (when DI is
+  visible on the bus).
 - **Refusal to enable 30 MPH MODE while engaged**: prevents the
   rack's torque envelope from jumping mid-steer.
+- **30 MPH MODE pre-flight ESP check (v4.2+)**: refuses if real
+  ESP traffic is on `0x155`.
+
+### Manual E-STOP paths
+- **Four**: red button, ESC key, Q key, window close. Any one of
+  them flips controlType=0 within 20 ms.
 
 ---
 

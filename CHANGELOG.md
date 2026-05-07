@@ -9,16 +9,11 @@ project follows a loose semantic-versioning scheme (see
 
 ## [4.2.0-dev] -- in progress on `dev/v4.2-prnd`
 
-### Added
-- **PRND awareness**. Listens to `0x118 DI_torque2` and decodes
-  `DI_gear`, `DI_gearRequest`, and `DI_vehicleSpeed` (DI's own
-  speed estimate, useful for verifying the 30 MPH MODE spoof is
-  not propagating somewhere it shouldn't).
-- **Park-to-engage gate**. When `0x118` is being received and the
-  gear is not P, ENGAGE is refused with a clear message in the
-  event log. Bypassed automatically when `0x118` has never been
-  received (bench mode without a real DI module on the bus).
-  Configurable via `REQUIRE_PARK_TO_ENGAGE`.
+### Added (PRND awareness)
+- Listens to `0x118 DI_torque2` and decodes `DI_gear`,
+  `DI_gearRequest`, and `DI_vehicleSpeed` (DI's own speed estimate,
+  useful for verifying the 30 MPH MODE spoof is not propagating
+  somewhere it shouldn't).
 - Status panel grows to 3 rows: adds Gear, Gear Request, DI Speed,
   Park Gate cells.
 - Bus diagnostic panel adds `0x118 DI_torque2 (gear)`.
@@ -26,15 +21,47 @@ project follows a loose semantic-versioning scheme (see
   columns.
 - Gear transition events written to the `.log` file.
 
+### Added (safety guards)
+Derek's first 30 MPH MODE in-car test "freaked out" the car
+(ESP contention cascaded into other ECUs). These guards prevent
+that exact failure mode and several adjacent ones:
+
+- **Park-to-engage gate**. When `0x118` is being received and the
+  gear is not P, ENGAGE is refused with a clear log message.
+  Bypassed automatically when `0x118` has never been received
+  (bench mode). Configurable via `REQUIRE_PARK_TO_ENGAGE` (default
+  `True`).
+- **30 MPH MODE pre-flight ESP check**. If real ESP traffic is
+  detected on `0x155` above `ESP_PREFLIGHT_REFUSE_HZ` (1 Hz), the
+  toggle refuses to enable. The original test would have been
+  prevented by this guard.
+- **30 MPH MODE mid-session auto-disable**. If real ESP traffic
+  appears (or returns) while 30 MPH MODE is on, the toggle flips
+  itself off within one tick.
+- **Auto-disengage on gear-out-of-P**. If engaged and the gear
+  leaves Park, the worker disengages on the next 50 Hz tick.
+- **Auto-disengage on real motion**. If `DI_vehicleSpeed` (the
+  car's own estimate, NOT our spoof) goes above 1 mph, the worker
+  disengages.
+- **EAC-bounce watchdog**. If we see more than 5 EAC status
+  transitions in any 1-second window, auto-E-STOP. Catches the
+  May 2026 flicker pattern automatically.
+- GUI buttons (`ENGAGE`, `30 MPH MODE`) now resync their labels
+  when the worker thread auto-disables them.
+
 ### Changed
 - Window height increased from 860 to 920 px to fit the new row.
 - `__version__` bumped to `4.2.0-dev`.
 
 ### Notes
-- Default `REQUIRE_PARK_TO_ENGAGE = True`. Flip to False if testing
-  with a broken or absent gear sensor and you want to bypass the
-  gate.
 - Wire-level CAN protocol unchanged. Patched rack remains compatible.
+- All v4.2 watchdogs are configurable via the constants at the top
+  of `tesla_control.py`. Default values err on the side of safety.
+- The 30 MPH MODE toggle is intentionally still available, but the
+  pre-flight check makes it impossible to enable in-car (where
+  real ESP is alive). It can be enabled on a bench setup with the
+  ESP module disconnected, which is the only configuration where
+  it was ever safe to use.
 
 ## [4.1.0] -- 2026-05-07
 
