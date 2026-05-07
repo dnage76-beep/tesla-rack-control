@@ -125,6 +125,10 @@ dependency.
 
 ## Documentation
 
+- [PROJECT_MEMORY.md](PROJECT_MEMORY.md) -- canonical reference of
+  what's true, with sources cited. Read this first.
+- [ROADMAP.md](ROADMAP.md) -- phased plan from current state to RC
+  car to openpilot integration.
 - [docs/GUIDE.md](docs/GUIDE.md) -- setup, operating procedure,
   configuration, mode reference.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) -- symptom
