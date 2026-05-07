@@ -1,0 +1,11 @@
+[2026-05-07 00:32:18.873] session start (20260507_003218)
+[2026-05-07 00:32:18.947] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-07 00:32:18.947] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-07 00:32:19.010] EAC: INHIBITED -> AVAILABLE (err=OUT_OF_RANGE)
+[2026-05-07 00:32:21.865] shift requested: D
+[2026-05-07 00:32:21.879] SHIFT: requesting D via 0x6D burst
+[2026-05-07 00:32:22.238] SHIFT post-burst gear: P
+[2026-05-07 00:32:22.251] EAC: AVAILABLE -> INHIBITED (err=OUT_OF_RANGE)
+[2026-05-07 00:32:22.258] E-STOP: loop overrun 364 ms
+[2026-05-07 00:32:27.420] CAN closed
+[2026-05-07 00:32:27.421] disconnect; closing log
