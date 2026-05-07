@@ -284,6 +284,16 @@ EAC_STATUS_NAMES = {
     0: "INHIBITED", 1: "AVAILABLE", 2: "ACTIVE", 3: "FAULT", 4: "SNA",
 }
 
+# DI_brakePedalState enum (verified from opendbc tesla_can.dbc)
+# 0=NotApplied, 1=ApplyingFault, 2=Released_Holding, 3=Applied
+# Values 1 and 3 both indicate the brake is currently applied.
+DI_BRAKE_STATE_NAMES = {
+    0: "RELEASED",
+    1: "FAULT",
+    2: "HOLDING",
+    3: "APPLIED",
+}
+
 # DI_gear enum (verified from opendbc tesla_can.dbc, message 280 / 0x118)
 DI_GEAR_NAMES = {
     0: "INVALID", 1: "P", 2: "R", 3: "N", 4: "D", 7: "SNA",
@@ -368,6 +378,9 @@ class RackStatus:
     gear_request: int = -1
     di_vehicle_speed_mph: float = 0.0
     di_torque2_rx_count: int = 0
+    # Brake (from 0x118 also). brake_pedal: 0/1 boolean. brake_state: enum.
+    brake_pedal: int = -1
+    brake_state: int = -1
     # EAC transition timestamps for the bounce watchdog. Worker
     # appends; the bounce check reads. Bounded to keep memory finite.
     eac_transition_times: deque = field(default_factory=lambda: deque(maxlen=64))
@@ -446,8 +459,9 @@ class SessionLogger:
         "target_deg", "commanded_deg", "measured_deg",
         "eac_status", "eac_error",
         "rx_count_0x370", "bus_errors",
-        # v4.2 PRND columns
+        # v4.2 PRND + brake columns
         "gear", "gear_request", "di_vehicle_speed_mph",
+        "brake_pedal", "brake_state",
     ]
 
     def __init__(self):
@@ -496,6 +510,10 @@ class SessionLogger:
                     "gear_request": DI_GEAR_NAMES.get(status.gear_request, "") if status.gear_request >= 0 else "",
                     "di_vehicle_speed_mph": (f"{status.di_vehicle_speed_mph:.2f}"
                                              if status.di_torque2_rx_count > 0 else ""),
+                    "brake_pedal": ("PRESSED" if status.brake_pedal == 1
+                                    else ("released" if status.brake_pedal == 0 else "")),
+                    "brake_state": (DI_BRAKE_STATE_NAMES.get(status.brake_state, "")
+                                    if status.brake_state >= 0 else ""),
                 })
             except Exception:
                 pass
@@ -581,26 +599,32 @@ class CanWorker(threading.Thread):
         self._stop.set()
 
     def _decode_0x118(self, data: bytes):
-        """0x118 DI_torque2, 6 bytes. Decode gear, gear request, DI's
-        own vehicle speed estimate.
+        """0x118 DI_torque2, 6 bytes. Decode gear, gear request,
+        vehicle speed, and brake state.
 
         Bit layout (verified from opendbc tesla_can.dbc, BO_ 280):
-          DI_gear          : 12|3@1+   (byte 1, bits 6..4)
-          DI_vehicleSpeed  : 16|12@1+  factor 0.05, offset -25, MPH
-                             (byte 2 bits 7..0, byte 3 bits 3..0)
-          DI_gearRequest   : 28|3@1+   (byte 3, bits 6..4)
+          DI_gear           : 12|3@1+   (byte 1, bits 6..4)
+          DI_brakePedal     : 15|1@1+   (byte 1, bit 7)
+          DI_vehicleSpeed   : 16|12@1+  factor 0.05, offset -25, MPH
+          DI_gearRequest    : 28|3@1+   (byte 3, bits 6..4)
+          DI_brakePedalState: 36|2@1+   (byte 4, bits 4..5)
         """
-        if len(data) < 4:
+        if len(data) < 5:
             return
         gear = (data[1] >> 4) & 0x07
+        brake_pedal = (data[1] >> 7) & 0x01
         gear_req = (data[3] >> 4) & 0x07
         speed_raw = data[2] | ((data[3] & 0x0F) << 8)
         speed_mph = speed_raw * 0.05 - 25.0
+        brake_state = (data[4] >> 4) & 0x03
 
         prev_gear = self.status.gear
+        prev_brake = self.status.brake_pedal
         self.status.gear = gear
         self.status.gear_request = gear_req
         self.status.di_vehicle_speed_mph = speed_mph
+        self.status.brake_pedal = brake_pedal
+        self.status.brake_state = brake_state
         self.status.di_torque2_rx_count += 1
 
         if prev_gear != gear and prev_gear != -1:
@@ -609,6 +633,8 @@ class CanWorker(threading.Thread):
             if self.logger:
                 self.logger.sample(self.ctrl, self.status,
                                    event=f"gear_change:{DI_GEAR_NAMES.get(gear,'?')}")
+        if prev_brake != brake_pedal and prev_brake != -1:
+            self.log(f"brake: {'PRESSED' if brake_pedal else 'released'}")
 
     def _decode_0x370(self, data: bytes):
         if len(data) < 8:
@@ -932,20 +958,26 @@ class WheelCanvas:
 # ============================================================================
 
 class App(tk.Tk):
-    BG     = "#1e1e1e"
-    FG     = "#e0e0e0"
-    PANEL  = "#2a2a2a"
-    SUNKEN = "#0f0f0f"
-    ACCENT = "#3b82f6"
-    GREEN  = "#22c55e"
-    YELLOW = "#eab308"
-    RED    = "#ef4444"
-    DIM    = "#9ca3af"
+    # GitHub-dark-inspired palette. Tighter contrast, less harsh
+    # than the original, more "instrumentation panel" than "demo".
+    BG       = "#0d1117"   # window background
+    PANEL    = "#161b22"   # primary panel background
+    PANEL2   = "#1c2128"   # cell / stat background (one shade up)
+    BORDER   = "#30363d"   # subtle border between panels
+    SUNKEN   = "#010409"   # event log / sunken areas
+    FG       = "#e6edf3"   # primary text
+    DIM      = "#8b949e"   # labels, secondary text
+    MUTE     = "#6e7681"   # disabled / placeholder
+    ACCENT   = "#388bfd"   # blue (primary action)
+    GREEN    = "#3fb950"   # success / nominal
+    YELLOW   = "#d29922"   # warning
+    ORANGE   = "#db6d28"   # engaged / on
+    RED      = "#f85149"   # error / E-STOP
 
     def __init__(self):
         super().__init__()
-        self.title(f"Tesla Rack Control  --  v{__version__}  --  30 MPH MODE toggle")
-        self.geometry("1080x920")
+        self.title(f"Tesla Rack Control  v{__version__}")
+        self.geometry("1200x940")
         self.configure(bg=self.BG)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -964,14 +996,21 @@ class App(tk.Tk):
     # ---------- Setup ----------
 
     def _build_styles(self):
-        self.f_h1   = font.Font(family="Segoe UI", size=18, weight="bold")
-        self.f_h2   = font.Font(family="Segoe UI", size=12, weight="bold")
-        self.f_btn  = font.Font(family="Segoe UI", size=11, weight="bold")
-        self.f_estop= font.Font(family="Segoe UI", size=16, weight="bold")
-        self.f_big  = font.Font(family="Consolas", size=22, weight="bold")
-        self.f_mid  = font.Font(family="Consolas", size=12)
-        self.f_mono = font.Font(family="Consolas", size=10)
-        self.f_help = font.Font(family="Segoe UI", size=9)
+        # New hierarchy (v4.2 polish, partial). f_h2 kept as an alias
+        # for f_section so existing _build_ui calls still work; the
+        # full UI rewrite to use f_section / f_label / f_pill directly
+        # is in progress.
+        self.f_h1     = font.Font(family="Segoe UI", size=16, weight="bold")
+        self.f_section= font.Font(family="Segoe UI", size=9,  weight="bold")
+        self.f_h2     = font.Font(family="Segoe UI", size=12, weight="bold")
+        self.f_btn    = font.Font(family="Segoe UI", size=10, weight="bold")
+        self.f_estop  = font.Font(family="Segoe UI", size=14, weight="bold")
+        self.f_pill   = font.Font(family="Segoe UI", size=10, weight="bold")
+        self.f_label  = font.Font(family="Segoe UI", size=8)
+        self.f_help   = font.Font(family="Segoe UI", size=9)
+        self.f_big    = font.Font(family="Consolas", size=20, weight="bold")
+        self.f_mid    = font.Font(family="Consolas", size=11)
+        self.f_mono   = font.Font(family="Consolas", size=10)
 
     def _bind_keys(self):
         self.bind("<Escape>",          lambda e: self.estop("ESC key"))
