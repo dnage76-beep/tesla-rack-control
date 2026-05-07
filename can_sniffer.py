@@ -254,12 +254,15 @@ def decode_0x6D(data: bytes) -> str:
     rnd_names = {0: "IDLE", 1: "R", 2: "N_UP", 4: "N_DOWN",
                  6: "INI", 8: "D", 15: "SNA"}
     p_names = {0: "IDLE", 1: "PSD", 2: "INI", 3: "SNA"}
+    # Show the fixed bits for diagnosis (real stalk: b0=0x40, b1 bit 6-7 set)
+    b0_mark = "" if data[0] == 0x40 else f" b0=0x{data[0]:02X}"
+    b1_top  = "" if (data[1] & 0xC0) == 0xC0 else " b1!c0"
     # CRC verification
     our_crc = tesla_crc8(bytes(data[:3]))
     crc_mark = f"{GREEN}OK{RESET}" if our_crc == crc_byte else f"{RED}MISS{RESET}"
     return (f"rnd={rnd_names.get(rnd, f'?({rnd})')} "
             f"P={p_names.get(p, f'?({p})')} "
-            f"ctr={counter} "
+            f"ctr={counter}{b0_mark}{b1_top} "
             f"crc=0x{crc_byte:02X} ours=0x{our_crc:02X} {crc_mark}")
 
 

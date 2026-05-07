@@ -97,12 +97,18 @@ then 5 IDLE frames as a settling tail.
 
 | Byte | Bits  | Field                       | Encoding                                      |
 |------|-------|-----------------------------|-----------------------------------------------|
-| b0   | 2..0  | `StW_Sw_Stat3`              | zeroed                                        |
-| b0   | 7..6  | `MsgTxmtId`                 | zeroed                                        |
+| b0   | 7..0  | `MsgTxmtId` + zeros         | always `0x40` (MsgTxmtId = 1, rest zero)      |
 | b1   | 3..0  | `TSL_RND_Posn_StW`          | 0=IDLE 1=R 2=N_UP 4=N_DOWN 8=D 15=SNA         |
 | b1   | 5..4  | `TSL_P_Psd_StW`             | 0=IDLE 1=PSD 2=INI 3=SNA                      |
+| b1   | 7..6  | reserved                    | always `0b11` (mask `0xC0`)                   |
 | b2   | 7..4  | `MC_SBW_RQ_SCCM`            | counter, 0..15                                |
-| b3   | 7..0  | `CRC_SBW_RQ_SCCM`           | CRC-8/AUTOSAR over 0x6D + bytes 0..2          |
+| b3   | 7..0  | `CRC_SBW_RQ_SCCM`           | CRC-8/J1850 over bytes 0..2                   |
+
+The fixed bits in byte 0 and byte 1 high nibble are NOT in the
+opendbc DBC but the SCCM requires them. Verified from a real stalk
+capture (`field_testing/captures/20260507_011220_shift_diagnostic/`,
+18,000+ frames; every IDLE frame is `0x40 0xC0 *counter* *crc*`,
+every shift frame has `0xC0 | rnd_posn | (p_pressed << 4)` in byte 1).
 
 ```python
 def tesla_crc8(data):

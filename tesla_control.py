@@ -409,20 +409,26 @@ def tesla_crc8(data: bytes) -> int:
 def build_sbw_rq(rnd_posn: int, p_pressed: int, counter: int) -> bytes:
     """0x6D SBW_RQ_SCCM, 4 bytes. Gear shift request.
 
-    Field layout (verified from opendbc tesla_can.dbc, BO_ 109):
-      byte 0 bits 0..2 : StW_Sw_Stat3              (zeroed)
-      byte 0 bits 6..7 : MsgTxmtId                 (zeroed)
+    Field layout (DBC + observed from real stalk capture
+    field_testing/captures/20260507_011220_shift_diagnostic/):
+      byte 0           : 0x40 (MsgTxmtId = 1, all other bits zero)
       byte 1 bits 0..3 : TSL_RND_Posn_StW          (gear position)
       byte 1 bits 4..5 : TSL_P_Psd_StW             (P button)
+      byte 1 bits 6..7 : reserved, ALWAYS SET (= 0xC0 mask)
       byte 2 bits 4..7 : MC_SBW_RQ_SCCM            (counter, 0..15)
       byte 3 bits 0..7 : CRC_SBW_RQ_SCCM           (CRC-8/J1850)
 
+    Byte 0 = 0x40 and byte-1 bits 6-7 = 0b11 are constant fixed bits
+    that the SCCM checks. Initial v4.2 implementation set byte 0 = 0
+    and ignored those byte-1 bits (the DBC doesn't define them).
+    Charlie's 2026-05-07 capture proved the SCCM rejects frames
+    without these bits, even with a valid CRC.
+
     CRC is computed over the 3 data bytes ONLY -- no address prefix.
-    Verified against BogGyver/panda do_fake_stalk_cancel which calls
-    tesla_compute_crc(MLB, MHB, num_bytes) with no address byte.
+    Verified against 6 captured stalk-shift frames (all CRC OK).
     """
-    b0 = 0x00
-    b1 = ((p_pressed & 0x03) << 4) | (rnd_posn & 0x0F)
+    b0 = 0x40
+    b1 = 0xC0 | ((p_pressed & 0x03) << 4) | (rnd_posn & 0x0F)
     b2 = (counter & 0x0F) << 4
     crc = tesla_crc8(bytes([b0, b1, b2]))
     return bytes([b0, b1, b2, crc])

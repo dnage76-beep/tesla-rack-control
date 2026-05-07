@@ -48,6 +48,32 @@ prior features preserved.
 - Session export keeps the live session running -- the dialog
   doesn't disconnect.
 
+### Fixed (gear shift fixed bits, 2026-05-07 round 2)
+After the CRC fix, Charlie captured 18,414 real stalk frames with
+the new `can_sniffer.py` filter mode and pushed them to
+`field_testing/captures/20260507_011220_shift_diagnostic/`. CRC
+verification: every captured frame matched our `tesla_crc8` exactly,
+confirming the polynomial 0x1D fix from earlier today.
+
+But the captures revealed two fixed bits that the DBC does NOT
+document but the SCCM rejects frames without:
+
+- **byte 0 must be `0x40`** -- this is `MsgTxmtId = 1` in bits 6..7.
+  Original code set byte 0 to `0x00` (MsgTxmtId = 0). The SCCM
+  silently dropped any frame with the wrong transmitter ID.
+- **byte 1 bits 6..7 must both be set** (mask `0xC0`). The DBC has
+  no signal here, but every real stalk frame has these bits high.
+
+Fixed in `build_sbw_rq`:
+  byte 0: 0x00 -> 0x40
+  byte 1: ((p << 4) | rnd) -> 0xC0 | (p << 4) | rnd
+Verified the fix produces byte-identical frames to the captured
+real stalk: `40 c0 80 94`, `40 c8 80 ce` (D), `40 c1 80 d8` (R),
+etc.
+
+The sniffer's `decode_0x6D` now flags any frame with byte 0 != 0x40
+or byte 1 high nibble != 0xC as suspect.
+
 ### Fixed (gear shift CRC, 2026-05-07)
 Original v4.2 gear shift used the wrong CRC algorithm. After
 Charlie's field test at 2026-05-07 ~00:32 (sessions 003159,
