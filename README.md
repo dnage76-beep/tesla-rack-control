@@ -1,83 +1,100 @@
 # tesla-rack-control
 
-Laptop-side Python tools for commanding a 2013 Tesla Model S EPAS rack over CAN.
+Laptop-side Python tools for commanding a 2013 Tesla Model S EPAS
+rack over CAN. Designed for the rack already flashed with
+[gregjhogan's pre-AP EPAS firmware patch](https://github.com/gregjhogan/tesla-pre-ap-epas-patch).
 
-The rack must already be flashed with [gregjhogan's pre-AP EPAS firmware patch](https://github.com/gregjhogan/tesla-pre-ap-epas-patch). With the patch in place, the rack accepts `0x488 DAS_steeringControl` messages directly without the GTW/EPB gating.
+The current program is `tesla_control_v4_1.py`. It needs only a
+SYS TEC USB-CANmodul1 and the patched rack. **No comma 3X required.**
 
-## Files
+---
 
-### Code
+## Repository layout
 
-- `move.py` — **Simplest possible.** ~120 lines. Run `python move.py 15` and the wheel goes to +15°. Ctrl-C to disengage. No GUI, no rate limit, no watchdog. Heavily commented so you can read and understand the entire CAN protocol.
-- `steer.py` — **Live keyboard control GUI.** A small dark window with a steering-wheel icon that rotates with the commanded angle. Hold LEFT/RIGHT arrows to steer, SPACE to recenter, Q/ESC to disengage. ~200 lines, no admin or extra packages needed. Soft ±60° clamp, smoothed output, Q/ESC disengage.
-- `tesla_steering_test.py` — Full Tkinter GUI. Slider sets target angle, sends `0x488` at 50 Hz with valid checksum and counter, listens for `0x370 EPAS_sysStatus`. Hard angle clamp ±90°, rate limit 50°/sec, big red E-STOP, ESC key, multiple watchdog failsafes, real-time EAC transition logging.
-- `can_sniffer.py` — Passive CAN bus listener. Auto-detects baud rate (500/250/125 kbps), highlights known Tesla IDs, decodes `0x370` so you can verify wiring before sending anything.
+```
+.
+├── README.md                  this file
+├── tesla_control_v4_1.py      the program -- run this
+├── can_sniffer.py             passive CAN bus listener
+├── docs/
+│   ├── GUIDE.md               operating guide for v4.1
+│   ├── TROUBLESHOOTING.md     symptom-driven debugging
+│   └── PROTOCOL.md            CAN protocol reference
+├── archive/
+│   ├── legacy/                older programs (move.py, steer.py, ...)
+│   ├── pdfs/                  original Jordan-facing PDFs
+│   └── notes/                 conversation snapshots, field-test plans
+├── field_testing/             session photos and Charlie's field logs
+└── logs/                      session .log + .csv files (gitignored)
+```
 
-### Documentation (read these before running anything)
+Each subdirectory has its own README explaining what is in it.
 
-- `READ_ME_FIRST.txt` — Plain-English overview of the project status and the order to do things in.
-- `WIRING_DIAGRAM.pdf` — One-page printable. SYS TEC DB9 ↔ Tesla OBD-II pin-by-pin with safety notes.
-- `PINOUT_VERIFICATION.pdf` — Two-page procedure for confirming chassis CAN is on OBD-II pins 1/9 (multimeter checks + sniffer test).
-- `INSTRUCTION_MANUAL.pdf` — Two-page Windows install + first-run guide.
-- `FLASH_AND_TROUBLESHOOTING.pdf` — Four-page guide for re-flashing the EPAS rack via the comma 3X (BogGyver `tesla_unity_releaseC3` branch). Use when the rack stays at INHIBITED. Includes pre-flight checklist, MD5 diagnosis, UI button vs SSH command-line paths, post-flash verification, bench test procedure, and a 14-row troubleshooting matrix.
-- `FLICKER_TROUBLESHOOTING.pdf` — Four-page guide for diagnosing and fixing EAC flicker / `HIGH_ANGLE_RATE_REQ` / wheel twitching. Full eacErrorCode reference table, four flicker-pattern matchers, five fixes (A through E), and a known-good configuration checklist. Updated 04 May 2026.
-- `IMPLEMENTATION_GUIDE.pdf` — Four-page guide explaining when to use which program (sniffer / move / steer / GUI), full `steer.py` GUI tour, A/B testing procedure for the two theory branches (`theory-A-conservative-rate` and `theory-B-pure-filter`), and a recommended end-to-end workflow + post-fix validation checklist.
-- `SETUP.md` — Longer text reference for installing the SYS TEC driver and python-can.
+---
 
-## Hardware tested with
-
-- SYS TEC USB-CANmodul1 (model 3204001) on Windows. python-can `systec` interface.
-- Connects to chassis CAN at OBD-II pin 1 (CH+) and pin 9 (CH-) per [Tinkla wiki](https://web.archive.org/web/20221201213432/https://tinkla.us/index.php/Tesla_Model_S_preAP_OBD2_port).
-
-## Install
+## Quick start
 
 ```
 pip install python-can
 ```
 
-Plus SYS TEC's Windows driver (USBCAN32.dll) from systec-electronic.com.
+Plus the SYS TEC sysWORXX USB-CAN driver from
+https://www.systec-electronic.com/en/services-support/downloads.
 
-## Run
+Then:
 
 ```
-python tesla_steering_test.py
+python tesla_control_v4_1.py
 ```
 
-## Configuration (top of `tesla_steering_test.py`)
+For the operating procedure, see [`docs/GUIDE.md`](docs/GUIDE.md).
+For debugging, see [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 
-| Flag | Default | Meaning |
-|---|---|---|
-| `IN_CAR_MODE` | `True` | True: rack is in car, stock GTW/EPB still on bus, we don't send `0x101`/`0x214`. False: bench, we synthesize them. |
-| `BENCH_MODE` | `False` | Inject fake `0x155 ESP_B` vehicle speed so rack doesn't fault on `MIN_SPEED`. Bench only. |
-| `HARD_ANGLE_LIMIT_DEG` | 90 | Refuses commands beyond this. |
-| `MAX_RATE_DEG_PER_SEC` | 50 | Rate-limits commanded angle. Rack faults > 250°/s; 50 is well clear. |
-| `DIVERGENCE_TRIP_ENABLED` | False | E-STOP if commanded vs measured angle differs by > 15°. Off until measured-angle decode is calibrated on bench. |
+---
 
-## Failsafes
+## Hardware
 
-All trigger immediate E-STOP (sets `controlType=0`, freezes commanded angle):
+- 2013 Tesla Model S, post-May-31 build, pre-AP. EPAS rack flashed
+  with gregjhogan's patch.
+- SYS TEC sysWORXX USB-CANmodul1 (model 3204001), Windows 10+.
+- The custom OBD-to-X119 (or X437/TDC) harness Jordan built.
 
-- No `0x370` received in 500 ms
-- Rack reports `eacStatus = FAULT`
-- Loop overrun > 100 ms
-- Any TX/RX exception
-- CAN bus error count > 50
-- ESC key, E-STOP button, or window close
-- Refuses ENGAGE before any `0x370` has been received
-- Hard ±90° clamp on commands
-- 50°/sec rate limit on commanded angle
+What you do **not** need: comma 3X, comma 3, comma 2, red panda,
+any other comma device. A comma device on the bus while v4.1 is
+running causes the EAC flicker bug from the May 2026 field tests.
 
-## CAN protocol references
-
-Verified against [opendbc tesla_can.dbc](https://github.com/commaai/opendbc/blob/master/opendbc/dbc/tesla_can.dbc) and [BogGyver pre-AP safety](https://github.com/BogGyver/openpilot/blob/tesla_0.7.10/panda/board/safety/safety_tesla.h).
-
-- `0x488 DAS_steeringControl` (4 bytes, TX 50 Hz): angle = (degrees + 1638.35) × 10. Big-endian. Includes 4-bit counter and 8-bit checksum.
-- `0x101 GTW_epasControl` (3 bytes): bench-mode TX only. Patched rack ignores content.
-- `0x214 EPB_epasControl` (3 bytes): bench-mode TX only. Patched rack ignores content but requires presence on bus.
-- `0x370 EPAS_sysStatus` (8 bytes, RX): `eacStatus` byte 6 bits 7-5; measured angle bytes 4-5 big-endian factor 0.1 offset -819.2.
-
-Checksum algorithm for all: `(addr_low + addr_high + sum_data_bytes_except_checksum) & 0xFF`.
+---
 
 ## Safety
 
-This commands a 2013 Tesla EPAS rack. Misuse can damage the rack or cause uncommanded steering. Front wheels off the ground or tie rods disconnected before any active testing. Read the failsafe list above before running.
+This commands a real EPAS rack that applies real force. Misuse can
+damage the rack, strain a tie rod, dent a fender, or cause
+uncommanded steering. Front wheels off the ground or tie rods
+disconnected before any active testing.
+
+The program enforces a hard angle clamp, rate limit, and multiple
+watchdog failsafes. Full failsafe list is in
+[`docs/GUIDE.md`](docs/GUIDE.md). All E-STOP paths are documented in
+[`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
+
+---
+
+## Versions
+
+| Version | Status                | Notes                                                           |
+|---------|-----------------------|------------------------------------------------------------------|
+| v4.1    | **current**           | Adds runtime 30 MPH MODE toggle. Default behavior matches v4.    |
+| v4      | superseded            | First no-3X version. Lives at `archive/legacy/tesla_control_v4.py`. |
+| pre-v4  | superseded, archived  | `move.py`, `steer.py`, `tesla_steering_test.py`. See `archive/legacy/README.md`. |
+
+The wire-level CAN protocol has not changed across versions. The
+patched rack from gregjhogan's flash is compatible with all of them.
+
+---
+
+## Authors
+
+- Derek Nagel (project owner, software lead)
+- Jordan (hardware lead, EPAS firmware flash)
+- Charlie Yonkura (field testing, session logs)
+- Claude (pair programmer)
