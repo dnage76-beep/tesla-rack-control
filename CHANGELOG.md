@@ -9,6 +9,45 @@ project follows a loose semantic-versioning scheme (see
 
 ## [4.2.0-dev] -- in progress on `dev/v4.2-prnd`
 
+### Added (UI overhaul)
+Complete restructure of the GUI for a more professional look. All
+prior features preserved.
+
+- **Vitals strip** across the top: at-a-glance colored pills for
+  LINK / EAC / GEAR / BRAKE / 30 MPH / SHIFT. Each pill is a
+  colored dot + label + value, readable from across the room.
+- **Sectioned panels** with consistent small-caps headings, a
+  subtle border, and proper padding. New helper `_section()` and
+  `_stat()` keep styling uniform.
+- **Brake cell** in the new Vehicle Status panel. Brake state was
+  decoded earlier; v4.2 finally surfaces it in the GUI.
+- **Vehicle Status panel** groups gear / gear-req / brake /
+  brake-state / DI-speed / park-gate together (separate from
+  Rack Status which now holds only EPAS-specific values).
+- **Status bar** at the bottom: shows active session path, current
+  rack EAC state, and elapsed session time (mm:ss).
+- **Window grew** from 1080x920 to 1280x920; minsize 1180x800.
+- **GitHub-dark color palette**: tighter contrast, more
+  "instrumentation panel" than original flat dark theme.
+- **No clipped text**: bus diagnostic and stat cells now use
+  explicit minsize widths so values are never cut off.
+
+### Added (save test to GitHub)
+- New **SAVE TEST** button in the action bar (replaces the old
+  SAVE LOG button).
+- Modal dialog asks for a short test name and an optional
+  description.
+- Background thread copies the active session's `.log` and `.csv`
+  into `field_testing/sessions/<timestamp>_<name>/`, generates a
+  `README.md` with metadata (elapsed time, EAC state, gear,
+  brake, errors, etc.), then runs `git add` + `git commit -m
+  "test: <name>"` + `git push origin <current-branch>`.
+- All git output streams to the event log. If push fails (no
+  auth, no network), files are committed locally and the user is
+  shown the manual command to push.
+- Session export keeps the live session running -- the dialog
+  doesn't disconnect.
+
 ### Added (gear shift -- EXPERIMENTAL)
 - Four shift buttons in the GUI: **P / R / N / D**.
 - New CAN message: `0x6D SBW_RQ_SCCM` (Shift By Wire Request from

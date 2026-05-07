@@ -163,6 +163,9 @@ import csv
 import math
 import os
 import queue
+import re
+import shutil
+import subprocess
 import sys
 import threading
 import time
@@ -1104,7 +1107,8 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(f"Tesla Rack Control  v{__version__}")
-        self.geometry("1200x940")
+        self.geometry("1280x920")
+        self.minsize(1180, 800)
         self.configure(bg=self.BG)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -1114,6 +1118,9 @@ class App(tk.Tk):
         self.log_q: queue.Queue = queue.Queue()
         self.logger: Optional[SessionLogger] = None
         self.worker: Optional[CanWorker] = None
+        self.elapsed_start: Optional[float] = None  # set on CONNECT
+        self.vitals: dict = {}                       # vitals strip widgets
+        self.kp_lines: dict = {}                     # keepalive line dots
 
         self._build_styles()
         self._build_ui()
@@ -1150,177 +1157,202 @@ class App(tk.Tk):
         self.bind("<KeyPress-space>",  self._key_space)
 
     def _build_ui(self):
-        # ---------- Header bar ----------
+        # ===================== HEADER =====================
         hdr = tk.Frame(self, bg=self.BG)
-        hdr.pack(fill="x", padx=14, pady=(12, 6))
-        tk.Label(hdr, text=f"Tesla Rack Control  v{__version__}",
-                 font=self.f_h1, fg=self.FG, bg=self.BG).pack(side="left")
-        self.lbl_conn = tk.Label(hdr, text="DISCONNECTED",
-                                 font=self.f_h2, fg=self.RED, bg=self.BG)
-        self.lbl_conn.pack(side="right")
+        hdr.pack(fill="x", padx=16, pady=(14, 6))
+        tk.Label(hdr, text="Tesla Rack Control", font=self.f_h1,
+                 fg=self.FG, bg=self.BG).pack(side="left")
+        tk.Label(hdr, text=f"v{__version__}", font=self.f_help,
+                 fg=self.DIM, bg=self.BG).pack(side="left", padx=(10, 0),
+                                               anchor="s", pady=(0, 4))
 
-        # ---------- Action bar ----------
-        bar = tk.Frame(self, bg=self.PANEL)
-        bar.pack(fill="x", padx=14, pady=4)
+        # ===================== VITALS STRIP =====================
+        # At-a-glance pills for: LINK / EAC / GEAR / BRAKE / 30 MPH / SHIFT
+        vital = tk.Frame(self, bg=self.PANEL,
+                         highlightbackground=self.BORDER, highlightthickness=1)
+        vital.pack(fill="x", padx=16, pady=(0, 8))
+        for key, label in (("link",  "LINK"),
+                           ("eac",   "EAC"),
+                           ("gear",  "GEAR"),
+                           ("brake", "BRAKE"),
+                           ("mph30", "30 MPH"),
+                           ("shift", "SHIFT")):
+            cell = tk.Frame(vital, bg=self.PANEL)
+            cell.pack(side="left", padx=14, pady=10)
+            dot = tk.Label(cell, text="●", font=self.f_pill,
+                           fg=self.MUTE, bg=self.PANEL)
+            dot.pack(side="left")
+            tk.Label(cell, text=label, font=self.f_label,
+                     fg=self.DIM, bg=self.PANEL).pack(side="left", padx=(6, 6))
+            val = tk.Label(cell, text="--", font=self.f_pill,
+                           fg=self.FG, bg=self.PANEL)
+            val.pack(side="left")
+            self.vitals[key] = (dot, val)
+
+        # ===================== ACTION BAR =====================
+        bar_wrap = tk.Frame(self, bg=self.BG)
+        bar_wrap.pack(fill="x", padx=16, pady=(0, 8))
+        bar = tk.Frame(bar_wrap, bg=self.PANEL,
+                       highlightbackground=self.BORDER, highlightthickness=1)
+        bar.pack(fill="x")
         self.btn_conn = tk.Button(bar, text="CONNECT", font=self.f_btn,
                                   bg=self.ACCENT, fg="white", width=12,
-                                  relief="flat", command=self.toggle_connect)
-        self.btn_conn.pack(side="left", padx=6, pady=6)
-
+                                  relief="flat", padx=4, pady=8,
+                                  command=self.toggle_connect)
+        self.btn_conn.pack(side="left", padx=(8, 4), pady=8)
         self.btn_engage = tk.Button(bar, text="ENGAGE", font=self.f_btn,
                                     bg=self.GREEN, fg="white", width=12,
                                     relief="flat", state="disabled",
+                                    padx=4, pady=8,
                                     command=self.toggle_engage)
-        self.btn_engage.pack(side="left", padx=6, pady=6)
-
-        self.btn_save = tk.Button(bar, text="SAVE LOG", font=self.f_btn,
-                                  bg="#525252", fg="white", width=12,
-                                  relief="flat", state="disabled",
-                                  command=self.save_log)
-        self.btn_save.pack(side="left", padx=6, pady=6)
-
-        # 30 MPH MODE toggle. Starts OFF. When ON, the worker thread
-        # synthesizes 0x155 ESP_B at 200 Hz to spoof speed.
+        self.btn_engage.pack(side="left", padx=4, pady=8)
         self.btn_30mph = tk.Button(bar, text="30 MPH MODE: OFF",
                                    font=self.f_btn, bg="#525252", fg="white",
-                                   width=18, relief="flat",
+                                   width=18, relief="flat", padx=4, pady=8,
                                    command=self.toggle_30mph)
-        self.btn_30mph.pack(side="left", padx=6, pady=6)
-
+        self.btn_30mph.pack(side="left", padx=4, pady=8)
+        self.btn_save_test = tk.Button(bar, text="SAVE TEST", font=self.f_btn,
+                                       bg="#525252", fg="white", width=14,
+                                       relief="flat", state="disabled",
+                                       padx=4, pady=8,
+                                       command=self.open_save_test_dialog)
+        self.btn_save_test.pack(side="left", padx=4, pady=8)
         self.btn_estop = tk.Button(bar, text="E - STOP   (ESC)",
                                    font=self.f_estop, bg=self.RED, fg="white",
-                                   width=18, relief="flat",
+                                   width=18, relief="flat", padx=4, pady=8,
                                    command=lambda: self.estop("button"))
-        self.btn_estop.pack(side="right", padx=6, pady=6)
+        self.btn_estop.pack(side="right", padx=8, pady=8)
 
-        # ---------- Two-column body ----------
+        # ===================== STATUS BAR (bottom; pack first so body fills above) =====================
+        statusbar_wrap = tk.Frame(self, bg=self.BG)
+        statusbar_wrap.pack(fill="x", side="bottom", padx=16, pady=(8, 12))
+        statusbar = tk.Frame(statusbar_wrap, bg=self.PANEL,
+                             highlightbackground=self.BORDER, highlightthickness=1)
+        statusbar.pack(fill="x")
+        self.lbl_statusbar = tk.Label(statusbar,
+                                      text="session: not started · idle",
+                                      font=self.f_help, fg=self.DIM,
+                                      bg=self.PANEL, anchor="w",
+                                      padx=12, pady=6)
+        self.lbl_statusbar.pack(fill="x")
+
+        # ===================== BODY (2 columns) =====================
         body = tk.Frame(self, bg=self.BG)
-        body.pack(fill="both", expand=True, padx=14, pady=4)
-        body.grid_columnconfigure(0, weight=3)
-        body.grid_columnconfigure(1, weight=2)
+        body.pack(fill="both", expand=True, padx=16, pady=0)
+        body.grid_columnconfigure(0, weight=3, minsize=720)
+        body.grid_columnconfigure(1, weight=2, minsize=440)
         body.grid_rowconfigure(0, weight=1)
         left  = tk.Frame(body, bg=self.BG)
         right = tk.Frame(body, bg=self.BG)
-        left.grid(row=0, column=0, sticky="nsew", padx=(0, 6))
-        right.grid(row=0, column=1, sticky="nsew", padx=(6, 0))
+        left.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
+        right.grid(row=0, column=1, sticky="nsew", padx=(0, 0))
 
-        # ---------- Status panel (LEFT TOP) ----------
-        sp = tk.LabelFrame(left, text=" Rack Status ", font=self.f_h2,
-                           fg=self.FG, bg=self.PANEL, bd=1, relief="solid")
-        sp.pack(fill="x", pady=(0, 6))
-        grid = tk.Frame(sp, bg=self.PANEL)
-        grid.pack(fill="x", padx=10, pady=8)
-        for c in range(4):
-            grid.grid_columnconfigure(c, weight=1)
-        self.lbl_eac    = self._stat(grid, 0, 0, "EAC Status",     "SNA")
-        self.lbl_err    = self._stat(grid, 0, 1, "Last Error",     "NONE")
-        self.lbl_meas   = self._stat(grid, 0, 2, "Measured",       "-- deg")
-        self.lbl_cmd    = self._stat(grid, 0, 3, "Commanded",      "-- deg")
-        self.lbl_target = self._stat(grid, 1, 0, "Target",         "0.0 deg")
-        self.lbl_diverg = self._stat(grid, 1, 1, "Divergence",     "0.0 deg")
-        self.lbl_rx     = self._stat(grid, 1, 2, "0x370 RX count", "0")
-        self.lbl_buserr = self._stat(grid, 1, 3, "Bus Errors",     "0")
-        # v4.2 -- PRND row
-        self.lbl_gear     = self._stat(grid, 2, 0, "Gear",         "--")
-        self.lbl_gear_req = self._stat(grid, 2, 1, "Gear Request", "--")
-        self.lbl_di_speed = self._stat(grid, 2, 2, "DI Speed",     "-- mph")
-        self.lbl_park_gate= self._stat(grid, 2, 3, "Park Gate",    "armed" if REQUIRE_PARK_TO_ENGAGE else "off")
+        # ----- LEFT COLUMN -----
+        self._build_steering_command(left)
+        self._build_rack_status(left)
+        self._build_vehicle_status(left)
+        self._build_shift_panel(left)
 
-        # ---------- Gear shift (LEFT, ABOVE INPUT MODE) -----------
-        # EXPERIMENTAL v4.2 -- shifts via 0x6D SBW_RQ_SCCM burst.
-        # Heavy safety gating in request_shift().
-        sf = tk.LabelFrame(left, text=" Shift Gear (EXPERIMENTAL) ",
-                           font=self.f_h2, fg=self.FG, bg=self.PANEL,
-                           bd=1, relief="solid")
-        sf.pack(fill="x", pady=(0, 6))
-        shift_bar = tk.Frame(sf, bg=self.PANEL)
-        shift_bar.pack(fill="x", padx=10, pady=8)
-        self.btn_shift_p = tk.Button(
-            shift_bar, text="P", font=self.f_btn, width=6, relief="flat",
-            bg="#525252", fg="white",
-            command=lambda: self.request_shift("P"))
-        self.btn_shift_p.pack(side="left", padx=4)
-        self.btn_shift_r = tk.Button(
-            shift_bar, text="R", font=self.f_btn, width=6, relief="flat",
-            bg="#525252", fg="white",
-            command=lambda: self.request_shift("R"))
-        self.btn_shift_r.pack(side="left", padx=4)
-        self.btn_shift_n = tk.Button(
-            shift_bar, text="N", font=self.f_btn, width=6, relief="flat",
-            bg="#525252", fg="white",
-            command=lambda: self.request_shift("N"))
-        self.btn_shift_n.pack(side="left", padx=4)
-        self.btn_shift_d = tk.Button(
-            shift_bar, text="D", font=self.f_btn, width=6, relief="flat",
-            bg="#525252", fg="white",
-            command=lambda: self.request_shift("D"))
-        self.btn_shift_d.pack(side="left", padx=4)
-        tk.Label(sf,
-                 text=("requirements: brake pressed, real speed < 1 mph, "
-                       "rack disengaged, no shift in flight"),
-                 font=self.f_help, fg=self.DIM, bg=self.PANEL,
-                 anchor="w").pack(fill="x", padx=10, pady=(0, 6))
+        # ----- RIGHT COLUMN -----
+        self._build_bus_diagnostic(right)
+        self._build_keepalives(right)
+        self._build_event_log(right)   # expand=True; fills remainder
 
-        # ---------- Mode tabs (LEFT MIDDLE) ----------
-        modef = tk.Frame(left, bg=self.PANEL, bd=1, relief="solid")
-        modef.pack(fill="x", pady=6)
-        tk.Label(modef, text=" Input Mode ", font=self.f_h2,
-                 fg=self.FG, bg=self.PANEL).pack(anchor="w", padx=10, pady=(6, 0))
-        modebar = tk.Frame(modef, bg=self.PANEL)
-        modebar.pack(fill="x", padx=10, pady=8)
+        self._log_local("ready. click CONNECT to open the SYS TEC adapter.")
+        self._log_local(f"keepalives: GTW={SYNTHESIZE_GTW} EPB={SYNTHESIZE_EPB} "
+                        f"30MPH=OFF (toggle button when ready)")
+
+    # -------------------- panel builders --------------------
+
+    def _section(self, parent, title, expand=False):
+        """Section panel: small-caps heading above a bordered frame."""
+        wrap = tk.Frame(parent, bg=self.BG)
+        if expand:
+            wrap.pack(fill="both", expand=True, pady=(0, 8))
+        else:
+            wrap.pack(fill="x", pady=(0, 8))
+        tk.Label(wrap, text=title, font=self.f_section,
+                 fg=self.DIM, bg=self.BG).pack(anchor="w", padx=2, pady=(0, 4))
+        panel = tk.Frame(wrap, bg=self.PANEL,
+                         highlightbackground=self.BORDER, highlightthickness=1)
+        if expand:
+            panel.pack(fill="both", expand=True)
+        else:
+            panel.pack(fill="x")
+        return panel
+
+    def _stat(self, parent, row, col, label, value):
+        """Stat cell: small caps label above bigger value."""
+        cell = tk.Frame(parent, bg=self.PANEL)
+        cell.grid(row=row, column=col, sticky="nsew", padx=10, pady=(6, 8))
+        tk.Label(cell, text=label, font=self.f_label, fg=self.DIM,
+                 bg=self.PANEL, anchor="w").pack(anchor="w")
+        v = tk.Label(cell, text=value, font=self.f_mid, fg=self.FG,
+                     bg=self.PANEL, anchor="w")
+        v.pack(anchor="w")
+        return v
+
+    def _build_steering_command(self, parent):
+        panel = self._section(parent, "STEERING COMMAND")
+        # Mode tabs row
+        modebar = tk.Frame(panel, bg=self.PANEL)
+        modebar.pack(fill="x", padx=12, pady=(10, 4))
         self.btn_mode_slider = tk.Button(
-            modebar, text="SLIDER", font=self.f_btn, width=14, relief="flat",
-            bg=self.ACCENT, fg="white",
+            modebar, text="SLIDER", font=self.f_btn, width=12,
+            relief="flat", bg=self.ACCENT, fg="white", padx=4, pady=6,
             command=lambda: self.set_mode(MODE_SLIDER))
-        self.btn_mode_slider.pack(side="left", padx=4)
+        self.btn_mode_slider.pack(side="left", padx=(0, 6))
         self.btn_mode_keyboard = tk.Button(
-            modebar, text="KEYBOARD", font=self.f_btn, width=14, relief="flat",
-            bg="#525252", fg="white",
+            modebar, text="KEYBOARD", font=self.f_btn, width=12,
+            relief="flat", bg="#525252", fg="white", padx=4, pady=6,
             command=lambda: self.set_mode(MODE_KEYBOARD))
         self.btn_mode_keyboard.pack(side="left", padx=4)
         tk.Button(modebar, text="CENTER (0)", font=self.f_btn, width=12,
-                  relief="flat", bg="#525252", fg="white",
+                  relief="flat", bg="#525252", fg="white", padx=4, pady=6,
                   command=self.on_center).pack(side="right", padx=4)
 
-        # ---------- Slider controls ----------
-        self.frame_slider = tk.Frame(left, bg=self.PANEL, bd=1, relief="solid")
+        # Slider frame (default visible)
+        self.frame_slider = tk.Frame(panel, bg=self.PANEL)
         sl = tk.Frame(self.frame_slider, bg=self.PANEL)
-        sl.pack(fill="x", padx=10, pady=10)
-        tk.Label(sl, text=f"-{HARD_ANGLE_LIMIT_DEG:.0f}", font=self.f_mono,
-                 fg=self.FG, bg=self.PANEL).pack(side="left")
+        sl.pack(fill="x", padx=12, pady=(8, 4))
+        tk.Label(sl, text=f"−{HARD_ANGLE_LIMIT_DEG:.0f}",
+                 font=self.f_mono, fg=self.DIM, bg=self.PANEL).pack(side="left")
         self.var_slider = tk.DoubleVar(value=0.0)
         self.slider = tk.Scale(sl, from_=-HARD_ANGLE_LIMIT_DEG,
                                to=HARD_ANGLE_LIMIT_DEG, resolution=0.5,
                                orient="horizontal", variable=self.var_slider,
-                               command=self.on_slider, length=420,
-                               bg=self.PANEL, fg=self.FG, troughcolor="#404040",
+                               command=self.on_slider, length=520,
+                               bg=self.PANEL, fg=self.FG,
+                               troughcolor=self.PANEL2,
                                highlightthickness=0, sliderrelief="flat",
                                showvalue=0)
         self.slider.pack(side="left", padx=10, fill="x", expand=True)
         tk.Label(sl, text=f"+{HARD_ANGLE_LIMIT_DEG:.0f}", font=self.f_mono,
-                 fg=self.FG, bg=self.PANEL).pack(side="left")
+                 fg=self.DIM, bg=self.PANEL).pack(side="left")
+
         entry_row = tk.Frame(self.frame_slider, bg=self.PANEL)
-        entry_row.pack(fill="x", padx=10, pady=(0, 10))
+        entry_row.pack(fill="x", padx=12, pady=(0, 12))
         tk.Label(entry_row, text="Type angle (deg):", font=self.f_mid,
-                 fg=self.FG, bg=self.PANEL).pack(side="left")
+                 fg=self.DIM, bg=self.PANEL).pack(side="left")
         self.var_entry = tk.StringVar(value="0.0")
         ent = tk.Entry(entry_row, textvariable=self.var_entry,
-                       font=self.f_mono, width=10, bg="#1a1a1a", fg=self.FG,
+                       font=self.f_mono, width=10,
+                       bg=self.PANEL2, fg=self.FG,
                        insertbackground=self.FG, relief="flat")
-        ent.pack(side="left", padx=8)
+        ent.pack(side="left", padx=8, ipady=3)
         ent.bind("<Return>", lambda e: self.on_set_entry())
         tk.Button(entry_row, text="SET", font=self.f_btn, bg=self.ACCENT,
-                  fg="white", relief="flat", width=8,
+                  fg="white", relief="flat", width=8, padx=4, pady=4,
                   command=self.on_set_entry).pack(side="left", padx=4)
 
-        # ---------- Keyboard controls ----------
-        self.frame_kbd = tk.Frame(left, bg=self.PANEL, bd=1, relief="solid")
+        # Keyboard frame (hidden until KEYBOARD mode)
+        self.frame_kbd = tk.Frame(panel, bg=self.PANEL)
         kb_inner = tk.Frame(self.frame_kbd, bg=self.PANEL)
-        kb_inner.pack(fill="x", padx=10, pady=10)
-        self.wheel = WheelCanvas(kb_inner, size=220, bg=self.PANEL)
+        kb_inner.pack(fill="x", padx=12, pady=(8, 12))
+        self.wheel = WheelCanvas(kb_inner, size=210, bg=self.PANEL)
         self.wheel.pack(side="left", padx=8)
         kb_help = tk.Frame(kb_inner, bg=self.PANEL)
-        kb_help.pack(side="left", padx=14, anchor="n", pady=10)
+        kb_help.pack(side="left", padx=14, anchor="n", pady=8)
         for line in (
             "LEFT / RIGHT arrow .... hold to steer",
             f"steer rate ............ {KEYBOARD_STEER_RATE_DEG_PER_SEC:.0f} deg/s",
@@ -1335,89 +1367,130 @@ class App(tk.Tk):
                      anchor="w").pack(anchor="w")
 
         # Show slider mode by default.
-        self.frame_slider.pack(fill="x", pady=6)
+        self.frame_slider.pack(fill="x")
 
-        # ---------- Bus Diagnostic Panel (RIGHT TOP) ----------
-        dp = tk.LabelFrame(right, text=" Bus Diagnostic ",
-                           font=self.f_h2, fg=self.FG, bg=self.PANEL,
-                           bd=1, relief="solid")
-        dp.pack(fill="x", pady=(0, 6))
-        tk.Label(dp, text="frame rates per ID -- watch 0x488 stays at 0.0",
-                 font=self.f_help, fg=self.DIM,
-                 bg=self.PANEL).pack(anchor="w", padx=10, pady=(4, 0))
-        diag_grid = tk.Frame(dp, bg=self.PANEL)
-        diag_grid.pack(fill="x", padx=10, pady=8)
+    def _build_rack_status(self, parent):
+        panel = self._section(parent, "RACK STATUS")
+        g = tk.Frame(panel, bg=self.PANEL)
+        g.pack(fill="x", padx=4, pady=4)
+        for c in range(4):
+            g.grid_columnconfigure(c, weight=1, minsize=140)
+        self.lbl_eac    = self._stat(g, 0, 0, "EAC STATUS",   "SNA")
+        self.lbl_err    = self._stat(g, 0, 1, "LAST ERROR",   "NONE")
+        self.lbl_meas   = self._stat(g, 0, 2, "MEASURED",     "-- deg")
+        self.lbl_cmd    = self._stat(g, 0, 3, "COMMANDED",    "-- deg")
+        self.lbl_target = self._stat(g, 1, 0, "TARGET",       "0.0 deg")
+        self.lbl_diverg = self._stat(g, 1, 1, "DIVERGENCE",   "0.0 deg")
+        self.lbl_rx     = self._stat(g, 1, 2, "RX (0x370)",   "0")
+        self.lbl_buserr = self._stat(g, 1, 3, "BUS ERRORS",   "0")
+
+    def _build_vehicle_status(self, parent):
+        panel = self._section(parent, "VEHICLE STATUS")
+        g = tk.Frame(panel, bg=self.PANEL)
+        g.pack(fill="x", padx=4, pady=4)
+        for c in range(4):
+            g.grid_columnconfigure(c, weight=1, minsize=140)
+        self.lbl_gear     = self._stat(g, 0, 0, "GEAR",        "--")
+        self.lbl_gear_req = self._stat(g, 0, 1, "GEAR REQ",    "--")
+        self.lbl_brake    = self._stat(g, 0, 2, "BRAKE",       "--")
+        self.lbl_brake_st = self._stat(g, 0, 3, "BRAKE STATE", "--")
+        self.lbl_di_speed = self._stat(g, 1, 0, "DI SPEED",    "-- mph")
+        self.lbl_park_gate= self._stat(g, 1, 1, "PARK GATE",
+                                       "armed" if REQUIRE_PARK_TO_ENGAGE else "off")
+
+    def _build_shift_panel(self, parent):
+        panel = self._section(parent, "SHIFT GEAR (EXPERIMENTAL)")
+        bar = tk.Frame(panel, bg=self.PANEL)
+        bar.pack(fill="x", padx=12, pady=(8, 4))
+        for label in ("P", "R", "N", "D"):
+            btn = tk.Button(bar, text=label, font=self.f_btn,
+                            width=8, relief="flat",
+                            bg="#525252", fg="white", padx=4, pady=8,
+                            command=lambda l=label: self.request_shift(l))
+            btn.pack(side="left", padx=(0, 6))
+            setattr(self, f"btn_shift_{label.lower()}", btn)
+        tk.Label(panel,
+                 text="brake required · real speed < 1 mph · "
+                      "rack disengaged · no shift in flight",
+                 font=self.f_help, fg=self.DIM, bg=self.PANEL,
+                 anchor="w").pack(fill="x", padx=12, pady=(0, 10))
+
+    def _build_bus_diagnostic(self, parent):
+        panel = self._section(parent, "BUS DIAGNOSTIC")
+        tk.Label(panel,
+                 text="frame rates per ID · 0x488 RX must stay 0.0",
+                 font=self.f_help, fg=self.DIM, bg=self.PANEL,
+                 anchor="w").pack(fill="x", padx=12, pady=(8, 4))
+        g = tk.Frame(panel, bg=self.PANEL)
+        g.pack(fill="x", padx=12, pady=(0, 10))
+        # Column widths so nothing clips
+        g.grid_columnconfigure(0, minsize=58)
+        g.grid_columnconfigure(1, minsize=64)
+        g.grid_columnconfigure(2, minsize=64)
+        g.grid_columnconfigure(3, weight=1)
+        # Header row
+        for col, txt, anchor in ((0, "ID",    "w"),
+                                 (1, "Hz",    "e"),
+                                 (2, "count", "e"),
+                                 (3, "name",  "w")):
+            tk.Label(g, text=txt, font=self.f_label,
+                     fg=self.DIM, bg=self.PANEL, anchor=anchor).grid(
+                row=0, column=col, sticky="ew", padx=(0, 8), pady=(0, 4))
         self.diag_labels = {}
-        # Header
-        for col, txt in enumerate(("ID", "Hz", "count", "name")):
-            tk.Label(diag_grid, text=txt, font=self.f_mono,
-                     fg=self.DIM, bg=self.PANEL, anchor="w"
-                     ).grid(row=0, column=col, sticky="w", padx=4)
         for row, (cid, name, _note) in enumerate(DIAG_IDS, start=1):
-            tk.Label(diag_grid, text=f"0x{cid:03X}", font=self.f_mono,
-                     fg=self.FG, bg=self.PANEL).grid(row=row, column=0,
-                                                     sticky="w", padx=4)
-            lbl_hz  = tk.Label(diag_grid, text=" 0.0", font=self.f_mono,
-                               fg=self.DIM, bg=self.PANEL, width=8, anchor="e")
-            lbl_cnt = tk.Label(diag_grid, text="0", font=self.f_mono,
-                               fg=self.DIM, bg=self.PANEL, width=8, anchor="e")
-            lbl_name= tk.Label(diag_grid, text=name, font=self.f_mono,
-                               fg=self.FG, bg=self.PANEL, anchor="w")
-            lbl_hz.grid (row=row, column=1, sticky="e", padx=4)
-            lbl_cnt.grid(row=row, column=2, sticky="e", padx=4)
-            lbl_name.grid(row=row, column=3, sticky="w", padx=4)
+            tk.Label(g, text=f"0x{cid:03X}", font=self.f_mono,
+                     fg=self.FG, bg=self.PANEL).grid(
+                row=row, column=0, sticky="w", padx=(0, 8))
+            lbl_hz   = tk.Label(g, text=" 0.0", font=self.f_mono,
+                                fg=self.MUTE, bg=self.PANEL, anchor="e")
+            lbl_cnt  = tk.Label(g, text="0", font=self.f_mono,
+                                fg=self.MUTE, bg=self.PANEL, anchor="e")
+            lbl_name = tk.Label(g, text=name, font=self.f_mono,
+                                fg=self.DIM, bg=self.PANEL, anchor="w")
+            lbl_hz.grid  (row=row, column=1, sticky="ew", padx=(0, 8))
+            lbl_cnt.grid (row=row, column=2, sticky="ew", padx=(0, 8))
+            lbl_name.grid(row=row, column=3, sticky="w")
             self.diag_labels[cid] = (lbl_hz, lbl_cnt, lbl_name)
 
-        # ---------- Keepalive plan readout (RIGHT) ----------
-        kp = tk.LabelFrame(right, text=" Keepalives We Send ",
-                           font=self.f_h2, fg=self.FG, bg=self.PANEL,
-                           bd=1, relief="solid")
-        kp.pack(fill="x", pady=6)
-        kp_inner = tk.Frame(kp, bg=self.PANEL)
-        kp_inner.pack(fill="x", padx=10, pady=8)
-        # Static lines (don't change at runtime)
-        tk.Label(kp_inner, text="  0x488 DAS_steeringControl   ALWAYS  @ 50 Hz",
-                 font=self.f_mono, fg=self.FG, bg=self.PANEL,
-                 anchor="w").pack(fill="x")
-        tk.Label(kp_inner,
-                 text=f"  0x101 GTW_epasControl       {'ON ' if SYNTHESIZE_GTW else 'off'}     @ 20 Hz",
-                 font=self.f_mono, fg=self.FG, bg=self.PANEL,
-                 anchor="w").pack(fill="x")
-        tk.Label(kp_inner,
-                 text=f"  0x214 EPB_epasControl       {'ON ' if SYNTHESIZE_EPB else 'off'}     @ 10 Hz",
-                 font=self.f_mono, fg=self.FG, bg=self.PANEL,
-                 anchor="w").pack(fill="x")
-        # Dynamic line (updated by _tick to reflect 30 MPH MODE state)
-        self.lbl_kp_speed = tk.Label(kp_inner,
-                 text="  0x155 ESP_B fake speed      off     @ 200 Hz",
-                 font=self.f_mono, fg=self.FG, bg=self.PANEL, anchor="w")
-        self.lbl_kp_speed.pack(fill="x")
-        # ESP contention warning line (hidden until 30 MPH MODE is on
-        # AND we detect real ESP traffic on the bus).
-        self.lbl_esp_warn = tk.Label(kp_inner, text="", font=self.f_mono,
+    def _build_keepalives(self, parent):
+        panel = self._section(parent, "KEEPALIVES WE SEND")
+        inner = tk.Frame(panel, bg=self.PANEL)
+        inner.pack(fill="x", padx=12, pady=(10, 4))
+        # 4 lines: 0x488 always, 0x214, 0x101, 0x155
+        for kid, label, default_on, rate in (
+            (0x488, "DAS_steeringControl", True,            "50 Hz"),
+            (0x214, "EPB_epasControl",     SYNTHESIZE_EPB,  "10 Hz"),
+            (0x101, "GTW_epasControl",     SYNTHESIZE_GTW,  "20 Hz"),
+            (0x155, "ESP_B fake speed",    False,           "200 Hz"),
+        ):
+            line = tk.Frame(inner, bg=self.PANEL)
+            line.pack(fill="x", pady=2)
+            dot = tk.Label(line, text="●" if default_on else "○",
+                           font=self.f_pill,
+                           fg=self.GREEN if default_on else self.MUTE,
+                           bg=self.PANEL)
+            dot.pack(side="left")
+            tk.Label(line, text=f"  0x{kid:03X}  {label}",
+                     font=self.f_mono, fg=self.FG, bg=self.PANEL,
+                     anchor="w").pack(side="left")
+            rate_lbl = tk.Label(line,
+                                text=f"{rate} · ON" if default_on else rate,
+                                font=self.f_mono,
+                                fg=self.GREEN if default_on else self.DIM,
+                                bg=self.PANEL)
+            rate_lbl.pack(side="right", padx=8)
+            self.kp_lines[kid] = (dot, rate_lbl)
+        self.lbl_esp_warn = tk.Label(panel, text="", font=self.f_mono,
                                      fg=self.RED, bg=self.PANEL, anchor="w")
-        self.lbl_esp_warn.pack(fill="x")
+        self.lbl_esp_warn.pack(fill="x", padx=12, pady=(0, 8))
 
-        # ---------- Event log (RIGHT bottom, takes remaining space) ----------
-        lp = tk.LabelFrame(right, text=" Event Log ", font=self.f_h2,
-                           fg=self.FG, bg=self.PANEL, bd=1, relief="solid")
-        lp.pack(fill="both", expand=True, pady=(6, 0))
-        self.txt_log = tk.Text(lp, font=self.f_mono, bg=self.SUNKEN,
-                               fg=self.FG, relief="flat", wrap="word")
-        self.txt_log.pack(fill="both", expand=True, padx=6, pady=6)
-        self._log_local("ready. click CONNECT to open the SYS TEC adapter.")
-        self._log_local(f"keepalives: GTW={SYNTHESIZE_GTW} EPB={SYNTHESIZE_EPB} "
-                        f"30MPH=OFF (toggle button when ready)")
-
-    def _stat(self, parent, row, col, label, value):
-        cell = tk.Frame(parent, bg=self.PANEL)
-        cell.grid(row=row, column=col, sticky="nsew", padx=6, pady=4)
-        tk.Label(cell, text=label, font=self.f_mono, fg=self.DIM,
-                 bg=self.PANEL).pack(anchor="w")
-        v = tk.Label(cell, text=value, font=self.f_big, fg=self.FG,
-                     bg=self.PANEL)
-        v.pack(anchor="w")
-        return v
+    def _build_event_log(self, parent):
+        panel = self._section(parent, "EVENT LOG", expand=True)
+        self.txt_log = tk.Text(panel, font=self.f_mono, bg=self.SUNKEN,
+                               fg=self.FG, relief="flat", wrap="word",
+                               insertbackground=self.FG, padx=8, pady=6,
+                               highlightthickness=0)
+        self.txt_log.pack(fill="both", expand=True, padx=12, pady=10)
 
     # ---------- Actions ----------
 
@@ -1430,19 +1503,20 @@ class App(tk.Tk):
             self.status.rx_count = 0
             self.status.last_rx_monotonic = 0.0
             self.logger = SessionLogger()
+            self.elapsed_start = time.monotonic()
             self._log_local(f"session started -> {self.logger.log_path}")
             self.worker = CanWorker(self.ctrl, self.status, self.stats,
                                     self.log_q, self.logger)
             self.worker.start()
             self.btn_conn.config(text="DISCONNECT", bg="#525252")
             self.btn_engage.config(state="normal")
-            self.btn_save.config(state="normal")
-            self.lbl_conn.config(text="CONNECTING...", fg=self.YELLOW)
+            self.btn_save_test.config(state="normal")
         else:
             self.estop("disconnect requested")
             self.worker.stop()
             self.worker.join(timeout=2.0)
             self.worker = None
+            self.elapsed_start = None
             if self.logger:
                 self.logger.event("disconnect; closing log")
                 self.logger.close()
@@ -1452,8 +1526,7 @@ class App(tk.Tk):
             self.btn_conn.config(text="CONNECT", bg=self.ACCENT)
             self.btn_engage.config(state="disabled", text="ENGAGE",
                                    bg=self.GREEN)
-            self.btn_save.config(state="disabled")
-            self.lbl_conn.config(text="DISCONNECTED", fg=self.RED)
+            self.btn_save_test.config(state="disabled")
 
     def toggle_engage(self):
         if self.ctrl.estop:
@@ -1546,14 +1619,213 @@ class App(tk.Tk):
         self.var_entry.set("0.0")
         self._log_local("centering")
 
-    def save_log(self):
-        """Flush the current session log to disk without disconnecting."""
+    # ---------- Save Test to GitHub ----------
+
+    def open_save_test_dialog(self):
+        """Modal dialog: name + description, then export to GitHub."""
         if not self.logger:
-            self._log_local("no active session log to save")
+            self._log_local("REFUSED save test: no active session (CONNECT first)")
             return
-        self.logger.event("manual flush requested")
-        self._log_local(f"log path: {self.logger.log_path}")
-        self._log_local(f"csv path: {self.logger.csv_path}")
+
+        dlg = tk.Toplevel(self)
+        dlg.title("Save Test to GitHub")
+        dlg.configure(bg=self.BG)
+        dlg.geometry("560x340")
+        dlg.transient(self)
+        dlg.grab_set()
+
+        tk.Label(dlg, text="SAVE TEST TO GITHUB", font=self.f_section,
+                 fg=self.DIM, bg=self.BG).pack(anchor="w", padx=20, pady=(20, 4))
+
+        panel = tk.Frame(dlg, bg=self.PANEL,
+                         highlightbackground=self.BORDER, highlightthickness=1)
+        panel.pack(fill="both", expand=True, padx=20, pady=(0, 8))
+
+        tk.Label(panel, text="TEST NAME (short, no spaces)",
+                 font=self.f_label, fg=self.DIM, bg=self.PANEL,
+                 anchor="w").pack(fill="x", padx=14, pady=(14, 2))
+        default_name = f"test_{datetime.now().strftime('%H%M%S')}"
+        name_var = tk.StringVar(value=default_name)
+        name_ent = tk.Entry(panel, textvariable=name_var, font=self.f_mono,
+                            bg=self.PANEL2, fg=self.FG,
+                            insertbackground=self.FG, relief="flat")
+        name_ent.pack(fill="x", padx=14, pady=(0, 10), ipady=5)
+
+        tk.Label(panel,
+                 text="DESCRIPTION (what was being tested, what happened)",
+                 font=self.f_label, fg=self.DIM, bg=self.PANEL,
+                 anchor="w").pack(fill="x", padx=14, pady=(6, 2))
+        desc_txt = tk.Text(panel, font=self.f_mono, bg=self.PANEL2,
+                           fg=self.FG, insertbackground=self.FG,
+                           relief="flat", height=5, wrap="word",
+                           padx=8, pady=4, highlightthickness=0)
+        desc_txt.pack(fill="both", expand=True, padx=14, pady=(0, 14))
+
+        btns = tk.Frame(dlg, bg=self.BG)
+        btns.pack(fill="x", padx=20, pady=(0, 20))
+
+        def do_save():
+            name = name_var.get().strip()
+            if not name:
+                return
+            desc = desc_txt.get("1.0", "end").strip()
+            dlg.destroy()
+            self._do_save_test(name, desc)
+
+        tk.Button(btns, text="Cancel", font=self.f_btn,
+                  bg="#525252", fg="white", relief="flat",
+                  padx=12, pady=8, width=10,
+                  command=dlg.destroy).pack(side="right", padx=(8, 0))
+        tk.Button(btns, text="SAVE", font=self.f_btn,
+                  bg=self.GREEN, fg="white", relief="flat",
+                  padx=12, pady=8, width=12,
+                  command=do_save).pack(side="right")
+
+        name_ent.focus_set()
+        name_ent.select_range(0, "end")
+
+    def _do_save_test(self, name: str, description: str):
+        """Spin off the export in a background thread so the UI stays
+        responsive during git operations."""
+        self._log_local(f"saving test '{name}'...")
+        threading.Thread(
+            target=self._run_git_export, args=(name, description),
+            daemon=True
+        ).start()
+
+    def _run_git_export(self, name: str, description: str):
+        """Background-thread worker. Copies session files into the repo,
+        writes a README, and tries git add+commit+push. All output is
+        streamed back to the event log via self.log_q."""
+        def emit(msg):
+            self.log_q.put(f"[{time.strftime('%H:%M:%S')}] {msg}")
+
+        safe_name = re.sub(r'[^a-zA-Z0-9_-]+', '_', name).strip('_')[:64]
+        if not safe_name:
+            safe_name = "unnamed"
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        folder_name = f"{ts}_{safe_name}"
+
+        repo_root = os.path.dirname(os.path.abspath(__file__))
+        dest = os.path.join(repo_root, "field_testing", "sessions", folder_name)
+
+        # ---- Copy session files ----
+        try:
+            os.makedirs(dest, exist_ok=True)
+            if self.logger:
+                self.logger.event(f"snapshot: saving as '{name}'")
+                log_src = self.logger.log_path
+                csv_src = self.logger.csv_path
+                if os.path.exists(log_src):
+                    shutil.copy2(log_src, os.path.join(dest, "session.log"))
+                if os.path.exists(csv_src):
+                    shutil.copy2(csv_src, os.path.join(dest, "session.csv"))
+            readme_path = os.path.join(dest, "README.md")
+            with open(readme_path, "w") as f:
+                f.write(self._build_test_readme(name, description, folder_name))
+            emit(f"saved files to field_testing/sessions/{folder_name}/")
+        except Exception as e:
+            emit(f"ERROR copying files: {e}")
+            return
+
+        # ---- git add ----
+        rel_path = os.path.relpath(dest, repo_root)
+        commit_msg = (f"test: {name}\n\n{description}"
+                      if description else f"test: {name}")
+        try:
+            subprocess.run(["git", "add", rel_path], cwd=repo_root,
+                           check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as e:
+            emit(f"git add failed: {(e.stderr or '').strip() or e}")
+            return
+        except FileNotFoundError:
+            emit("git not found in PATH; files saved but not committed")
+            return
+
+        # ---- git commit ----
+        try:
+            subprocess.run(["git", "commit", "-m", commit_msg],
+                           cwd=repo_root, check=True,
+                           capture_output=True, text=True)
+            emit(f"git commit OK: 'test: {name}'")
+        except subprocess.CalledProcessError as e:
+            err = (e.stderr or e.stdout or "").strip()
+            if "nothing to commit" in err:
+                emit("git commit: nothing changed (already saved?)")
+                return
+            emit(f"git commit failed: {err}")
+            return
+
+        # ---- git push ----
+        try:
+            br = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                                cwd=repo_root, check=True,
+                                capture_output=True, text=True)
+            branch = br.stdout.strip()
+            subprocess.run(["git", "push", "origin", branch],
+                           cwd=repo_root, check=True,
+                           capture_output=True, text=True)
+            emit(f"git push OK to origin/{branch}")
+            emit(f"saved on GitHub: field_testing/sessions/{folder_name}/")
+        except subprocess.CalledProcessError as e:
+            err = (e.stderr or "").strip()
+            emit(f"git push failed: {err}")
+            emit(f"files committed locally; push manually with:")
+            emit(f"  git push origin {branch}")
+
+    def _build_test_readme(self, name: str, description: str, folder: str) -> str:
+        s = self.status
+        c = self.ctrl
+        elapsed = (time.monotonic() - (self.elapsed_start or time.monotonic()))
+        lines = [
+            f"# {name}",
+            "",
+            f"**Saved:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            f"**Folder:** `field_testing/sessions/{folder}/`",
+            f"**Program version:** v{__version__}",
+            "",
+            "## Description",
+            "",
+            description if description else "_(no description provided)_",
+            "",
+            "## Snapshot at save time",
+            "",
+            f"- Elapsed session time: {elapsed:.1f} s",
+            f"- EAC status: `{EAC_STATUS_NAMES.get(s.eac_status, '?')}`",
+            f"- Last EAC error: `{EAC_ERROR_CODES.get(s.eac_error_code, '?')}`",
+            f"- Measured angle: {s.measured_angle_deg:+.1f} deg",
+            f"- Commanded angle: {c.commanded_angle_deg:+.1f} deg",
+            f"- 0x370 RX count: {s.rx_count}",
+            f"- Bus errors: {c.bus_errors}",
+            f"- Engaged: {c.engaged}",
+            f"- 30 MPH MODE: {'ON' if c.thirty_mph_mode else 'off'}",
+            f"- Mode: {c.mode}",
+            "",
+        ]
+        if s.di_torque2_rx_count > 0:
+            lines += [
+                "## Vehicle state",
+                "",
+                f"- Gear: `{DI_GEAR_NAMES.get(s.gear, '?')}`",
+                f"- Gear request: `{DI_GEAR_NAMES.get(s.gear_request, '?')}`",
+                f"- Brake: `{'PRESSED' if s.brake_pedal == 1 else 'released'}`",
+                f"- Brake state: `{DI_BRAKE_STATE_NAMES.get(s.brake_state, '?')}`",
+                f"- DI vehicle speed: {s.di_vehicle_speed_mph:+.2f} mph",
+                "",
+            ]
+        lines += [
+            "## Files",
+            "",
+            "- `session.log` -- human-readable event timeline",
+            "- `session.csv` -- per-frame state samples (open in Excel/pandas)",
+            "",
+            "## How to read",
+            "",
+            "See [docs/TROUBLESHOOTING.md](../../../docs/TROUBLESHOOTING.md)",
+            "under \"Logs -- finding and reading them\" for the .log and",
+            ".csv format.",
+        ]
+        return "\n".join(lines) + "\n"
 
     def toggle_30mph(self):
         """Flip the 30 MPH MODE runtime toggle. When ON, the worker
@@ -1705,7 +1977,7 @@ class App(tk.Tk):
         self.txt_log.see("end")
 
     def _tick(self):
-        # Drain log queue
+        # Drain worker log queue into the event log text widget.
         try:
             while True:
                 line = self.log_q.get_nowait()
@@ -1714,22 +1986,52 @@ class App(tk.Tk):
         except queue.Empty:
             pass
 
-        # Connection light
+        # ===== Vitals strip =====
+        # LINK
         if self.worker is None:
-            self.lbl_conn.config(text="DISCONNECTED", fg=self.RED)
+            self._set_vital("link", "DISCONNECTED", self.RED)
         elif self.ctrl.estop:
-            self.lbl_conn.config(text=f"E-STOP: {self.ctrl.estop_reason}",
-                                 fg=self.RED)
+            self._set_vital("link", "E-STOP", self.RED)
         elif self.status.rx_count == 0:
-            self.lbl_conn.config(text="WAITING FOR 0x370...", fg=self.YELLOW)
+            self._set_vital("link", "WAITING", self.YELLOW)
         else:
-            self.lbl_conn.config(text="EPAS LINK OK", fg=self.GREEN)
-
-        # Status readouts
+            self._set_vital("link", "OK", self.GREEN)
+        # EAC
         eac = self.status.eac_status
-        eac_color = {0: self.DIM, 1: self.YELLOW, 2: self.GREEN,
-                     3: self.RED, 4: self.DIM}.get(eac, self.FG)
-        self.lbl_eac.config(text=EAC_STATUS_NAMES.get(eac, "?"), fg=eac_color)
+        eac_name = EAC_STATUS_NAMES.get(eac, "?")
+        eac_color = {0: self.MUTE, 1: self.YELLOW, 2: self.GREEN,
+                     3: self.RED, 4: self.MUTE}.get(eac, self.FG)
+        self._set_vital("eac", eac_name, eac_color)
+        # GEAR
+        gear = self.status.gear
+        if gear < 0:
+            self._set_vital("gear", "(no DI)", self.MUTE)
+        else:
+            self._set_vital("gear", DI_GEAR_NAMES.get(gear, "?"),
+                            {1: self.GREEN, 2: self.RED, 3: self.YELLOW,
+                             4: self.RED}.get(gear, self.MUTE))
+        # BRAKE
+        brake = self.status.brake_pedal
+        if brake < 0:
+            self._set_vital("brake", "(no DI)", self.MUTE)
+        elif brake == 1:
+            self._set_vital("brake", "PRESSED", self.GREEN)
+        else:
+            self._set_vital("brake", "released", self.MUTE)
+        # 30 MPH
+        if self.ctrl.thirty_mph_mode:
+            self._set_vital("mph30", "ON", self.ORANGE)
+        else:
+            self._set_vital("mph30", "off", self.MUTE)
+        # SHIFT
+        if self.ctrl.shift_target:
+            _r, _p, lbl = self.ctrl.shift_target
+            self._set_vital("shift", f"-> {lbl}", self.YELLOW)
+        else:
+            self._set_vital("shift", "idle", self.MUTE)
+
+        # ===== Rack Status =====
+        self.lbl_eac.config(text=eac_name, fg=eac_color)
         err_name = EAC_ERROR_CODES.get(self.status.eac_error_code, "?")
         self.lbl_err.config(
             text=err_name,
@@ -1746,93 +2048,119 @@ class App(tk.Tk):
             text=str(self.ctrl.bus_errors),
             fg=self.RED if self.ctrl.bus_errors else self.FG)
 
-        # PRND row
-        gear = self.status.gear
+        # ===== Vehicle Status =====
         if gear < 0:
-            self.lbl_gear.config(text="-- (no DI)", fg=self.DIM)
-            self.lbl_gear_req.config(text="--", fg=self.DIM)
-            self.lbl_di_speed.config(text="-- mph", fg=self.DIM)
+            self.lbl_gear.config(text="(no DI)", fg=self.MUTE)
+            self.lbl_gear_req.config(text="--", fg=self.MUTE)
+            self.lbl_brake.config(text="--", fg=self.MUTE)
+            self.lbl_brake_st.config(text="--", fg=self.MUTE)
+            self.lbl_di_speed.config(text="-- mph", fg=self.MUTE)
         else:
-            gear_name = DI_GEAR_NAMES.get(gear, "?")
-            gear_color = {1: self.GREEN, 2: self.RED, 3: self.YELLOW,
-                          4: self.RED}.get(gear, self.DIM)
-            self.lbl_gear.config(text=gear_name, fg=gear_color)
+            self.lbl_gear.config(
+                text=DI_GEAR_NAMES.get(gear, "?"),
+                fg={1: self.GREEN, 2: self.RED, 3: self.YELLOW,
+                    4: self.RED}.get(gear, self.MUTE))
             req_name = DI_GEAR_NAMES.get(self.status.gear_request, "?")
             req_color = self.FG if self.status.gear_request == gear else self.YELLOW
             self.lbl_gear_req.config(text=req_name, fg=req_color)
+            if self.status.brake_pedal == 1:
+                self.lbl_brake.config(text="PRESSED", fg=self.GREEN)
+            else:
+                self.lbl_brake.config(text="released", fg=self.MUTE)
+            self.lbl_brake_st.config(
+                text=DI_BRAKE_STATE_NAMES.get(self.status.brake_state, "?"),
+                fg=(self.GREEN if self.status.brake_state in (1, 3)
+                    else self.DIM))
+            speed_color = (self.RED
+                           if abs(self.status.di_vehicle_speed_mph) > 1
+                           else self.FG)
             self.lbl_di_speed.config(
                 text=f"{self.status.di_vehicle_speed_mph:+.1f} mph",
-                fg=self.FG)
-        # Park gate state
+                fg=speed_color)
+        # Park gate
         if not REQUIRE_PARK_TO_ENGAGE:
-            self.lbl_park_gate.config(text="off", fg=self.DIM)
+            self.lbl_park_gate.config(text="off", fg=self.MUTE)
         elif self.status.di_torque2_rx_count == 0:
-            self.lbl_park_gate.config(text="bypass (no DI)", fg=self.YELLOW)
+            self.lbl_park_gate.config(text="bypass", fg=self.YELLOW)
         elif self.status.gear == DI_GEAR_PARK:
             self.lbl_park_gate.config(text="OK (P)", fg=self.GREEN)
         else:
             self.lbl_park_gate.config(text="BLOCKED", fg=self.RED)
 
-        # Bus diagnostic panel
-        now = time.monotonic()
+        # ===== Bus Diagnostic =====
         esp_contention = False
         for cid, (lbl_hz, lbl_cnt, _lbl_name) in self.diag_labels.items():
             hz = self.stats.hz(cid)
             cnt = self.stats.count(cid)
-            color = self.DIM if hz < 0.1 else self.GREEN
-            # Special case: any RX of 0x488 means a second transmitter
-            # exists on the bus. That is the contention bug we just fled.
+            color = self.MUTE if hz < 0.1 else self.GREEN
             if cid == 0x488 and hz > 0.1:
-                color = self.RED
-            # Special case for 0x155: when 30 MPH MODE is ON, our own
-            # frames don't echo back, so any 0x155 RX traffic above the
-            # threshold is the real ESP module fighting us.
+                color = self.RED   # second transmitter on the bus
             if (cid == 0x155 and self.ctrl.thirty_mph_mode
                     and hz > ESP_CONTENTION_RX_THRESHOLD_HZ):
                 color = self.RED
                 esp_contention = True
-            lbl_hz.config(text=f"{hz:6.1f}", fg=color)
+            lbl_hz.config(text=f"{hz:5.1f}", fg=color)
             lbl_cnt.config(text=str(cnt),
                            fg=self.DIM if cnt == 0 else self.FG)
 
-        # Keepalive plan dynamic line + ESP contention warning
-        if self.ctrl.thirty_mph_mode:
-            self.lbl_kp_speed.config(
-                text=f"  0x155 ESP_B fake speed      ON     @ 200 Hz "
-                     f"({BENCH_FAKE_SPEED_KPH:.0f} km/h)", fg=self.YELLOW)
-        else:
-            self.lbl_kp_speed.config(
-                text="  0x155 ESP_B fake speed      off     @ 200 Hz", fg=self.FG)
+        # ===== Keepalives panel: 0x155 dot reflects 30 MPH MODE state =====
+        dot_155, rate_155 = self.kp_lines.get(0x155, (None, None))
+        if dot_155:
+            if self.ctrl.thirty_mph_mode:
+                dot_155.config(text="●", fg=self.ORANGE)
+                rate_155.config(text="200 Hz · ON", fg=self.ORANGE)
+            else:
+                dot_155.config(text="○", fg=self.MUTE)
+                rate_155.config(text="200 Hz", fg=self.DIM)
         if esp_contention:
             self.lbl_esp_warn.config(
-                text="  ! REAL ESP DETECTED ON BUS -- contention "
-                     "with our 0x155 (see docstring)")
+                text="! REAL ESP DETECTED -- contention with our 0x155")
         else:
             self.lbl_esp_warn.config(text="")
 
-        # Wheel canvas (always render -- shows commanded angle even in slider mode)
+        # ===== Wheel canvas (KEYBOARD mode only) =====
         if self.ctrl.mode == MODE_KEYBOARD:
-            label = ""
             if self.ctrl.key_left and not self.ctrl.key_right:
-                label = "<<<  STEERING LEFT"
+                wlabel = "<<<  STEERING LEFT"
             elif self.ctrl.key_right and not self.ctrl.key_left:
-                label = "STEERING RIGHT  >>>"
+                wlabel = "STEERING RIGHT  >>>"
             else:
-                label = "HOLDING"
-            self.wheel.draw(self.ctrl.commanded_angle_deg, label_below=label)
+                wlabel = "HOLDING"
+            self.wheel.draw(self.ctrl.commanded_angle_deg, label_below=wlabel)
 
-        # Sync ENGAGE button label to actual engaged state. The worker
-        # thread can auto-disengage from a watchdog (real motion, gear
-        # leaving P, ESP contention), so we must reflect that in the UI.
+        # ===== Button label sync (worker can change these) =====
         if not self.ctrl.engaged and self.btn_engage["text"] != "ENGAGE":
             self.btn_engage.config(text="ENGAGE", bg=self.GREEN)
-        # Sync 30 MPH MODE button to its actual state (auto-disable
-        # in worker can flip it).
         if (not self.ctrl.thirty_mph_mode
                 and self.btn_30mph["text"] != "30 MPH MODE: OFF"):
             self.btn_30mph.config(text="30 MPH MODE: OFF", bg="#525252")
 
+        # ===== Status bar =====
+        if self.elapsed_start is None or self.worker is None:
+            elapsed_str = "idle"
+        else:
+            elapsed_s = time.monotonic() - self.elapsed_start
+            elapsed_str = (f"{int(elapsed_s // 60):02d}:"
+                           f"{int(elapsed_s % 60):02d} elapsed")
+        if self.logger:
+            session_str = ("session: logs/"
+                           + os.path.basename(self.logger.log_path)
+                                 .replace(".log", ""))
+        else:
+            session_str = "session: not started"
+        rack_str = ""
+        if self.worker:
+            rack_str = (" · rack "
+                        + EAC_STATUS_NAMES.get(self.status.eac_status, "?"))
+        self.lbl_statusbar.config(
+            text=f"{session_str}{rack_str} · {elapsed_str}")
+
         self.after(50, self._tick)
+
+    def _set_vital(self, key: str, value: str, color: str):
+        dot, val = self.vitals[key]
+        dot.config(fg=color)
+        val.config(text=value, fg=color)
 
 
 # ============================================================================
