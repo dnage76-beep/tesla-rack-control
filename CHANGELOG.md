@@ -48,6 +48,18 @@ prior features preserved.
 - Session export keeps the live session running -- the dialog
   doesn't disconnect.
 
+### Fixed (gear shift CRC, 2026-05-07)
+Original v4.2 gear shift used the wrong CRC algorithm. After
+Charlie's field test at 2026-05-07 ~00:32 (sessions 003159,
+003218, 003228) showed the SCCM silently ignoring all N/D/R
+shift requests:
+- Polynomial corrected from 0x2F (AUTOSAR) to **0x1D
+  (SAE-J1850)**, verified against BogGyver/panda's
+  `safety_tesla.h` lookup table (first 16 entries match exactly).
+- CRC input no longer prepends the address byte 0x6D; it now
+  covers the 3 data bytes only, matching BogGyver's
+  `do_fake_stalk_cancel` convention.
+
 ### Added (gear shift -- EXPERIMENTAL)
 - Four shift buttons in the GUI: **P / R / N / D**.
 - New CAN message: `0x6D SBW_RQ_SCCM` (Shift By Wire Request from

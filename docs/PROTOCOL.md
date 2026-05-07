@@ -106,13 +106,17 @@ then 5 IDLE frames as a settling tail.
 
 ```python
 def tesla_crc8(data):
+    """CRC-8 / SAE-J1850. Polynomial 0x1D, init 0xFF, XOR-out 0xFF.
+    Verified against BogGyver/panda safety_tesla.h tesla_compute_crc."""
     crc = 0xFF
     for byte in data:
         crc ^= byte
         for _ in range(8):
-            crc = ((crc << 1) ^ 0x2F) & 0xFF if crc & 0x80 else (crc << 1) & 0xFF
+            crc = ((crc << 1) ^ 0x1D) & 0xFF if crc & 0x80 else (crc << 1) & 0xFF
     return crc ^ 0xFF
 ```
+
+CRC is computed over the **3 data bytes only** (no address prefix).
 
 Shift mappings used by `request_shift()`:
 
@@ -123,12 +127,13 @@ Shift mappings used by `request_shift()`:
 | N           | N_DOWN (4)       | IDLE (0)      |
 | D           | D (8)            | IDLE (0)      |
 
-**EXPERIMENTAL**: bit layout is verified against opendbc's
-`tesla_can.dbc` (BO_ 109), but the exact CRC convention used by
-this Model S has not been verified against a real stalk capture.
-If the first shift attempt is silently ignored, run `can_sniffer.py`
-during a physical stalk shift, capture the 4 bytes, and confirm
-byte 3 matches `tesla_crc8(0x6D, b0, b1, b2)`.
+**Verified against BogGyver/panda** (`safety_tesla.h`,
+`tesla_compute_crc`): polynomial 0x1D, init 0xFF, xorout 0xFF, no
+address byte in the CRC input. Initial v4.2 implementation used
+polynomial 0x2F (AUTOSAR) and prepended the address byte; both
+were wrong, fixed after Charlie's 2026-05-07 field test
+(sessions 003159 / 003218 / 003228) showed all shifts to
+N/D/R silently ignored by the SCCM.
 
 ## RX in `tesla_control.py`
 

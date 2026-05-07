@@ -378,23 +378,29 @@ def build_epb_epas_control(counter: int) -> bytes:
 
 
 def tesla_crc8(data: bytes) -> int:
-    """Tesla CRC-8/AUTOSAR. Polynomial 0x2F, init 0xFF, XOR-out 0xFF.
+    """Tesla CRC-8/SAE-J1850. Polynomial 0x1D, init 0xFF, XOR-out 0xFF.
 
-    Used by 0x6D SBW_RQ_SCCM (gear shift) and other Tesla messages
-    that require CRC8 instead of the simpler sum-checksum.
+    Verified against BogGyver/panda safety_tesla.h tesla_compute_crc:
+    its lookup table starts 0x00, 0x1D, 0x3A, 0x27 ... which is the
+    standard CRC-8/SAE-J1850 table for polynomial 0x1D, and the
+    function's docstring states verbatim:
+      "Calculate CRC8 using 1D poly, FF start, FF end"
 
-    EXPERIMENTAL: this implementation matches the AUTOSAR spec which
-    Tesla's stalk module is known to use. If the first gear-shift
-    attempt is silently ignored by the DI module, the CRC is the
-    most likely culprit -- capture a real stalk frame on the bus
-    and verify the byte at offset 3.
+    Used by 0x6D SBW_RQ_SCCM (gear shift) and 0x45 STW_ACTN_RQ
+    (stalk) and other Tesla messages that use CRC8 instead of the
+    simpler sum-checksum.
+
+    NOTE: the original v4.2 implementation used polynomial 0x2F
+    (AUTOSAR) and prepended the address byte to the CRC input.
+    Both were wrong. Fixed after Charlie's 2026-05-07 field test
+    showed shifts being silently ignored by the SCCM.
     """
     crc = 0xFF
     for byte in data:
         crc ^= byte
         for _ in range(8):
             if crc & 0x80:
-                crc = ((crc << 1) ^ 0x2F) & 0xFF
+                crc = ((crc << 1) ^ 0x1D) & 0xFF
             else:
                 crc = (crc << 1) & 0xFF
     return crc ^ 0xFF
@@ -409,15 +415,16 @@ def build_sbw_rq(rnd_posn: int, p_pressed: int, counter: int) -> bytes:
       byte 1 bits 0..3 : TSL_RND_Posn_StW          (gear position)
       byte 1 bits 4..5 : TSL_P_Psd_StW             (P button)
       byte 2 bits 4..7 : MC_SBW_RQ_SCCM            (counter, 0..15)
-      byte 3 bits 0..7 : CRC_SBW_RQ_SCCM           (CRC-8/AUTOSAR)
+      byte 3 bits 0..7 : CRC_SBW_RQ_SCCM           (CRC-8/J1850)
+
+    CRC is computed over the 3 data bytes ONLY -- no address prefix.
+    Verified against BogGyver/panda do_fake_stalk_cancel which calls
+    tesla_compute_crc(MLB, MHB, num_bytes) with no address byte.
     """
     b0 = 0x00
     b1 = ((p_pressed & 0x03) << 4) | (rnd_posn & 0x0F)
     b2 = (counter & 0x0F) << 4
-    # CRC computed over the first 3 data bytes plus the 11-bit ID.
-    # Tesla's CRC-8/AUTOSAR convention includes the address byte at
-    # the start of the input. ID 0x6D fits in one byte.
-    crc = tesla_crc8(bytes([ID_SBW_RQ_SCCM & 0xFF, b0, b1, b2]))
+    crc = tesla_crc8(bytes([b0, b1, b2]))
     return bytes([b0, b1, b2, crc])
 
 
