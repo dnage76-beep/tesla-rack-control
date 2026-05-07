@@ -1,0 +1,6 @@
+07 May 2026 00:03
+
+Wheels up, 30MPH mode off: Steering works well, 
+Wheels up, 30MPH mode on: Same sort of error, saved to log
+Wheels down, 30MPH mode off: 
+Wheels down, 30MPH mode on: 
