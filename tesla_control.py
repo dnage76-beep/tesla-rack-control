@@ -1259,14 +1259,16 @@ class App(tk.Tk):
         right.grid(row=0, column=1, sticky="nsew", padx=(0, 0))
 
         # ----- LEFT COLUMN -----
+        # Keepalives moved here so the Event Log on the right gets
+        # the full column height (was getting squeezed before).
         self._build_steering_command(left)
         self._build_rack_status(left)
         self._build_vehicle_status(left)
         self._build_shift_panel(left)
+        self._build_keepalives(left)
 
         # ----- RIGHT COLUMN -----
         self._build_bus_diagnostic(right)
-        self._build_keepalives(right)
         self._build_event_log(right)   # expand=True; fills remainder
 
         self._log_local("ready. click CONNECT to open the SYS TEC adapter.")
@@ -1497,11 +1499,22 @@ class App(tk.Tk):
 
     def _build_event_log(self, parent):
         panel = self._section(parent, "EVENT LOG", expand=True)
-        self.txt_log = tk.Text(panel, font=self.f_mono, bg=self.SUNKEN,
+        # Vertical scrollbar so older lines don't get hidden when the
+        # log fills up.
+        wrap = tk.Frame(panel, bg=self.PANEL)
+        wrap.pack(fill="both", expand=True, padx=12, pady=10)
+        scroll = tk.Scrollbar(wrap, bg=self.PANEL, troughcolor=self.PANEL2,
+                              activebackground=self.DIM, relief="flat",
+                              borderwidth=0, highlightthickness=0)
+        scroll.pack(side="right", fill="y")
+        self.txt_log = tk.Text(wrap, font=self.f_mono, bg=self.SUNKEN,
                                fg=self.FG, relief="flat", wrap="word",
                                insertbackground=self.FG, padx=8, pady=6,
-                               highlightthickness=0)
-        self.txt_log.pack(fill="both", expand=True, padx=12, pady=10)
+                               highlightthickness=0,
+                               height=24,             # decent minimum
+                               yscrollcommand=scroll.set)
+        self.txt_log.pack(side="left", fill="both", expand=True)
+        scroll.config(command=self.txt_log.yview)
 
     # ---------- Actions ----------
 
