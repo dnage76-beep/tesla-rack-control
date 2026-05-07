@@ -64,10 +64,11 @@ user opts in.
 
 ### RX
 
-| ID    | Name           | What we do                                      |
-|-------|----------------|-------------------------------------------------|
-| 0x370 | EPAS_sysStatus | Decode EAC state, error code, measured angle    |
-| (any) | other          | Count for the bus diagnostic panel              |
+| ID    | Name           | What we do                                              |
+|-------|----------------|---------------------------------------------------------|
+| 0x370 | EPAS_sysStatus | Decode EAC state, error code, measured angle            |
+| 0x118 | DI_torque2     | (v4.2+) Decode gear, gear request, DI's own speed       |
+| (any) | other          | Count for the bus diagnostic panel                      |
 
 ---
 

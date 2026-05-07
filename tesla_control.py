@@ -1,10 +1,27 @@
 """
-Tesla Rack Control  --  v4.1
-============================
+Tesla Rack Control  --  v4.2.0-dev (PRND features)
+==================================================
 
 Single-program steering control for the patched 2013 Tesla Model S EPAS
 rack. Drives the rack from a SYS TEC USB-CANmodul1 (model 3204001) on
 Windows, with NO comma 3X required.
+
+WHAT IS NEW IN v4.2 (vs v4.1)
+    - **PRND awareness.** Listens to 0x118 DI_torque2 and decodes
+      DI_gear, DI_gearRequest, and DI_vehicleSpeed (DI's own speed
+      estimate, useful for verifying the 30 MPH MODE spoof is not
+      propagating somewhere it shouldn't).
+    - **Park-to-engage gate.** When 0x118 is being received and the
+      gear is not P, ENGAGE is refused with a clear message. The
+      gate is bypassed automatically when 0x118 has never been
+      received (bench mode without a real DI module on the bus).
+      Configurable via REQUIRE_PARK_TO_ENGAGE.
+    - **Status panel grows to 3 rows of 4** to show Gear, Gear
+      Request, DI Speed, and Park Gate state.
+    - **Bus diagnostic adds 0x118**.
+    - **CSV log adds gear, gear_request, di_vehicle_speed_mph**
+      columns for offline analysis.
+    - **Gear transitions are logged** to the .log file.
 
 WHAT IS NEW IN v4.1 (vs v4)
     - **30 MPH MODE toggle button in the GUI.** Starts OFF. When the
@@ -138,7 +155,7 @@ from datetime import datetime
 from tkinter import font
 from typing import Optional
 
-__version__ = "4.1.0"
+__version__ = "4.2.0-dev"
 
 
 # ============================================================================
@@ -181,6 +198,7 @@ ID_GTW_EPAS_CONTROL     = 0x101
 ID_EPB_EPAS_CONTROL     = 0x214
 ID_EPAS_SYS_STATUS      = 0x370
 ID_ESP_B_FAKE_SPEED     = 0x155
+ID_DI_TORQUE2           = 0x118  # carries DI_gear, DI_gearRequest, DI_vehicleSpeed
 
 # TX cycle periods (ms)
 PERIOD_DAS_MS = 20              # 50 Hz
@@ -200,6 +218,7 @@ ESP_CONTENTION_RX_THRESHOLD_HZ = 5.0
 DIAG_IDS = [
     (0x101, "GTW_epasControl",       "real car GTW; ~10 Hz expected"),
     (0x108, "DI_torque1",            "drive inverter; ~100 Hz expected"),
+    (0x118, "DI_torque2 (gear)",     "carries PRND; ~100 Hz expected"),
     (0x129, "SteeringAngle (SAS)",   "steering angle sensor; ~100 Hz"),
     (0x155, "ESP_B vehicleSpeed",    "real car ESP; ~50 Hz expected"),
     (0x214, "EPB_epasControl",       "we send this; ~10 Hz when synth"),
@@ -222,6 +241,17 @@ EAC_ERROR_CODES = {
 EAC_STATUS_NAMES = {
     0: "INHIBITED", 1: "AVAILABLE", 2: "ACTIVE", 3: "FAULT", 4: "SNA",
 }
+
+# DI_gear enum (verified from opendbc tesla_can.dbc, message 280 / 0x118)
+DI_GEAR_NAMES = {
+    0: "INVALID", 1: "P", 2: "R", 3: "N", 4: "D", 7: "SNA",
+}
+DI_GEAR_PARK = 1
+
+# Refuse to engage unless gear is P. Bypassed when 0x118 has never
+# been received (bench mode, no DI module on the bus). When 0x118 IS
+# arriving and gear is not P, ENGAGE is refused.
+REQUIRE_PARK_TO_ENGAGE = True
 
 MODE_SLIDER = "slider"
 MODE_KEYBOARD = "keyboard"
@@ -290,6 +320,12 @@ class RackStatus:
     eac_error_code: int = 0
     measured_angle_deg: float = 0.0
     rx_count: int = 0
+    # 0x118 DI_torque2 decoded fields. -1 means "no 0x118 received yet"
+    # (bench mode without the real DI module on the bus).
+    gear: int = -1
+    gear_request: int = -1
+    di_vehicle_speed_mph: float = 0.0
+    di_torque2_rx_count: int = 0
 
 
 @dataclass
@@ -365,6 +401,8 @@ class SessionLogger:
         "target_deg", "commanded_deg", "measured_deg",
         "eac_status", "eac_error",
         "rx_count_0x370", "bus_errors",
+        # v4.2 PRND columns
+        "gear", "gear_request", "di_vehicle_speed_mph",
     ]
 
     def __init__(self):
@@ -409,6 +447,10 @@ class SessionLogger:
                     "eac_error": EAC_ERROR_CODES.get(status.eac_error_code, "?"),
                     "rx_count_0x370": status.rx_count,
                     "bus_errors": ctrl.bus_errors,
+                    "gear": DI_GEAR_NAMES.get(status.gear, "") if status.gear >= 0 else "",
+                    "gear_request": DI_GEAR_NAMES.get(status.gear_request, "") if status.gear_request >= 0 else "",
+                    "di_vehicle_speed_mph": (f"{status.di_vehicle_speed_mph:.2f}"
+                                             if status.di_torque2_rx_count > 0 else ""),
                 })
             except Exception:
                 pass
@@ -492,6 +534,36 @@ class CanWorker(threading.Thread):
 
     def stop(self):
         self._stop.set()
+
+    def _decode_0x118(self, data: bytes):
+        """0x118 DI_torque2, 6 bytes. Decode gear, gear request, DI's
+        own vehicle speed estimate.
+
+        Bit layout (verified from opendbc tesla_can.dbc, BO_ 280):
+          DI_gear          : 12|3@1+   (byte 1, bits 6..4)
+          DI_vehicleSpeed  : 16|12@1+  factor 0.05, offset -25, MPH
+                             (byte 2 bits 7..0, byte 3 bits 3..0)
+          DI_gearRequest   : 28|3@1+   (byte 3, bits 6..4)
+        """
+        if len(data) < 4:
+            return
+        gear = (data[1] >> 4) & 0x07
+        gear_req = (data[3] >> 4) & 0x07
+        speed_raw = data[2] | ((data[3] & 0x0F) << 8)
+        speed_mph = speed_raw * 0.05 - 25.0
+
+        prev_gear = self.status.gear
+        self.status.gear = gear
+        self.status.gear_request = gear_req
+        self.status.di_vehicle_speed_mph = speed_mph
+        self.status.di_torque2_rx_count += 1
+
+        if prev_gear != gear and prev_gear != -1:
+            self.log(f"gear: {DI_GEAR_NAMES.get(prev_gear,'?')} -> "
+                     f"{DI_GEAR_NAMES.get(gear,'?')}")
+            if self.logger:
+                self.logger.sample(self.ctrl, self.status,
+                                   event=f"gear_change:{DI_GEAR_NAMES.get(gear,'?')}")
 
     def _decode_0x370(self, data: bytes):
         if len(data) < 8:
@@ -614,6 +686,8 @@ class CanWorker(threading.Thread):
                     self.stats.note(msg.arbitration_id, now)
                     if msg.arbitration_id == ID_EPAS_SYS_STATUS:
                         self._decode_0x370(msg.data)
+                    elif msg.arbitration_id == ID_DI_TORQUE2:
+                        self._decode_0x118(msg.data)
             except Exception as e:
                 self.trigger_estop(f"RX exception: {e}")
 
@@ -779,7 +853,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(f"Tesla Rack Control  --  v{__version__}  --  30 MPH MODE toggle")
-        self.geometry("1080x860")
+        self.geometry("1080x920")
         self.configure(bg=self.BG)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -888,6 +962,11 @@ class App(tk.Tk):
         self.lbl_diverg = self._stat(grid, 1, 1, "Divergence",     "0.0 deg")
         self.lbl_rx     = self._stat(grid, 1, 2, "0x370 RX count", "0")
         self.lbl_buserr = self._stat(grid, 1, 3, "Bus Errors",     "0")
+        # v4.2 -- PRND row
+        self.lbl_gear     = self._stat(grid, 2, 0, "Gear",         "--")
+        self.lbl_gear_req = self._stat(grid, 2, 1, "Gear Request", "--")
+        self.lbl_di_speed = self._stat(grid, 2, 2, "DI Speed",     "-- mph")
+        self.lbl_park_gate= self._stat(grid, 2, 3, "Park Gate",    "armed" if REQUIRE_PARK_TO_ENGAGE else "off")
 
         # ---------- Mode tabs (LEFT MIDDLE) ----------
         modef = tk.Frame(left, bg=self.PANEL, bd=1, relief="solid")
@@ -1091,6 +1170,16 @@ class App(tk.Tk):
             if self.status.rx_count == 0:
                 self._log_local("REFUSED: no 0x370 yet, cannot engage blind")
                 return
+            # v4.2 park-to-engage gate. Only enforced when 0x118 has
+            # actually been observed (so bench mode without a real DI
+            # module on the bus is not blocked).
+            if (REQUIRE_PARK_TO_ENGAGE
+                    and self.status.di_torque2_rx_count > 0
+                    and self.status.gear != DI_GEAR_PARK):
+                gear_name = DI_GEAR_NAMES.get(self.status.gear, "?")
+                self._log_local(f"REFUSED: gear is {gear_name}, must be P "
+                                "to engage. Shift to Park first.")
+                return
             cur = self.status.measured_angle_deg
             self.ctrl.commanded_angle_deg = cur
             self.ctrl.filtered_target_deg = cur
@@ -1286,6 +1375,33 @@ class App(tk.Tk):
             text=str(self.ctrl.bus_errors),
             fg=self.RED if self.ctrl.bus_errors else self.FG)
 
+        # PRND row
+        gear = self.status.gear
+        if gear < 0:
+            self.lbl_gear.config(text="-- (no DI)", fg=self.DIM)
+            self.lbl_gear_req.config(text="--", fg=self.DIM)
+            self.lbl_di_speed.config(text="-- mph", fg=self.DIM)
+        else:
+            gear_name = DI_GEAR_NAMES.get(gear, "?")
+            gear_color = {1: self.GREEN, 2: self.RED, 3: self.YELLOW,
+                          4: self.RED}.get(gear, self.DIM)
+            self.lbl_gear.config(text=gear_name, fg=gear_color)
+            req_name = DI_GEAR_NAMES.get(self.status.gear_request, "?")
+            req_color = self.FG if self.status.gear_request == gear else self.YELLOW
+            self.lbl_gear_req.config(text=req_name, fg=req_color)
+            self.lbl_di_speed.config(
+                text=f"{self.status.di_vehicle_speed_mph:+.1f} mph",
+                fg=self.FG)
+        # Park gate state
+        if not REQUIRE_PARK_TO_ENGAGE:
+            self.lbl_park_gate.config(text="off", fg=self.DIM)
+        elif self.status.di_torque2_rx_count == 0:
+            self.lbl_park_gate.config(text="bypass (no DI)", fg=self.YELLOW)
+        elif self.status.gear == DI_GEAR_PARK:
+            self.lbl_park_gate.config(text="OK (P)", fg=self.GREEN)
+        else:
+            self.lbl_park_gate.config(text="BLOCKED", fg=self.RED)
+
         # Bus diagnostic panel
         now = time.monotonic()
         esp_contention = False
@@ -1361,6 +1477,8 @@ def banner():
     print(f" 30 MPH MODE 0x155 fake   : runtime toggle, default OFF")
     print(f"   when ON               : {BENCH_FAKE_SPEED_KPH:.0f} km/h "
           f"@ {1000//PERIOD_ESP_MS} Hz")
+    print(f" Park-to-engage gate      : {'armed' if REQUIRE_PARK_TO_ENGAGE else 'off'}")
+    print(f"   (bypassed when 0x118 DI_torque2 has not been observed)")
     print(f" Log dir                  : {LOG_DIR}")
     print("=" * 72)
 

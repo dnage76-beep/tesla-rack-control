@@ -7,6 +7,35 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [4.2.0-dev] -- in progress on `dev/v4.2-prnd`
+
+### Added
+- **PRND awareness**. Listens to `0x118 DI_torque2` and decodes
+  `DI_gear`, `DI_gearRequest`, and `DI_vehicleSpeed` (DI's own
+  speed estimate, useful for verifying the 30 MPH MODE spoof is
+  not propagating somewhere it shouldn't).
+- **Park-to-engage gate**. When `0x118` is being received and the
+  gear is not P, ENGAGE is refused with a clear message in the
+  event log. Bypassed automatically when `0x118` has never been
+  received (bench mode without a real DI module on the bus).
+  Configurable via `REQUIRE_PARK_TO_ENGAGE`.
+- Status panel grows to 3 rows: adds Gear, Gear Request, DI Speed,
+  Park Gate cells.
+- Bus diagnostic panel adds `0x118 DI_torque2 (gear)`.
+- Session CSV adds `gear`, `gear_request`, `di_vehicle_speed_mph`
+  columns.
+- Gear transition events written to the `.log` file.
+
+### Changed
+- Window height increased from 860 to 920 px to fit the new row.
+- `__version__` bumped to `4.2.0-dev`.
+
+### Notes
+- Default `REQUIRE_PARK_TO_ENGAGE = True`. Flip to False if testing
+  with a broken or absent gear sensor and you want to bypass the
+  gate.
+- Wire-level CAN protocol unchanged. Patched rack remains compatible.
+
 ## [4.1.0] -- 2026-05-07
 
 ### Added

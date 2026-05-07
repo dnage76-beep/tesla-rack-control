@@ -91,6 +91,25 @@ send only when the real source is absent:
 
 ## RX in `tesla_control.py`
 
+### `0x118` DI_torque2  --  6 bytes  --  ~100 Hz from drive inverter (v4.2+)
+
+| Field                    | Position             | Encoding                                                     |
+|--------------------------|----------------------|--------------------------------------------------------------|
+| `DI_gear`                | byte 1, bits 6..4    | 0=INVALID, 1=P, 2=R, 3=N, 4=D, 7=SNA                         |
+| `DI_vehicleSpeed`        | byte 2 + byte 3 lo4  | 12-bit LE, factor 0.05, offset -25, units MPH                |
+| `DI_gearRequest`         | byte 3, bits 6..4    | same enum as `DI_gear`                                       |
+
+```python
+gear     = (data[1] >> 4) & 0x07
+gear_req = (data[3] >> 4) & 0x07
+speed_raw = data[2] | ((data[3] & 0x0F) << 8)
+speed_mph = speed_raw * 0.05 - 25.0
+```
+
+Used by v4.2's park-to-engage safety gate. The gate is bypassed
+automatically when `0x118` has never been received (bench mode
+without a real DI module on the bus).
+
 ### `0x370` EPAS_sysStatus  --  8 bytes  --  ~100 Hz from rack
 
 | Field                | Position             | Encoding                                                   |
