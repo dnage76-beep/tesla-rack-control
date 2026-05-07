@@ -935,12 +935,16 @@ class CanWorker(threading.Thread):
             # ----- Shift burst (consumes shift_target if set) -----
             if self.ctrl.shift_target is not None and not self.ctrl.estop:
                 self._execute_shift_burst()
-                # Reset TX deadlines so we don't try to catch up after
-                # the ~250 ms burst window; just resume normal cadence.
-                next_das = time.monotonic()
-                next_gtw = next_das
-                next_epb = next_das
-                next_esp = next_das
+                # The burst blocks the worker for ~250-350 ms (10 active
+                # frames + 5 idle frames at 100 Hz, plus 200 ms verify
+                # sleep). Reset the loop-overrun baseline AND the TX
+                # deadlines so the next failsafe check doesn't see the
+                # burst as a missed tick.
+                last_loop = time.monotonic()
+                next_das = last_loop
+                next_gtw = last_loop
+                next_epb = last_loop
+                next_esp = last_loop
 
             # ----- E-STOP path: send disengaged 0x488 frames and idle -----
             if self.ctrl.estop:
