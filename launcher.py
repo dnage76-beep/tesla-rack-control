@@ -3,85 +3,183 @@ Tesla Rack Control launcher.
 
 Double-click entry point. On startup:
 
-1. Quietly checks GitHub for new commits on the tracked branch.
-2. If updates exist, asks the user whether to pull.
-3. If pulled, re-runs `pip install -r requirements.txt` (in case
-   requirements changed).
-4. Hands off to tesla_control.py.
+1. Quietly checks GitHub's REST API for the latest commit on `main`.
+2. Compares to the SHA stored in `.version` next to this file.
+3. If they differ, asks the user whether to update.
+4. On accept: downloads the main-branch zip from codeload.github.com,
+   extracts, copies the new files over the install folder (preserving
+   logs/, field_testing/sessions/, field_testing/captures/), updates
+   `.version`, and re-runs `pip install -r requirements.txt` in case
+   dependencies changed.
+5. Hands off to tesla_control.py.
 
-Failures are non-fatal: if GitHub is unreachable the launcher offers
-to start the program anyway. If git or pip fail it shows the error
-and offers to launch the previous version.
+Designed for the one-click install flow where Jordan's machine does
+NOT have git. The HTTP/zip approach avoids any git dependency.
 
-Run with the same Python interpreter that has python-can installed
-(typically a 32-bit Python because USBCAN32.dll is 32-bit).
+A developer checkout that has a `.git/` folder is detected and the
+update prompt is skipped (the dev manages versions with git directly).
+
+Failures (offline, GitHub down, pip failed) are non-fatal: the launcher
+shows the error and offers to start the program anyway.
 """
 
+import io
+import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import tkinter as tk
+import urllib.error
+import urllib.request
+import zipfile
 from tkinter import messagebox, scrolledtext
 
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 TARGET = "tesla_control.py"
-REMOTE = "origin"
+VERSION_FILE = ".version"
+
+OWNER = "dnage76-beep"
+REPO = "tesla-rack-control"
 BRANCH = "main"
-TIMEOUT_S = 10
+USER_AGENT = "tesla-rack-control-launcher"
+
+API_TIMEOUT = 15
+DOWNLOAD_TIMEOUT = 120
+
+# Files/dirs that hold the user's local data and must NOT be
+# overwritten by an update. Paths are relative to REPO_DIR.
+PRESERVE_DIRS = {
+    "logs",
+    "field_testing/sessions",
+    "field_testing/captures",
+}
 
 
-def _run(cmd, timeout=TIMEOUT_S):
-    return subprocess.run(
-        cmd,
-        cwd=REPO_DIR,
-        capture_output=True,
-        text=True,
-        timeout=timeout,
-    )
+# ----------------------------------------------------------------------
+# environment detection
+# ----------------------------------------------------------------------
 
-
-def _is_git_repo():
-    try:
-        r = _run(["git", "rev-parse", "--is-inside-work-tree"])
-        return r.returncode == 0 and r.stdout.strip() == "true"
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return False
+def _is_git_checkout():
+    return os.path.isdir(os.path.join(REPO_DIR, ".git"))
 
 
 def _local_sha():
-    r = _run(["git", "rev-parse", "--short", "HEAD"])
-    return r.stdout.strip() if r.returncode == 0 else "?"
+    p = os.path.join(REPO_DIR, VERSION_FILE)
+    if not os.path.exists(p):
+        return None
+    with open(p) as f:
+        return f.read().strip() or None
 
 
-def _check_remote():
-    """Return (commits_behind, error_or_none)."""
-    fetch = _run(["git", "fetch", REMOTE, BRANCH], timeout=20)
-    if fetch.returncode != 0:
-        return None, fetch.stderr.strip() or "git fetch failed"
-    behind = _run(["git", "rev-list", f"HEAD..{REMOTE}/{BRANCH}", "--count"])
-    if behind.returncode != 0:
-        return None, behind.stderr.strip() or "git rev-list failed"
-    try:
-        return int(behind.stdout.strip() or 0), None
-    except ValueError:
-        return None, "could not parse rev-list output"
+def _write_local_sha(sha):
+    with open(os.path.join(REPO_DIR, VERSION_FILE), "w") as f:
+        f.write(sha)
 
 
-def _pending_release_notes(n):
-    r = _run(
-        ["git", "log", f"HEAD..{REMOTE}/{BRANCH}", "--oneline", f"-{n}"]
+# ----------------------------------------------------------------------
+# GitHub API
+# ----------------------------------------------------------------------
+
+def _api_request(url, timeout=API_TIMEOUT):
+    req = urllib.request.Request(
+        url, headers={"User-Agent": USER_AGENT, "Accept": "application/vnd.github+json"}
     )
-    return r.stdout.strip() if r.returncode == 0 else ""
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.load(r)
 
 
-def _has_local_changes():
-    r = _run(["git", "status", "--porcelain"])
-    return bool(r.stdout.strip())
+def _latest_remote_sha():
+    """Return (sha, error_or_none)."""
+    try:
+        data = _api_request(
+            f"https://api.github.com/repos/{OWNER}/{REPO}/commits/{BRANCH}"
+        )
+        return data["sha"], None
+    except urllib.error.URLError as e:
+        return None, f"GitHub unreachable: {e.reason}"
+    except (KeyError, json.JSONDecodeError) as e:
+        return None, f"unexpected GitHub response: {e}"
+    except Exception as e:
+        return None, str(e)
 
 
-def _pull():
-    r = _run(["git", "pull", "--ff-only", REMOTE, BRANCH], timeout=30)
-    return r.returncode == 0, (r.stdout + r.stderr).strip()
+def _commits_between(local_sha, remote_sha):
+    """Best-effort list of commit messages between local and remote.
+    Returns a string for display, or '' if the request fails."""
+    if not local_sha:
+        return ""
+    try:
+        data = _api_request(
+            f"https://api.github.com/repos/{OWNER}/{REPO}/compare/"
+            f"{local_sha}...{remote_sha}"
+        )
+        commits = data.get("commits", []) or []
+        lines = []
+        for c in commits[-10:]:
+            sha7 = c.get("sha", "")[:7]
+            msg = (c.get("commit", {}).get("message", "")
+                   .splitlines()[0])
+            lines.append(f"  {sha7}  {msg}")
+        return "\n".join(lines)
+    except Exception:
+        return ""
+
+
+# ----------------------------------------------------------------------
+# zip-based update
+# ----------------------------------------------------------------------
+
+def _download_zip():
+    """Download the branch zip and return its bytes."""
+    url = (
+        f"https://codeload.github.com/{OWNER}/{REPO}/zip/refs/heads/{BRANCH}"
+    )
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=DOWNLOAD_TIMEOUT) as r:
+        return r.read()
+
+
+def _is_preserved(rel_path):
+    rp = rel_path.replace("\\", "/")
+    for p in PRESERVE_DIRS:
+        if rp == p or rp.startswith(p + "/"):
+            return True
+    return False
+
+
+def _apply_zip(zip_bytes):
+    """Extract zip to a temp dir and copy files over REPO_DIR."""
+    tmp = tempfile.mkdtemp(prefix="trc_update_")
+    try:
+        with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+            zf.extractall(tmp)
+        # GitHub zips wrap everything in <repo>-<branch>/.
+        roots = [
+            n for n in os.listdir(tmp)
+            if os.path.isdir(os.path.join(tmp, n)) and n != "__MACOSX"
+        ]
+        if not roots:
+            raise RuntimeError("zip archive had no top-level directory")
+        src = os.path.join(tmp, roots[0])
+
+        for root, dirs, files in os.walk(src):
+            rel = os.path.relpath(root, src)
+            if rel != "." and _is_preserved(rel):
+                dirs[:] = []
+                continue
+            target_root = REPO_DIR if rel == "." else os.path.join(REPO_DIR, rel)
+            os.makedirs(target_root, exist_ok=True)
+            for f in files:
+                rel_file = f if rel == "." else os.path.join(rel, f)
+                if _is_preserved(rel_file):
+                    continue
+                shutil.copy2(
+                    os.path.join(root, f), os.path.join(target_root, f)
+                )
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def _pip_install():
@@ -93,12 +191,16 @@ def _pip_install():
         cwd=REPO_DIR,
         capture_output=True,
         text=True,
-        timeout=120,
+        timeout=180,
     )
     return r.returncode == 0, (r.stdout + r.stderr).strip()
 
 
-def _show_log_dialog(title, text):
+# ----------------------------------------------------------------------
+# UI helpers
+# ----------------------------------------------------------------------
+
+def _show_log(title, text):
     win = tk.Toplevel()
     win.title(title)
     win.geometry("700x300")
@@ -124,62 +226,65 @@ def _launch_target():
     os.execv(sys.executable, [sys.executable, target])
 
 
+# ----------------------------------------------------------------------
+# main
+# ----------------------------------------------------------------------
+
 def main():
     root = tk.Tk()
     root.withdraw()
 
-    if not _is_git_repo():
-        messagebox.showwarning(
-            "Tesla Rack Control",
-            "This folder is not a git checkout, so update checking "
-            "is disabled. Launching the program anyway.",
-        )
+    # Dev checkout: skip auto-update entirely.
+    if _is_git_checkout():
         _launch_target()
         return
 
-    sha = _local_sha()
-    behind, err = _check_remote()
+    local = _local_sha()
+    remote, err = _latest_remote_sha()
 
     if err:
         if not messagebox.askyesno(
             "Tesla Rack Control",
             f"Could not check GitHub for updates "
-            f"(running {sha}).\n\n{err}\n\nLaunch anyway?",
+            f"(running {(local or '?')[:7]}).\n\n{err}\n\n"
+            "Launch anyway?",
         ):
             sys.exit(0)
         _launch_target()
         return
 
-    if behind == 0:
+    # First run after install: write .version and proceed.
+    if local is None:
+        _write_local_sha(remote)
         _launch_target()
         return
 
-    notes = _pending_release_notes(behind)
+    if local == remote:
+        _launch_target()
+        return
+
+    notes = _commits_between(local, remote)
     msg = (
-        f"{behind} new commit(s) available on GitHub "
-        f"(currently running {sha}).\n\n"
-        f"{notes}\n\nUpdate now?"
+        f"A new version is available.\n\n"
+        f"Current: {local[:7]}\nLatest:  {remote[:7]}\n"
     )
+    if notes:
+        msg += f"\nRecent changes:\n{notes}\n"
+    msg += "\nUpdate now?"
+
     if not messagebox.askyesno("Update available", msg):
         _launch_target()
         return
 
-    if _has_local_changes():
-        messagebox.showerror(
-            "Cannot update",
-            "You have local uncommitted changes. Commit or stash "
-            "them, or ask Derek/Charlie for help. Launching the "
-            "current version.",
-        )
-        _launch_target()
-        return
-
-    ok, log = _pull()
-    if not ok:
-        _show_log_dialog("git pull failed", log)
+    try:
+        zip_bytes = _download_zip()
+        _apply_zip(zip_bytes)
+        _write_local_sha(remote)
+    except Exception as e:
+        _show_log("Update failed", str(e))
         if not messagebox.askyesno(
             "Update failed",
-            "Pull failed (see log). Launch the previous version?",
+            "Update failed (see log). Launch the previous version?",
         ):
             sys.exit(1)
         _launch_target()
@@ -187,17 +292,16 @@ def main():
 
     pip_ok, pip_log = _pip_install()
     if not pip_ok:
-        _show_log_dialog("pip install failed", pip_log)
+        _show_log("pip install failed", pip_log)
         if not messagebox.askyesno(
             "Dependency install failed",
-            "pip install failed (see log). Launch anyway?",
+            "Update applied but pip install failed.\n\nLaunch anyway?",
         ):
             sys.exit(1)
 
-    new_sha = _local_sha()
     messagebox.showinfo(
         "Updated",
-        f"Updated to {new_sha}. Launching Tesla Rack Control.",
+        f"Updated to {remote[:7]}. Launching Tesla Rack Control.",
     )
     _launch_target()
 

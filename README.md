@@ -34,34 +34,38 @@ required.**
 
 ## Quick start
 
-### One-click install (Windows, recommended for Jordan)
+### One-click install (Windows)
 
-Prerequisites you install once, by hand:
+For Jordan / Charlie / anyone setting up a fresh laptop:
 
-1. **32-bit Python 3.9+** from https://www.python.org/ — tick
-   "Add Python to PATH" during install. 32-bit is required because
-   the SYS TEC `USBCAN32.dll` is 32-bit.
-2. **Git for Windows** from https://git-scm.com/ — needed by the
-   auto-updater.
-3. **SYS TEC sysWORXX USB-CAN driver** from
+1. Make sure **32-bit Python 3.9+** is installed (from
+   https://www.python.org/, with "Add Python to PATH" ticked).
+   32-bit is required because the SYS TEC `USBCAN32.dll` is 32-bit.
+2. Download
+   [`Install_Tesla_Rack_Control.bat`](https://raw.githubusercontent.com/dnage76-beep/tesla-rack-control/main/Install_Tesla_Rack_Control.bat)
+   (right-click → Save link as…) and **double-click it**. It downloads
+   the latest version of Tesla Rack Control to `~/TeslaRackControl`,
+   pip-installs the dependencies, and creates a "Tesla Rack Control"
+   shortcut on the desktop.
+3. Install the **SYS TEC sysWORXX USB-CAN driver** from
    https://www.systec-electronic.com/en/services-support/downloads.
-4. Clone this repo somewhere stable:
-   ```sh
-   git clone https://github.com/dnage76-beep/tesla-rack-control
-   ```
+   This one is vendor-proprietary so it cannot be auto-installed.
 
-Then double-click **`install.bat`** in the repo folder. It pip-installs
-the Python dependencies and creates a "Tesla Rack Control" shortcut on
-your desktop. After that, just double-click the desktop icon to run
-the program. The launcher checks GitHub for updates each time it starts
-and offers to pull the latest version.
+After that, double-click the desktop icon to run. The launcher checks
+GitHub for updates each time it starts and offers to pull the latest
+version. No git required — updates are downloaded as a zip.
 
-### Manual (developers)
+### Manual install (developers)
 
 ```sh
+git clone https://github.com/dnage76-beep/tesla-rack-control
+cd tesla-rack-control
 pip install -r requirements.txt
 python tesla_control.py
 ```
+
+Developer checkouts (folders with a `.git/` subdirectory) skip the
+launcher's auto-update prompt — manage versions with `git pull` directly.
 
 For the full operating procedure, read [`docs/GUIDE.md`](docs/GUIDE.md).
 For debugging, read [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
@@ -80,9 +84,11 @@ For debugging, read [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 ├── requirements.txt           pip dependencies
 │
 ├── tesla_control.py           the program -- run this
-├── launcher.py                update-checker, hands off to tesla_control
+├── launcher.py                update-checker (HTTP/zip), launches tesla_control
 ├── launcher.bat               Windows double-click wrapper for launcher.py
-├── install.bat                Windows first-time setup (pip + shortcut)
+├── install_one_click.py       end-user installer: download, pip install, shortcut
+├── Install_Tesla_Rack_Control.bat  the file you send Jordan -- runs the above
+├── install.bat                dev-machine setup (pip + shortcut, repo already cloned)
 ├── make_shortcut.py           creates a desktop .lnk on Windows
 ├── can_sniffer.py             passive CAN bus listener
 │
