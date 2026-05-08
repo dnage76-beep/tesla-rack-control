@@ -38,22 +38,40 @@ required.**
 
 For Jordan / Charlie / anyone setting up a fresh laptop:
 
-1. Make sure **32-bit Python 3.9+** is installed (from
-   https://www.python.org/, with "Add Python to PATH" ticked).
-   32-bit is required because the SYS TEC `USBCAN32.dll` is 32-bit.
+1. Install **32-bit Python 3.9+** from https://www.python.org/ — tick
+   "Add Python to PATH" during install. 32-bit is required because
+   the SYS TEC `USBCAN32.dll` is 32-bit.
 2. Download
    [`Install_Tesla_Rack_Control.bat`](https://raw.githubusercontent.com/dnage76-beep/tesla-rack-control/main/Install_Tesla_Rack_Control.bat)
-   (right-click → Save link as…) and **double-click it**. It downloads
-   the latest version of Tesla Rack Control to `~/TeslaRackControl`,
-   pip-installs the dependencies, and creates a "Tesla Rack Control"
-   shortcut on the desktop.
+   (right-click → Save link as…) and **double-click it**. The script
+   pulls the latest version of Tesla Rack Control into
+   `%USERPROFILE%\TeslaRackControl`, pip-installs the dependencies,
+   and drops a **"Tesla Rack Control"** shortcut on the desktop.
 3. Install the **SYS TEC sysWORXX USB-CAN driver** from
    https://www.systec-electronic.com/en/services-support/downloads.
-   This one is vendor-proprietary so it cannot be auto-installed.
+   Vendor-proprietary, so we can't auto-install it.
 
-After that, double-click the desktop icon to run. The launcher checks
-GitHub for updates each time it starts and offers to pull the latest
-version. No git required — updates are downloaded as a zip.
+If Windows SmartScreen flags the .bat: click "More info" → "Run anyway".
+
+#### Fallback if your network blocks the .bat
+
+Some corporate machines block batch-file downloads or PowerShell
+network calls. In that case:
+
+1. Browse to https://github.com/dnage76-beep/tesla-rack-control.
+2. Click **Code → Download ZIP**. (GitHub itself is rarely blocked.)
+3. Extract the zip to `C:\Users\<you>\TeslaRackControl`.
+4. Double-click `install.bat` inside that folder.
+
+The launcher's auto-updater works the same either way — it only needs
+`api.github.com` and `codeload.github.com`, both of which are reachable
+from any network where GitHub itself works.
+
+After install, double-click the **Tesla Rack Control** desktop icon
+and you'll get the desktop suite — sidebar with Dashboard, Run
+Steering Test, CAN Sniffer, Session Logs, CAN Captures, Documentation,
+Updates, About. The Run Test screen launches `tesla_control.py` (the
+real CAN-bus control program) in its own window.
 
 ### Manual install (developers)
 
@@ -61,7 +79,9 @@ version. No git required — updates are downloaded as a zip.
 git clone https://github.com/dnage76-beep/tesla-rack-control
 cd tesla-rack-control
 pip install -r requirements.txt
-python tesla_control.py
+python app.py            # the desktop suite
+# or directly:
+python tesla_control.py  # just the control GUI
 ```
 
 Developer checkouts (folders with a `.git/` subdirectory) skip the
@@ -83,12 +103,12 @@ For debugging, read [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 ├── LICENSE                    MIT
 ├── requirements.txt           pip dependencies
 │
-├── tesla_control.py           the program -- run this
-├── launcher.py                update-checker (HTTP/zip), launches tesla_control
+├── tesla_control.py           the live CAN-bus control program (v4.2.1)
+├── app.py                     desktop suite shell (sidebar, logs viewer, etc.)
+├── launcher.py                update-checker (HTTP/zip), then loads app.py
 ├── launcher.bat               Windows double-click wrapper for launcher.py
-├── install_one_click.py       end-user installer: download, pip install, shortcut
-├── Install_Tesla_Rack_Control.bat  the file you send Jordan -- runs the above
-├── install.bat                dev-machine setup (pip + shortcut, repo already cloned)
+├── Install_Tesla_Rack_Control.bat  one-click installer (download + extract + setup)
+├── install.bat                local-folder setup (pip + shortcut, source already present)
 ├── make_shortcut.py           creates a desktop .lnk on Windows
 ├── can_sniffer.py             passive CAN bus listener
 │

@@ -11,7 +11,8 @@ Double-click entry point. On startup:
    logs/, field_testing/sessions/, field_testing/captures/), updates
    `.version`, and re-runs `pip install -r requirements.txt` in case
    dependencies changed.
-5. Hands off to tesla_control.py.
+5. Hands off to app.py (the Tesla Rack Control Suite shell, which
+   in turn launches tesla_control.py from its Run Test screen).
 
 Designed for the one-click install flow where Jordan's machine does
 NOT have git. The HTTP/zip approach avoids any git dependency.
@@ -37,7 +38,7 @@ import zipfile
 from tkinter import messagebox, scrolledtext
 
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
-TARGET = "tesla_control.py"
+TARGET = "app.py"  # the desktop suite -- it spawns tesla_control.py from a button
 VERSION_FILE = ".version"
 
 OWNER = "dnage76-beep"
