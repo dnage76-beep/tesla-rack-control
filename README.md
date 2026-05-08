@@ -10,7 +10,7 @@ Tesla Model S electric power-steering rack. Designed for racks
 already flashed with
 [gregjhogan's pre-AP EPAS firmware patch](https://github.com/gregjhogan/tesla-pre-ap-epas-patch).
 
-The current program is `tesla_control.py` (v4.1.0). It needs only
+The current program is `tesla_control.py` (v4.2.1). It needs only
 a SYS TEC USB-CAN adapter and the patched rack. **No comma 3X is
 required.**
 
@@ -34,16 +34,32 @@ required.**
 
 ## Quick start
 
+### One-click install (Windows, recommended for Jordan)
+
+Prerequisites you install once, by hand:
+
+1. **32-bit Python 3.9+** from https://www.python.org/ — tick
+   "Add Python to PATH" during install. 32-bit is required because
+   the SYS TEC `USBCAN32.dll` is 32-bit.
+2. **Git for Windows** from https://git-scm.com/ — needed by the
+   auto-updater.
+3. **SYS TEC sysWORXX USB-CAN driver** from
+   https://www.systec-electronic.com/en/services-support/downloads.
+4. Clone this repo somewhere stable:
+   ```sh
+   git clone https://github.com/dnage76-beep/tesla-rack-control
+   ```
+
+Then double-click **`install.bat`** in the repo folder. It pip-installs
+the Python dependencies and creates a "Tesla Rack Control" shortcut on
+your desktop. After that, just double-click the desktop icon to run
+the program. The launcher checks GitHub for updates each time it starts
+and offers to pull the latest version.
+
+### Manual (developers)
+
 ```sh
 pip install -r requirements.txt
-```
-
-Plus the SYS TEC sysWORXX USB-CAN driver from
-https://www.systec-electronic.com/en/services-support/downloads.
-
-Then:
-
-```sh
 python tesla_control.py
 ```
 
@@ -64,6 +80,10 @@ For debugging, read [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 ├── requirements.txt           pip dependencies
 │
 ├── tesla_control.py           the program -- run this
+├── launcher.py                update-checker, hands off to tesla_control
+├── launcher.bat               Windows double-click wrapper for launcher.py
+├── install.bat                Windows first-time setup (pip + shortcut)
+├── make_shortcut.py           creates a desktop .lnk on Windows
 ├── can_sniffer.py             passive CAN bus listener
 │
 ├── docs/
@@ -152,7 +172,9 @@ dependency.
 
 | Version | Status        | File                                                | Headline                                       |
 |---------|---------------|-----------------------------------------------------|------------------------------------------------|
-| v4.1.0  | **current**   | `tesla_control.py`                                  | Adds runtime 30 MPH MODE toggle                |
+| v4.2.1  | **current**   | `tesla_control.py`                                  | Non-blocking shift burst, fixes EPAS_d039_kfc_reset (field-validated 2026-05-08) |
+| v4.2.0  | superseded    | `tesla_control.py` @ tag v4.2.0                     | PRND shift, brake read, vitals strip, save-to-GitHub |
+| v4.1.0  | superseded    | `tesla_control.py` @ tag v4.1.0                     | Adds runtime 30 MPH MODE toggle                |
 | v4.0    | superseded    | `archive/legacy/tesla_control_v4.py`                | First no-3X version, unified GUI               |
 | v3.0    | superseded    | `archive/legacy/steer.py`                           | Keyboard-only variant with wheel canvas        |
 | v2.0    | superseded    | `archive/legacy/tesla_steering_test.py`             | First full GUI with safety architecture        |
