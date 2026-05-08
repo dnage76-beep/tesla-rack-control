@@ -1,0 +1,11 @@
+[2026-05-07 21:48:52.428] session start (20260507_214852)
+[2026-05-07 21:48:52.695] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-07 21:48:52.695] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-07 21:48:52.695] err -> OUT_OF_RANGE
+[2026-05-07 21:48:52.780] EAC: INHIBITED -> AVAILABLE (err=OUT_OF_RANGE)
+[2026-05-07 21:49:10.286] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-07 21:49:53.863] mode change: keyboard
+[2026-05-07 22:03:09.809] brake: PRESSED
+[2026-05-07 22:03:42.658] E-STOP: window closed
+[2026-05-07 22:03:42.664] CAN closed
+[2026-05-07 22:06:03.684] snapshot: saving as 'test_220601'
