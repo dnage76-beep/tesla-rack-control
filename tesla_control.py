@@ -176,7 +176,7 @@ from datetime import datetime
 from tkinter import font
 from typing import Optional
 
-__version__ = "4.2.0"
+__version__ = "4.2.1"
 
 
 # ============================================================================
@@ -224,14 +224,20 @@ ID_SBW_RQ_SCCM          = 0x6D   # gear shift request from steering column
 
 # Gear shift -- 0x6D SBW_RQ_SCCM transmission parameters.
 #
-# The real stalk sends this at ~100 Hz continuously. To request a
-# shift, we burst N frames at 10 ms intervals with the desired
-# TSL_RND_Posn_StW (or TSL_P_Psd_StW for Park button), then return
-# to IDLE for a settling tail. Empirically Tesla DI accepts shifts
-# with as few as 5 active frames; 10 is conservative.
-SBW_BURST_ACTIVE_FRAMES   = 10
-SBW_BURST_IDLE_FRAMES     = 5
-SBW_BURST_PERIOD_MS       = 10   # 100 Hz, matches real stalk
+# v4.2.1 (2026-05-07 evening): non-blocking burst.
+# Previously the burst blocked the worker for ~350 ms which caused
+# the rack to fault EPAS_d039_kfc_reset because 0x488 stopped during
+# the gap. Now the burst interleaves into the main 50 Hz loop --
+# one 0x6D frame goes out every SBW_BURST_PERIOD_MS without blocking.
+# The 0x488 keepalive stream continues uninterrupted.
+#
+# Also bumped the rate from 100 Hz to 200 Hz (5 ms period). At 100 Hz
+# we were tied with the real stalk's IDLE-frame stream and lost ~50%
+# of arbitration races. At 200 Hz our frames win 4 of every 5.
+SBW_BURST_ACTIVE_FRAMES   = 30   # 30 active frames at 200 Hz = 150 ms of "request gear X"
+SBW_BURST_IDLE_FRAMES     = 10   # 10 idle frames at 200 Hz = 50 ms of "stalk released"
+SBW_BURST_PERIOD_MS       = 5    # 200 Hz, 4x the real stalk's rate
+SBW_VERIFY_AFTER_MS       = 200  # log resulting gear this long after burst ends
 
 # TSL_RND_Posn_StW values (verified from opendbc tesla_can.dbc, BO 109)
 TSL_RND_IDLE   = 0
@@ -491,8 +497,17 @@ class ControlState:
     # rnd/p values, then SBW_BURST_IDLE_FRAMES of IDLE, then clears
     # to None. While shift_target is set, the GUI's gear buttons stay
     # disabled to prevent overlapping shifts.
-    shift_target: Optional[tuple] = None  # (rnd_posn, p_pressed, label)
+    shift_target: Optional[tuple] = None  # (rnd_posn, p_pressed, label) -- set by GUI, cleared by worker when burst done
     counter_sbw: int = 0
+    # v4.2.1 non-blocking burst state machine. Phases:
+    #   None       -> not shifting
+    #   "active"   -> sending shift-request frames at 200 Hz
+    #   "idle"     -> sending IDLE-stalk frames at 200 Hz (settling tail)
+    #   "verify"   -> burst done, waiting for DI to update gear, then log result
+    shift_phase: Optional[str] = None
+    shift_frames_left: int = 0
+    shift_verify_at: float = 0.0
+    shift_label: str = ""
     # runtime 30 MPH MODE toggle (off by default). When True, worker
     # transmits 0x155 at 200 Hz to drown out the real ESP module and
     # convince the rack the car is moving.
@@ -677,11 +692,20 @@ class CanWorker(threading.Thread):
             self.bus = None
             self.log("CAN closed")
 
+    def _clear_shift_state(self):
+        """Reset the shift state machine. Called on E-STOP and disconnect
+        so a new session starts clean."""
+        self.ctrl.shift_target = None
+        self.ctrl.shift_phase = None
+        self.ctrl.shift_frames_left = 0
+        self.ctrl.shift_label = ""
+
     def trigger_estop(self, reason: str):
         if not self.ctrl.estop:
             self.ctrl.estop = True
             self.ctrl.estop_reason = reason
             self.ctrl.engaged = False
+            self._clear_shift_state()  # cancel any in-flight shift burst
             self.log(f"E-STOP: {reason}")
             if self.logger:
                 self.logger.sample(self.ctrl, self.status, event=f"estop:{reason}")
@@ -867,47 +891,77 @@ class CanWorker(threading.Thread):
             cur = target
         self.ctrl.commanded_angle_deg = cur
 
-    def _execute_shift_burst(self):
-        """Send the queued shift_target as a 0x6D burst.
-
-        Blocks the worker for ~150 ms (15 frames * 10 ms) but the
-        watchdogs at the top of run() are already idle for that
-        duration since this is a one-shot user action with no
-        steering active. The 0x488 stream pauses momentarily, which
-        is fine because we refuse shifts unless we're disengaged.
+    def _start_shift_burst(self):
+        """Promote ctrl.shift_target (set by GUI) into the state-machine
+        fields so the main loop can interleave the burst with the
+        50 Hz steering keepalive. Non-blocking: returns immediately.
         """
         target = self.ctrl.shift_target
         if target is None:
             return
         rnd, p, label = target
-        self.log(f"SHIFT: requesting {label} via 0x6D burst")
+        self.ctrl.shift_label = label
+        self.ctrl.shift_phase = "active"
+        self.ctrl.shift_frames_left = SBW_BURST_ACTIVE_FRAMES
+        self.log(f"SHIFT: requesting {label} via 0x6D burst "
+                 f"({SBW_BURST_ACTIVE_FRAMES} active + "
+                 f"{SBW_BURST_IDLE_FRAMES} idle frames at "
+                 f"{1000//SBW_BURST_PERIOD_MS} Hz)")
+
+    def _send_one_sbw_frame(self):
+        """Send one 0x6D frame matching the current shift phase, then
+        advance the state machine. Called from the main loop whenever
+        next_sbw deadline expires.
+        """
+        if self.ctrl.shift_phase == "active":
+            target = self.ctrl.shift_target
+            if target is None:
+                # Defensive: GUI cleared shift_target; abort burst.
+                self.ctrl.shift_phase = None
+                return
+            rnd, p, _label = target
+        elif self.ctrl.shift_phase == "idle":
+            rnd, p = TSL_RND_IDLE, TSL_P_IDLE
+        else:
+            return  # not bursting
+
         try:
-            for i in range(SBW_BURST_ACTIVE_FRAMES):
-                data = build_sbw_rq(rnd, p, self.ctrl.counter_sbw)
-                self.bus.send(can.Message(
-                    arbitration_id=ID_SBW_RQ_SCCM,
-                    data=data, is_extended_id=False,
-                ))
-                self.ctrl.counter_sbw = (self.ctrl.counter_sbw + 1) & 0x0F
-                time.sleep(SBW_BURST_PERIOD_MS / 1000.0)
-            for i in range(SBW_BURST_IDLE_FRAMES):
-                data = build_sbw_rq(TSL_RND_IDLE, TSL_P_IDLE,
-                                    self.ctrl.counter_sbw)
-                self.bus.send(can.Message(
-                    arbitration_id=ID_SBW_RQ_SCCM,
-                    data=data, is_extended_id=False,
-                ))
-                self.ctrl.counter_sbw = (self.ctrl.counter_sbw + 1) & 0x0F
-                time.sleep(SBW_BURST_PERIOD_MS / 1000.0)
+            data = build_sbw_rq(rnd, p, self.ctrl.counter_sbw)
+            self.bus.send(can.Message(
+                arbitration_id=ID_SBW_RQ_SCCM,
+                data=data, is_extended_id=False,
+            ))
+            self.ctrl.counter_sbw = (self.ctrl.counter_sbw + 1) & 0x0F
         except Exception as e:
             self.log(f"SHIFT FAILED: TX 0x6D error: {e}")
-        self.ctrl.shift_target = None
-        # Verify the shift landed (best effort -- DI may take 100-200 ms
-        # to update DI_gear after accepting the shift)
-        time.sleep(0.2)
-        if self.status.di_torque2_rx_count > 0:
-            self.log(f"SHIFT post-burst gear: "
-                     f"{DI_GEAR_NAMES.get(self.status.gear,'?')}")
+            self.ctrl.shift_phase = None
+            self.ctrl.shift_target = None
+            return
+
+        self.ctrl.shift_frames_left -= 1
+        if self.ctrl.shift_frames_left > 0:
+            return
+
+        # Phase complete -- advance.
+        if self.ctrl.shift_phase == "active":
+            self.ctrl.shift_phase = "idle"
+            self.ctrl.shift_frames_left = SBW_BURST_IDLE_FRAMES
+        elif self.ctrl.shift_phase == "idle":
+            self.ctrl.shift_phase = "verify"
+            self.ctrl.shift_verify_at = (time.monotonic()
+                                         + SBW_VERIFY_AFTER_MS / 1000.0)
+            self.ctrl.shift_target = None  # GUI button re-enables
+
+    def _maybe_verify_shift(self, now: float):
+        """If a burst recently ended, log the resulting gear once DI
+        has had time to update."""
+        if (self.ctrl.shift_phase == "verify"
+                and now >= self.ctrl.shift_verify_at):
+            gear_name = DI_GEAR_NAMES.get(self.status.gear, "?")
+            self.log(f"SHIFT post-burst gear: {gear_name} "
+                     f"(requested {self.ctrl.shift_label})")
+            self.ctrl.shift_phase = None
+            self.ctrl.shift_label = ""
 
     def run(self):
         if not self.connect():
@@ -916,6 +970,7 @@ class CanWorker(threading.Thread):
         next_gtw = next_das
         next_epb = next_das
         next_esp = next_das
+        next_sbw = next_das   # v4.2.1: non-blocking shift burst
         last_loop = 0.0
 
         while not self._stop.is_set():
@@ -945,19 +1000,21 @@ class CanWorker(threading.Thread):
             self._check_failsafes(now, last_loop)
             last_loop = now
 
-            # ----- Shift burst (consumes shift_target if set) -----
-            if self.ctrl.shift_target is not None and not self.ctrl.estop:
-                self._execute_shift_burst()
-                # The burst blocks the worker for ~250-350 ms (10 active
-                # frames + 5 idle frames at 100 Hz, plus 200 ms verify
-                # sleep). Reset the loop-overrun baseline AND the TX
-                # deadlines so the next failsafe check doesn't see the
-                # burst as a missed tick.
-                last_loop = time.monotonic()
-                next_das = last_loop
-                next_gtw = last_loop
-                next_epb = last_loop
-                next_esp = last_loop
+            # ----- Shift burst state machine (non-blocking, v4.2.1) -----
+            # GUI sets ctrl.shift_target via request_shift(). The state
+            # machine takes it over and emits 0x6D frames at 200 Hz
+            # alongside the normal 0x488 keepalive. Replaces the old
+            # blocking _execute_shift_burst() which caused EPAS resets
+            # by silencing 0x488 for 350 ms.
+            if (self.ctrl.shift_target is not None
+                    and self.ctrl.shift_phase is None
+                    and not self.ctrl.estop):
+                self._start_shift_burst()
+                next_sbw = now   # send first frame this iteration
+            if self.ctrl.shift_phase in ("active", "idle") and now >= next_sbw:
+                self._send_one_sbw_frame()
+                next_sbw = now + SBW_BURST_PERIOD_MS / 1000.0
+            self._maybe_verify_shift(now)
 
             # ----- E-STOP path: send disengaged 0x488 frames and idle -----
             if self.ctrl.estop:
@@ -1043,6 +1100,12 @@ class CanWorker(threading.Thread):
             if SYNTHESIZE_GTW:            deadlines.append(next_gtw)
             if SYNTHESIZE_EPB:            deadlines.append(next_epb)
             if self.ctrl.thirty_mph_mode: deadlines.append(next_esp)
+            # v4.2.1: when bursting a gear shift, use the 5 ms SBW
+            # deadline to drive the loop at 200 Hz so 0x6D frames go
+            # out at the requested rate. 0x488/0x214 keep their own
+            # cadence but the loop iterates faster.
+            if self.ctrl.shift_phase in ("active", "idle"):
+                deadlines.append(next_sbw)
             sleep_until = min(deadlines)
             BUSY_WAIT_S = 0.002
             sleep_s = sleep_until - time.monotonic()
@@ -1922,7 +1985,8 @@ class App(tk.Tk):
         if self.ctrl.engaged:
             self._log_local("REFUSED shift: disengage steering control first")
             return
-        if self.ctrl.shift_target is not None:
+        if (self.ctrl.shift_target is not None
+                or self.ctrl.shift_phase is not None):
             self._log_local("REFUSED shift: another shift is in flight")
             return
 

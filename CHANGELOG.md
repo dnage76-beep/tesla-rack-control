@@ -7,6 +7,47 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [4.2.1] -- 2026-05-07 (evening)
+
+### Fixed (non-blocking shift burst)
+Charlie's first in-car shift attempt with v4.2.0 produced
+`EPAS_d039_kfc_reset` -- the rack reset itself because the blocking
+`_execute_shift_burst()` paused `0x488` for ~350 ms, far past the
+rack's tolerance. Diagnosis confirmed by the session log:
+`AVAILABLE -> INHIBITED (err=OUT_OF_RANGE)` immediately after the
+burst started.
+
+Fix: replaced the blocking burst with a state machine that
+interleaves `0x6D` frames into the existing 50 Hz worker loop. The
+`0x488` keepalive stream now continues uninterrupted during a shift.
+Three new `ControlState` fields drive the state machine:
+`shift_phase` (None / "active" / "idle" / "verify"),
+`shift_frames_left`, `shift_verify_at`.
+
+While the shift is active, the worker's hybrid-sleep deadline list
+includes `next_sbw`, so the loop iterates at the burst rate (5 ms)
+without slowing the steering keepalive.
+
+### Changed (shift burst rate and duration)
+The same fix increases the shift rate from 100 Hz to **200 Hz** and
+the active-phase duration from 100 ms to **150 ms** (30 frames).
+Charlie's earlier shift attempt also failed to register because at
+100 Hz we tied with the real stalk's IDLE-frame stream and lost
+~50% of arbitration races. At 200 Hz our shift frames win 4 of every
+5 -- the SCCM should now see a clean shift request.
+
+`SBW_BURST_PERIOD_MS`: 10 -> 5
+`SBW_BURST_ACTIVE_FRAMES`: 10 -> 30
+`SBW_BURST_IDLE_FRAMES`: 5 -> 10
+`SBW_VERIFY_AFTER_MS`: new constant, 200 ms
+
+### Cleanup
+- E-STOP and disconnect now clear shift state via `_clear_shift_state()`
+- `request_shift` refusal expanded to also block while verify phase
+  is in flight (prevents rapid double-clicks from queueing during
+  the 200 ms post-burst settle)
+- `__version__` bumped to "4.2.1"
+
 ## [4.2.0] -- 2026-05-07
 
 ### Status notes at release
