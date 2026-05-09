@@ -1,3 +1,7 @@
 # Tesla Rack Control runtime dependencies.
 # tkinter ships with the standard Python distribution and does not need pip.
 python-can>=4.0
+# Pillow is used by the WheelCanvas widget to rotate a photographed
+# wheel image. The widget falls back to a vector drawing if Pillow
+# is unavailable, so this is technically optional.
+Pillow>=9.0

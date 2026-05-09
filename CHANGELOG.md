@@ -7,6 +7,45 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [4.3.3] -- 2026-05-09 (later)
+
+### Added (image wheel)
+
+The steering-wheel widget can now show a real photographed wheel
+that rotates with the commanded angle. Drop a transparent-background
+PNG into `assets/wheel.png` and the GUI uses it. Without the file,
+the original vector-drawn wheel is shown.
+
+`tools/prepare_wheel.py` is a small helper that takes a JPG or PNG
+with a mostly-white background, removes it by alpha threshold,
+crops to content, and writes `assets/wheel.png`. Default threshold
+is 240/255 per channel; lower with `--threshold 220` for sources
+with shadows.
+
+Pillow is now in `requirements.txt`. The widget `try`/`except`s the
+import; if Pillow isn't installed the widget silently falls back to
+the vector drawing.
+
+### Added (PRND keys)
+
+`P / R / N / D` keys now fire shifts directly from the keyboard.
+Bindings are on `<KeyPress-...>`, so a single tap is enough and the
+keys work while `<Left>` / `<Right>` are held -- you can steer and
+shift simultaneously without touching the mouse.
+
+The keyboard help text in the GUI lists the new keys.
+
+### Changed (shift-while-engaged gate removed)
+
+`request_shift()` no longer refuses when steering is engaged. The
+non-blocking 200 Hz burst from v4.2.1 keeps `0x488` keepalives
+flowing through a shift, so the rack does not lose steering control
+mid-shift. The shift is logged loudly as `SHIFT WHILE ENGAGED -> X`
+so it stands out in session logs.
+
+The other gates (E-STOP, in-flight shift, real-speed, brake gate
+on selected gears) are unchanged.
+
 ## [4.3.0] -- 2026-05-09
 
 ### Changed (full 360° lock-to-lock angle range)

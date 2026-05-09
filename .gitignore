@@ -8,3 +8,7 @@ venv/
 
 # v4 session logs
 
+
+# WheelCanvas asset prep -- sources are user-supplied, only the
+# prepared wheel.png is shipped (and even that is optional).
+assets/wheel_source.*
