@@ -1,10 +1,28 @@
 """
-Tesla Rack Control  --  v4.3.0 (full 360° lock-to-lock angle range)
+Tesla Rack Control  --  v4.3.3 (image wheel + PRND while steering)
 ==================================================================
 
 Single-program steering control for the patched 2013 Tesla Model S EPAS
 rack. Drives the rack from a SYS TEC USB-CANmodul1 (model 3204001) on
 Windows, with NO comma 3X required.
+
+WHAT IS NEW IN v4.3.3 (vs v4.3.0)
+    - Steering wheel widget can now show a real photographed wheel
+      that rotates with the commanded angle. Drop a transparent PNG
+      into assets/wheel.png and the GUI uses it. Without the asset
+      the original vector wheel is drawn instead. Helper script:
+      `python tools/prepare_wheel.py path/to/photo.jpg` removes a
+      mostly-white background and writes assets/wheel.png. Requires
+      Pillow (added to requirements.txt).
+    - Keyboard PRND: P / R / N / D keys now fire shifts directly.
+      Works while LEFT / RIGHT arrows are held, so you can steer
+      and shift simultaneously without taking your hands off the
+      keyboard.
+    - The "must disengage to shift" gate is removed. The non-
+      blocking 200 Hz burst from v4.2.1 keeps 0x488 keepalives
+      flowing during a shift, so the rack does not lose steering
+      control mid-shift. The shift is logged as
+      "SHIFT WHILE ENGAGED -> X" so it stands out in session logs.
 
 WHAT IS NEW IN v4.3 (vs v4.2.1)
     - HARD_ANGLE_LIMIT_DEG raised from 180 to 360. Wheel can now
@@ -193,7 +211,7 @@ from datetime import datetime
 from tkinter import font
 from typing import Optional
 
-__version__ = "4.3.0"
+__version__ = "4.3.3"
 
 
 # ============================================================================
@@ -1139,18 +1157,77 @@ class CanWorker(threading.Thread):
 # ============================================================================
 
 class WheelCanvas:
-    """Encapsulates the steering wheel widget. Drawn into a tk.Canvas."""
+    """Encapsulates the steering wheel widget. Drawn into a tk.Canvas.
+
+    If assets/wheel.png exists relative to this file, the widget shows
+    a rotating image of that wheel (use tools/prepare_wheel.py to make
+    one with a transparent background). Otherwise it falls back to a
+    minimal vector drawing.
+    """
+
+    _ASSET_REL = "assets/wheel.png"
 
     def __init__(self, parent, size=240, bg="#1c1c1f"):
         self.size = size
         self.bg = bg
         self.canvas = tk.Canvas(parent, width=size, height=size,
                                 bg=bg, highlightthickness=0)
+        self._pil_mod = None
+        self._imagetk_mod = None
+        self._image_pil = None
+        self._image_tk = None
+        self._tried_pil_load = False
+
+    def _load_image(self):
+        if self._tried_pil_load:
+            return
+        self._tried_pil_load = True
+        try:
+            from PIL import Image, ImageTk
+        except ImportError:
+            return
+        here = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(here, *self._ASSET_REL.split("/"))
+        if not os.path.exists(path):
+            return
+        try:
+            img = Image.open(path).convert("RGBA")
+            img.thumbnail((self.size, self.size), Image.LANCZOS)
+        except Exception:
+            return
+        self._pil_mod = Image
+        self._imagetk_mod = ImageTk
+        self._image_pil = img
 
     def pack(self, **kwargs):
         self.canvas.pack(**kwargs)
 
     def draw(self, angle_deg: float, label_below: str = ""):
+        self._load_image()
+        if self._image_pil is not None:
+            self._draw_image(angle_deg, label_below)
+        else:
+            self._draw_vector(angle_deg, label_below)
+
+    def _draw_image(self, angle_deg: float, label_below: str):
+        c = self.canvas
+        c.delete("all")
+        cx = cy = self.size // 2
+        # PIL rotate is counter-clockwise; positive angle_deg = right
+        # turn = clockwise on screen, so negate.
+        rotated = self._image_pil.rotate(
+            -angle_deg, resample=self._pil_mod.BICUBIC, expand=False
+        )
+        # Keep a reference on self so Tk doesn't garbage-collect it.
+        self._image_tk = self._imagetk_mod.PhotoImage(rotated)
+        c.create_image(cx, cy, image=self._image_tk)
+        c.create_text(cx, cy + 6, text=f"{angle_deg:+.0f}",
+                      fill="#e8e8e8", font=("Consolas", 14, "bold"))
+        if label_below:
+            c.create_text(cx, self.size - 14, text=label_below,
+                          fill="#fbbf24", font=("Segoe UI", 10, "bold"))
+
+    def _draw_vector(self, angle_deg: float, label_below: str = ""):
         c = self.canvas
         c.delete("all")
         cx = cy = self.size // 2
@@ -1252,6 +1329,13 @@ class App(tk.Tk):
         self.bind("<KeyPress-Right>",  self._key_right_down)
         self.bind("<KeyRelease-Right>",self._key_right_up)
         self.bind("<KeyPress-space>",  self._key_space)
+        # v4.3.3: P/R/N/D fire shifts. Bound on KeyPress (not release)
+        # so a single tap is enough; works while arrow keys are held.
+        for letter, gear in (("p", "P"), ("r", "R"), ("n", "N"), ("d", "D")):
+            self.bind(f"<KeyPress-{letter}>",
+                      lambda e, g=gear: self.request_shift(g))
+            self.bind(f"<KeyPress-{letter.upper()}>",
+                      lambda e, g=gear: self.request_shift(g))
 
     def _build_ui(self):
         # ===================== HEADER =====================
@@ -1456,6 +1540,7 @@ class App(tk.Tk):
             "LEFT / RIGHT arrow .... hold to steer",
             f"steer rate ............ {KEYBOARD_STEER_RATE_DEG_PER_SEC:.0f} deg/s",
             "SPACE ................. snap target to 0",
+            "P / R / N / D ......... shift gear",
             "Q or ESC .............. E-STOP",
             "",
             "Click in the window if",
@@ -2000,8 +2085,12 @@ class App(tk.Tk):
             self._log_local("REFUSED shift: E-STOP active")
             return
         if self.ctrl.engaged:
-            self._log_local("REFUSED shift: disengage steering control first")
-            return
+            # v4.3.3: shift while engaged is allowed. The non-blocking
+            # 200 Hz burst from v4.2.1 keeps 0x488 keepalives flowing
+            # during the shift, so the rack does not lose steering
+            # control. Log it loud so the .log makes the gear change
+            # easy to spot when reading later.
+            self._log_local(f"SHIFT WHILE ENGAGED -> {gear_label}")
         if (self.ctrl.shift_target is not None
                 or self.ctrl.shift_phase is not None):
             self._log_local("REFUSED shift: another shift is in flight")
