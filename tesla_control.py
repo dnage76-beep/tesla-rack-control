@@ -1,10 +1,27 @@
 """
-Tesla Rack Control  --  v4.2.0 (PRND + gear shift + polished UI)
-================================================================
+Tesla Rack Control  --  v4.3.0 (full 360° lock-to-lock angle range)
+==================================================================
 
 Single-program steering control for the patched 2013 Tesla Model S EPAS
 rack. Drives the rack from a SYS TEC USB-CANmodul1 (model 3204001) on
 Windows, with NO comma 3X required.
+
+WHAT IS NEW IN v4.3 (vs v4.2.1)
+    - HARD_ANGLE_LIMIT_DEG raised from 180 to 360. Wheel can now
+      command one full revolution in either direction (720° total
+      range). Mechanical lock-to-lock on a 2013 Model S rack is
+      ~±540°, so 360° leaves a comfortable safety margin to the
+      end-stops.
+    - Slider, keyboard input, and startup banner all auto-scale
+      from the constant. No other knob changes: rate stays at 150
+      deg/sec, divergence trip stays at 30 deg, all watchdogs
+      unchanged. Bigger range with same rate just means you can
+      drive there, not slam there.
+    - First-test note: at standstill the rack accepts up to ~60°
+      without 30 MPH MODE. Above that you need 30 MPH MODE ON. The
+      software clamp doesn't change which physical region of the
+      angle envelope is reachable -- it only stops being the
+      bottleneck.
 
 WHAT IS NEW IN v4.2 (vs v4.1)
     PRND awareness:
@@ -176,7 +193,7 @@ from datetime import datetime
 from tkinter import font
 from typing import Optional
 
-__version__ = "4.2.1"
+__version__ = "4.3.0"
 
 
 # ============================================================================
@@ -190,7 +207,7 @@ SYSTEC_CHANNEL = 0              # CAN0 (USB-CANmodul1 has only one channel)
 
 # Safety envelope (raised in v4.1 so 30 MPH MODE has somewhere to go;
 # the rack itself enforces tighter caps when 30 MPH MODE is OFF).
-HARD_ANGLE_LIMIT_DEG = 180.0    # Software clamp; rack will reject above ~60 if 30 MPH MODE off
+HARD_ANGLE_LIMIT_DEG = 360.0    # Software clamp; rack will reject above ~60 if 30 MPH MODE off (v4.3: ±360°, one full turn each way)
 MAX_RATE_DEG_PER_SEC = 150.0    # Software cap; rack at-speed allows ~250 deg/s
 ANGLE_DIVERGENCE_LIMIT_DEG = 30.0  # commanded vs measured before E-STOP (raised for bigger commands)
 RX_TIMEOUT_MS = 500             # Lose 0x370 for this long -> E-STOP
