@@ -7,6 +7,43 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [4.3.0] -- 2026-05-09
+
+### Changed (full 360° lock-to-lock angle range)
+
+`HARD_ANGLE_LIMIT_DEG` raised from 180 to 360. The wheel can now
+command one full revolution in either direction -- 720° of total
+range, lock-to-lock. Mechanical lock-to-lock on a 2013 Model S rack
+is approximately ±540°, so the new clamp leaves a comfortable
+safety margin to the end-stops.
+
+The slider, keyboard handler, and startup banner all parameterize
+on the constant, so no other source changes were needed for those.
+
+### Unchanged
+
+- `MAX_RATE_DEG_PER_SEC` stays at 150. Bigger range with the same
+  rate cap means you can drive there over ~2.4 s, not slam there.
+- `DIVERGENCE_TRIP_DEG` stays at 30 (still disabled by default).
+- All watchdogs (RX timeout, EAC bounce, loop overrun, bus error)
+  unchanged.
+
+### Operational note
+
+At standstill the rack accepts roughly ±60° without 30 MPH MODE
+because of the firmware's at-speed gate. To reach the new ±360°
+software clamp on a real rack the user still has to turn 30 MPH
+MODE on. The clamp bump doesn't change which physical region of
+the angle envelope is reachable -- it only stops being the
+bottleneck.
+
+### First-test recommendation
+
+On bench: sweep slowly from 0 to +360 with 30 MPH MODE ON, watch
+for any rack DTC, then -360. On vehicle (front wheels off the
+ground): same procedure. Don't drive to the new limit at full
+rate on first try; ramp via the slider.
+
 ## [4.2.1] -- 2026-05-07 (evening)
 
 ### Fixed (non-blocking shift burst)
