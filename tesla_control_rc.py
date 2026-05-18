@@ -1,5 +1,5 @@
 """
-Tesla Rack Control RC  --  v5.0.0-rc3
+Tesla Rack Control RC  --  v5.0.3
 =====================================
 
 Variant of tesla_control.py v4.3.3 that takes its steering and shift
@@ -73,7 +73,7 @@ except ImportError:
 import tesla_control as base
 
 
-__version__ = "5.0.0-rc3"
+__version__ = "5.0.3"
 
 
 # ============================================================================

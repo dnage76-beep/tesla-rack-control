@@ -59,7 +59,7 @@ class PageDeco:
         canvas.setFont("Helvetica-Bold", 8); canvas.setFillColor(HEAD)
         canvas.drawString(0.75 * inch, 10.55 * inch, "TESLA RACK CONTROL")
         canvas.setFont("Helvetica", 8); canvas.setFillColor(DIM)
-        canvas.drawRightString(7.75 * inch, 10.55 * inch, "v5.0.0-rc3")
+        canvas.drawRightString(7.75 * inch, 10.55 * inch, "v5.0.3")
         canvas.restoreState()
 
 
@@ -557,7 +557,7 @@ def build():
         leading=13, spaceAfter=0.18 * inch,
     )
     story.append(Paragraph(
-        f"v5.0.0-rc3 &nbsp;·&nbsp; "
+        f"v5.0.3 &nbsp;·&nbsp; "
         f"Spektrum DX8 → AR6200 → Arduino Nano → Tesla rack &nbsp;·&nbsp; "
         f"{datetime.now().strftime('%d %B %Y')}",
         sub_style))

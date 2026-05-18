@@ -7,7 +7,7 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
-## [5.0.0-rc3] -- 2026-05-17  (channel polarity fixes + signal-loss detection)
+## [5.0.3] -- 2026-05-17  (channel polarity fixes + signal-loss detection)
 
 ### Changed (channel polarities per Derek's DX8 layout)
 

@@ -207,9 +207,7 @@ dependency.
 
 | Version | Status        | File                                                | Headline                                       |
 |---------|---------------|-----------------------------------------------------|------------------------------------------------|
-| v5.0.0-rc3 | **rc**     | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/`  | Channel polarities for Derek's DX8 + signal-loss detection |
-| v5.0.0-rc2 | superseded | tag v5.0.0-rc2                                      | Openpilot expo curve, runtime calibration, PDF guide |
-| v5.0.0-rc1 | superseded | tag v5.0.0-rc1                                      | First RC bridge cut (linear, no PDF)           |
+| v5.0.3  | **current**   | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/`  | RC bridge: DX8 + AR6200 + Arduino Nano, expo curve, signal-loss detection |
 | v4.3.3  | **current**   | `tesla_control.py`                                  | Image wheel + PRND keys while steering         |
 | v4.3.0  | superseded    | `tesla_control.py` @ tag v4.3.0                     | HARD_ANGLE_LIMIT_DEG raised to 360 (lock-to-lock) |
 | v4.2.1  | superseded    | `tesla_control.py` @ tag v4.2.1                     | Non-blocking shift burst, fixes EPAS_d039_kfc_reset |
