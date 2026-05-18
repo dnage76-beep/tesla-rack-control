@@ -207,7 +207,8 @@ dependency.
 
 | Version | Status        | File                                                | Headline                                       |
 |---------|---------------|-----------------------------------------------------|------------------------------------------------|
-| v5.0.0-rc1 | **rc**     | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/`  | Spektrum DX8 + AR6200 + Arduino Nano RC bridge |
+| v5.0.0-rc2 | **rc**     | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/`  | Openpilot expo curve, runtime calibration, PDF guide |
+| v5.0.0-rc1 | superseded | tag v5.0.0-rc1                                      | First RC bridge cut (linear, no PDF)           |
 | v4.3.3  | **current**   | `tesla_control.py`                                  | Image wheel + PRND keys while steering         |
 | v4.3.0  | superseded    | `tesla_control.py` @ tag v4.3.0                     | HARD_ANGLE_LIMIT_DEG raised to 360 (lock-to-lock) |
 | v4.2.1  | superseded    | `tesla_control.py` @ tag v4.2.1                     | Non-blocking shift burst, fixes EPAS_d039_kfc_reset |

@@ -7,6 +7,89 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [5.0.0-rc2] -- 2026-05-17  (RC steering feel + PDF guide)
+
+### Changed (steering math: now openpilot-faithful)
+
+Per code review against openpilot's `tools/joystick/joystickd.py`,
+the stick-to-angle mapping is now byte-for-byte the same as what
+commaai ships in production for joystick control:
+
+- **Expo curve**: replaced the prior linear-with-deadband mapping
+  with the openpilot cubic blend `output = 0.4 * x^3 + 0.6 * x`.
+  Result: small stick movements give gentle wheel corrections, large
+  movements still reach full ±360° lock-to-lock. Feels natural across
+  the entire range instead of twitchy at the extremes.
+- **Runtime endpoint calibration**: replaced the hardcoded
+  1000/2000 µs endpoints with a running min/max envelope. The first
+  full stick sweep records the actual endpoints (which vary with EPA
+  trim) and the program uses them from then on. Matches openpilot's
+  `np.interp` pattern.
+- **Deadband**: now 3% normalized (matches openpilot), applied after
+  calibration. Replaces the 25 µs raw deadband from rc1.
+
+Sources: openpilot `tools/joystick/joystickd.py`, `EXPO = 0.4`,
+deadband 0.03 normalized.
+
+### Removed (per Derek's request: v4.3.3 watchdogs are enough)
+
+- Stick-jitter armer (the "wiggle to enable" requirement before the
+  rack would accept RC input). v4.3.3 already has RX-timeout watchdog
+  (500 ms on rack side), EAC-bounce watchdog, real-motion auto-
+  disengage, park-to-engage gate, and four E-STOP paths. Adding a
+  layered jitter armer made the program awkward to use without
+  buying meaningful additional safety.
+- Serial-frame timeout watchdog.
+- Consecutive-CRC-error counter.
+- Sequence-gap detection logging.
+
+The RC reader now silently drops malformed frames and waits for the
+next good one. Frame count is still surfaced in the UI for sanity.
+
+### Added (docs: printable PDF guide)
+
+`docs/build/RC_IMPLEMENTATION_GUIDE.pdf` -- six-page implementation
+guide in the same style as `ROADMAP.pdf`. Sections:
+
+1. System block diagram (DX8 → AR6200 → Nano → Laptop → SYS TEC → Tesla)
+2. Hardware list (everything needed including what is "already owned")
+3. AR6200 ↔ DX8 binding procedure
+4. **Pinout wiring diagram, visually verified for no wire crossings
+   and no false-connection visual artifacts.** Three SIG wires
+   (STEER / P latch / R/N/D) cross the page as clean L-shapes.
+   Power (+5V) and ground exit the receiver through a dedicated drop
+   column to the left of all channel pins, then run along a power
+   rail under the receiver to the Nano's 5V and GND.
+5. Pin-by-pin table
+6. Expo curve plot + full stick-travel-to-wheel-angle table
+7. PRND switch mapping (AUX1 + GEAR)
+8. Arduino-CLI flash instructions
+9. Standard operating sequence (numbered, 9 steps)
+10. Troubleshooting table
+
+Regenerate with `python docs/build/build_rc_guide.py`.
+
+### Self-graded against openpilot
+
+Honest assessment included in commit message. Summary: steering math
+is openpilot-grade (matches production line-for-line); bridge framing
+(COBS + CRC8) is industry standard; missing source-change ramp-in;
+no TX-loss detection (by Derek's request -- explicit scope choice,
+flagged in code comments).
+
+### Verified
+
+- Cubic-blend expo curve is monotonic across [-1, 1].
+- `apply_expo(0.5) = 0.35`, `apply_expo(1.0) = 1.0`, `apply_expo(-1.0)
+  = -1.0` (curve passes through exactly the openpilot reference
+  points).
+- Runtime calibration handles asymmetric endpoints (e.g. trimmed
+  sticks where center isn't 1500 µs).
+- All previous v5.0.0-rc1 smoke tests (COBS round-trip, CRC match
+  between Arduino C and Python) still pass.
+- PDF builds cleanly (24 KB, 6 pages, all diagrams render).
+- Pinout diagram visually verified across three rebuild iterations.
+
 ## [5.0.0-rc1] -- 2026-05-17  (RC variant)
 
 ### Added (new file: `tesla_control_rc.py`)
