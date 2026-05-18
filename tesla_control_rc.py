@@ -1,5 +1,5 @@
 """
-Tesla Rack Control RC  --  v5.0.0-rc2
+Tesla Rack Control RC  --  v5.0.0-rc3
 =====================================
 
 Variant of tesla_control.py v4.3.3 that takes its steering and shift
@@ -73,7 +73,7 @@ except ImportError:
 import tesla_control as base
 
 
-__version__ = "5.0.0-rc2"
+__version__ = "5.0.0-rc3"
 
 
 # ============================================================================
@@ -95,18 +95,30 @@ RC_BOOT_STEER_MIN_US    = 1100
 RC_BOOT_STEER_CENTER_US = 1500
 RC_BOOT_STEER_MAX_US    = 1900
 
-# 3-position switch thresholds for AUX1 -> R/N/D. Spektrum 3-pos
+# 3-position switch thresholds for AUX1 -> D / N / R. Spektrum 3-pos
 # switches travel ~1000 / ~1500 / ~2000 us. Wide hysteresis bands so a
 # wobbling stick doesn't flip-flop the selected gear.
-RC_RND_LOW_THRESH_US  = 1250   # below this -> R
-RC_RND_HIGH_THRESH_US = 1750   # above this -> D
+#
+# Convention: switch DOWN (low PWM) = D, center = N, switch UP (high
+# PWM) = R. This matches the user's DX8 layout. To invert, swap the
+# returns in _rnd_pwm_to_gear.
+RC_RND_LOW_THRESH_US  = 1250   # below this -> D
+RC_RND_HIGH_THRESH_US = 1750   # above this -> R
                                # in-between -> N
 
-# Park latch on the GEAR toggle switch. Hold above the threshold for
-# this long to request P. Cooldown prevents double-firing.
-RC_P_PRESS_THRESH_US  = 1750
-RC_P_LATCH_HOLD_MS    = 200
-RC_P_LATCH_COOLDOWN_S = 1.0
+# Park "button" on the GEAR channel. The DX8's GEAR toggle is mapped
+# so that -100% (~1000 us) means PRESSED and anything at 0% or above
+# (~1500 us+) means RELEASED. Press = low PWM, release = high PWM.
+RC_P_PRESS_THRESH_US  = 1250   # below this -> P button considered pressed
+RC_P_LATCH_HOLD_MS    = 200    # debounce: must stay pressed this long
+RC_P_LATCH_COOLDOWN_S = 1.0    # min interval between P fires
+
+# Signal-loss detection (UI indicator only by default).
+RC_SERIAL_TIMEOUT_MS    = 200     # no COBS frame for this long -> "NO SERIAL"
+RC_FROZEN_STICK_TIMEOUT_S = 3.0   # aileron PWM unchanged for this long ->
+                                  #   "TX SIGNAL LOST" (Spektrum hold-last
+                                  #   behavior on transmitter power-off)
+RC_FROZEN_STICK_TOLERANCE_US = 2  # PWM jitter window considered "no change"
 
 
 # ============================================================================
@@ -218,6 +230,13 @@ class RcInput:
         self.p_us = 0
         self.rnd_us = 0
         self.frame_count = 0
+        self.last_frame_monotonic = 0.0
+        # Frozen-stick detection (Spektrum holds-last on TX power loss)
+        self._last_steer_us = 0
+        self._steer_changed_at = 0.0
+        # Signal-loss flags (computed each UI tick by RcApp)
+        self.serial_lost = True       # no serial yet
+        self.tx_signal_lost = False   # stick frozen for too long
         self.calib = StickCalibration(
             RC_BOOT_STEER_MIN_US,
             RC_BOOT_STEER_CENTER_US,
@@ -226,9 +245,11 @@ class RcInput:
         # Edge detection for PRND switch
         self.selected_gear = "N"
         self.last_shift_gear = None
-        # P latch
-        self._p_high_since: Optional[float] = None
+        # P "button" debounce
+        self._p_low_since: Optional[float] = None
         self.last_p_latch_at = 0.0
+        # Auto-disengage on signal loss (opt-in; controlled by GUI checkbox)
+        self.auto_disengage_on_loss = False
 
 
 class RcReader(threading.Thread):
@@ -263,13 +284,20 @@ class RcReader(threading.Thread):
         w_steer = payload[1] | (payload[2] << 8)
         w_p     = payload[3] | (payload[4] << 8)
         w_rnd   = payload[5] | (payload[6] << 8)
+        now = time.monotonic()
 
         with self.rc.lock:
             self.rc.steer_us = w_steer
             self.rc.p_us = w_p
             self.rc.rnd_us = w_rnd
             self.rc.frame_count += 1
+            self.rc.last_frame_monotonic = now
             self.rc.calib.observe(w_steer)
+            # Frozen-stick tracking: bump the timestamp only if the
+            # aileron channel actually moved past the jitter floor.
+            if abs(w_steer - self.rc._last_steer_us) > RC_FROZEN_STICK_TOLERANCE_US:
+                self.rc._last_steer_us = w_steer
+                self.rc._steer_changed_at = now
 
         self.app.apply_rc_input(w_steer, w_p, w_rnd)
 
@@ -366,28 +394,33 @@ class RcApp(base.App):
                 self.rc.last_shift_gear = gear
                 self.request_shift(gear)
 
-        # ---- GEAR toggle -> P latch (long press) ----
+        # ---- GEAR channel -> P button (pressed when PWM is LOW) ----
+        # DX8 GEAR toggle is mapped such that -100% (~1000 us) means the
+        # P button is pressed; 0% or above (~1500 us+) means released.
         now = time.monotonic()
-        if w_p >= RC_P_PRESS_THRESH_US:
-            if self.rc._p_high_since is None:
-                self.rc._p_high_since = now
-            elif (now - self.rc._p_high_since) * 1000.0 >= RC_P_LATCH_HOLD_MS:
+        if w_p > 0 and w_p <= RC_P_PRESS_THRESH_US:
+            if self.rc._p_low_since is None:
+                self.rc._p_low_since = now
+            elif (now - self.rc._p_low_since) * 1000.0 >= RC_P_LATCH_HOLD_MS:
                 if (self.worker is not None and not self.ctrl.estop
                         and (now - self.rc.last_p_latch_at) > RC_P_LATCH_COOLDOWN_S):
-                    self.rc_log("P latch (gear switch held)")
+                    self.rc_log("P button pressed")
                     self.rc.last_p_latch_at = now
                     self.rc.last_shift_gear = "P"
                     self.request_shift("P")
         else:
-            self.rc._p_high_since = None
+            self.rc._p_low_since = None
 
     def _rnd_pwm_to_gear(self, w: int) -> str:
+        """AUX1 mapping: switch DOWN (low PWM) = D, center = N, switch
+        UP (high PWM) = R. Hysteresis bands prevent flip-flop near the
+        thresholds."""
         if w <= 0:
             return self.rc.selected_gear
         if w < RC_RND_LOW_THRESH_US:
-            return "R"
-        if w > RC_RND_HIGH_THRESH_US:
             return "D"
+        if w > RC_RND_HIGH_THRESH_US:
+            return "R"
         return "N"
 
     # ---------- UI ----------
@@ -416,6 +449,7 @@ class RcApp(base.App):
             return val
 
         self.rc_widgets["port"]   = cell(row, "PORT")
+        self.rc_widgets["signal"] = cell(row, "SIGNAL")
         self.rc_widgets["frames"] = cell(row, "FRAMES")
         self.rc_widgets["steer"]  = cell(row, "STEER us")
         self.rc_widgets["calib"]  = cell(row, "STICK range")
@@ -423,10 +457,27 @@ class RcApp(base.App):
         self.rc_widgets["p"]      = cell(row, "P us")
         self.rc_widgets["gear"]   = cell(row, "GEAR")
 
+        # Opt-in auto-disengage on signal loss. When checked, the
+        # program will drop ctrl.engaged if the RC source has been
+        # lost (no serial frame OR aileron frozen) for > 500 ms.
+        chk_var = tk.BooleanVar(value=False)
+        chk = tk.Checkbutton(
+            row, text="auto-disengage on signal loss",
+            variable=chk_var,
+            bg=self.PANEL, fg=self.DIM, selectcolor=self.PANEL2,
+            activebackground=self.PANEL, activeforeground=self.FG,
+            font=self.f_help, bd=0, highlightthickness=0,
+            command=lambda: setattr(
+                self.rc, "auto_disengage_on_loss", bool(chk_var.get())),
+        )
+        chk.pack(side="left", padx=(8, 0))
+        self.rc_widgets["_auto_chk_var"] = chk_var
+
     def _refresh_rc_ui(self):
         w = self.rc_widgets
         if not w:
             return
+        now = time.monotonic()
         with self.rc.lock:
             connected = self.rc.connected
             frames = self.rc.frame_count
@@ -437,9 +488,37 @@ class RcApp(base.App):
             lo = self.rc.calib.lo
             hi = self.rc.calib.hi
             seen = self.rc.calib.seen_movement
+            last_frame = self.rc.last_frame_monotonic
+            steer_changed_at = self.rc._steer_changed_at
+            auto_disengage = self.rc.auto_disengage_on_loss
+
+        # Signal-loss derivations
+        serial_age_ms = ((now - last_frame) * 1000.0
+                         if last_frame > 0 else float("inf"))
+        serial_lost = serial_age_ms > RC_SERIAL_TIMEOUT_MS
+        # Frozen-stick: only meaningful after we've seen at least one
+        # change since startup. Until then, treat as "unknown" (no warn).
+        if steer_changed_at == 0.0:
+            tx_lost = False
+        else:
+            tx_lost = (now - steer_changed_at) > RC_FROZEN_STICK_TIMEOUT_S
+        signal_ok = (not serial_lost) and (not tx_lost)
+
+        with self.rc.lock:
+            self.rc.serial_lost = serial_lost
+            self.rc.tx_signal_lost = tx_lost
 
         w["port"].config(text=("OPEN" if connected else "CLOSED"),
                          fg=(self.GREEN if connected else self.RED))
+        if not connected:
+            sig_text, sig_color = "OFFLINE", self.RED
+        elif serial_lost:
+            sig_text, sig_color = "NO SERIAL", self.RED
+        elif tx_lost:
+            sig_text, sig_color = "TX LOST", self.RED
+        else:
+            sig_text, sig_color = "LIVE", self.GREEN
+        w["signal"].config(text=sig_text, fg=sig_color)
         w["frames"].config(text=f"{frames}")
         w["steer"].config(text=(f"{steer}" if steer else "--"))
         w["calib"].config(
@@ -448,6 +527,15 @@ class RcApp(base.App):
         w["rnd"].config(text=(f"{rnd}" if rnd else "--"))
         w["p"].config(text=(f"{p}" if p else "--"))
         w["gear"].config(text=gear, fg=self.ORANGE)
+
+        # Opt-in auto-disengage. Drops engagement (does NOT E-STOP --
+        # the user can re-engage once signal returns) when the RC
+        # source has been lost for one full UI tick.
+        if (auto_disengage and self.ctrl.engaged
+                and not signal_ok and self.worker is not None):
+            self.rc_log(f"AUTO-DISENGAGE: RC signal lost "
+                        f"({sig_text.lower()})")
+            self.ctrl.engaged = False
 
     def _tick(self):
         super()._tick()

@@ -59,7 +59,7 @@ class PageDeco:
         canvas.setFont("Helvetica-Bold", 8); canvas.setFillColor(HEAD)
         canvas.drawString(0.75 * inch, 10.55 * inch, "TESLA RACK CONTROL")
         canvas.setFont("Helvetica", 8); canvas.setFillColor(DIM)
-        canvas.drawRightString(7.75 * inch, 10.55 * inch, "v5.0.0-rc2")
+        canvas.drawRightString(7.75 * inch, 10.55 * inch, "v5.0.0-rc3")
         canvas.restoreState()
 
 
@@ -557,7 +557,7 @@ def build():
         leading=13, spaceAfter=0.18 * inch,
     )
     story.append(Paragraph(
-        f"v5.0.0-rc2 &nbsp;·&nbsp; "
+        f"v5.0.0-rc3 &nbsp;·&nbsp; "
         f"Spektrum DX8 → AR6200 → Arduino Nano → Tesla rack &nbsp;·&nbsp; "
         f"{datetime.now().strftime('%d %B %Y')}",
         sub_style))
@@ -704,29 +704,36 @@ def build():
     story.append(heading("7. PRND switch mapping (AUX1 + GEAR)"))
     story.append(body(
         "<b>AUX1 (channel 6)</b> is a 3-position switch on the DX8. The "
-        "program reads the PWM width and selects R / N / D using these "
-        "hysteresis bands:"))
+        "program reads the PWM width and selects D / N / R using these "
+        "hysteresis bands. Switch DOWN selects drive, center is "
+        "neutral, switch UP selects reverse."))
     story.append(tbl([
-        ["PWM width (us)", "Gear"],
-        ["< 1250",         "R (reverse)"],
-        ["1250 – 1750",    "N (neutral)"],
-        ["> 1750",         "D (drive)"],
-    ], col_widths=[1.6 * inch, 2.0 * inch]))
+        ["PWM width (us)", "AUX1 position",  "Gear"],
+        ["< 1250",         "switch DOWN",    "D (drive)"],
+        ["1250 to 1750",   "switch CENTER",  "N (neutral)"],
+        ["> 1750",         "switch UP",      "R (reverse)"],
+    ], col_widths=[1.4 * inch, 1.6 * inch, 2.0 * inch]))
     story.append(body(
         "A shift is dispatched only when the switch position "
-        "<b>changes</b> -- holding the switch in D does not "
-        "continuously fire shift requests. The existing v4.3.3 "
-        "non-blocking 200 Hz shift burst handles the SBW_RQ_SCCM "
-        "transmission unchanged."))
+        "<b>changes</b>: holding the switch in D does not continuously "
+        "fire shift requests. The existing v4.3.3 non-blocking 200 Hz "
+        "shift burst handles the SBW_RQ_SCCM transmission unchanged."))
 
     story.append(body("&nbsp;"))
 
     story.append(body(
-        "<b>GEAR switch (channel 5)</b> is a 2-position toggle. Holding "
-        "it past PWM 1750 us for 200 ms requests a shift to <b>P</b>. "
-        "A 1-second cooldown prevents double-fire. This matches how "
-        "Tesla actually shifts to Park --via the stalk button, "
-        "not the stalk paddle."))
+        "<b>GEAR channel (channel 5)</b> is a 2-position toggle "
+        "configured as a momentary P button. The DX8 mapping is "
+        "inverted from the AUX1 convention: <b>-100% travel (~1000 us) "
+        "means PRESSED, anything at 0% or above (~1500 us+) means "
+        "RELEASED</b>. Holding the button at -100% for 200 ms requests "
+        "a shift to P. A 1-second cooldown prevents double-fire."))
+    story.append(tbl([
+        ["GEAR PWM (us)",  "DX8 reading",  "Meaning"],
+        ["<= 1250",        "-100% travel", "P button PRESSED"],
+        ["1250 to 1500",   "deadband",     "transitioning"],
+        ["> 1500",         "0% or higher", "P button RELEASED"],
+    ], col_widths=[1.4 * inch, 1.6 * inch, 2.0 * inch]))
 
     # ---- Flashing the Nano ----
     story.append(heading("8. Flashing the Arduino Nano"))
@@ -786,7 +793,7 @@ def build():
         ["5", "Sweep the right stick fully left and right once to seed calibration."],
         ["6", "Verify the RC INPUT panel shows STEER us tracking the stick."],
         ["7", "Click ENGAGE. EAC transitions INHIBITED → AVAILABLE → ACTIVE."],
-        ["8", "Steer with the right stick. Aux1 switch changes R/N/D. Gear switch held = P."],
+        ["8", "Steer with the right stick. AUX1 switch picks D/N/R. GEAR toggle pulled to -100% = P."],
         ["9", "ESC / Q / E-STOP button / close window = disengage."],
     ], col_widths=[0.30 * inch, 6.7 * inch]))
 
@@ -801,8 +808,56 @@ def build():
 
     story.append(PageBreak())
 
+    # ---- Signal-loss detection ----
+    story.append(heading("10. Signal-loss detection"))
+    story.append(body(
+        "Spektrum receivers <b>hold the last value</b> on transmitter "
+        "power-off (SmartSafe). The AR6200 keeps emitting whatever "
+        "PWM widths it last decoded, the Arduino keeps framing them, "
+        "and the laptop keeps reading them. Without explicit "
+        "detection, a dead transmitter looks identical to a stationary "
+        "stick. v5 surfaces this in two ways:"))
+    story.append(tbl([
+        ["Indicator",     "Trigger",                                       "What it means"],
+        ["NO SERIAL",     "No COBS frame for > 200 ms",                    "Arduino died, USB stalled, or cable unplugged"],
+        ["TX LOST",       "Aileron PWM unchanged > 2 us for > 3 s",        "Spektrum holding last value; TX off / out of range"],
+        ["LIVE (green)",  "Frames arriving, stick changing",               "Normal operation"],
+    ], col_widths=[1.1 * inch, 2.7 * inch, 3.2 * inch]))
+
+    story.append(body(
+        "<b>The SIGNAL pill</b> in the RC INPUT panel shows the current "
+        "state at all times. By itself the indicator does not interrupt "
+        "operation -- you decide whether to E-STOP. For unattended "
+        "or in-car testing, enable the <b>auto-disengage on signal "
+        "loss</b> checkbox in the same panel. When checked, the "
+        "program drops <i>ctrl.engaged</i> on the next UI tick if "
+        "either SIGNAL condition fires. This is not an E-STOP -- "
+        "you can re-engage once signal returns -- but it stops the "
+        "rack from continuing to track a stale target."))
+
+    story.append(callout(
+        "Why not auto-disengage by default",
+        "On a bench setup with a flaky USB cable or a laptop that "
+        "stutters its USB hub, the program would re-disengage every "
+        "few seconds, which is more annoying than helpful. The "
+        "checkbox lets you flip it on once the bench setup is known-"
+        "good and you're moving to in-car testing where the "
+        "consequence of a stuck stick matters more.",
+        ACCENT))
+
+    story.append(callout(
+        "TX LOST is a heuristic, not proof",
+        "If you legitimately hold the stick perfectly still for 3 "
+        "seconds, you'll see TX LOST. That's expected -- 3 seconds of "
+        "perfect stillness is unusual on a real RC operator's stick. "
+        "If you're driving slow and steady and trip the indicator, "
+        "raise RC_FROZEN_STICK_TIMEOUT_S in the source.",
+        YELLOW))
+
+    story.append(PageBreak())
+
     # ---- Troubleshooting ----
-    story.append(heading("10. Troubleshooting"))
+    story.append(heading("11. Troubleshooting"))
     story.append(tbl([
         ["Symptom",                                       "Likely cause",                  "Fix"],
         ["RC port FAILED to open",                        "Wrong port / driver missing",   "Re-check Device Manager. CH340 driver if clone Nano."],
@@ -813,9 +868,11 @@ def build():
         ["Stick travel doesn't reach ±360 deg",           "Calibration sweep not done",    "Push the stick fully left, then fully right, once"],
         ["Wheel jitters at center",                       "Dead band too tight for your stick", "Increase RC_DEADBAND_NORM from 0.03 to 0.05"],
         ["Wheel won't move past ~60 deg",                 "Rack is in MIN_SPEED gating",   "Enable 30 MPH MODE in the GUI (jacked-up only)"],
+        ["SIGNAL pill shows TX LOST when stick is still", "Holding stick perfectly still > 3 s", "Normal heuristic; raise RC_FROZEN_STICK_TIMEOUT_S if too sensitive"],
+        ["SIGNAL pill shows NO SERIAL intermittently",    "USB cable noise or hub power dip", "Plug Nano directly into laptop USB, not through a hub"],
     ], col_widths=[2.0 * inch, 1.9 * inch, 3.1 * inch]))
 
-    story.append(heading("11. What v5 is NOT", size=12))
+    story.append(heading("12. What v5 is NOT", size=12))
     story.append(body(
         "Throttle, brake, and longitudinal control are NOT in v5. The "
         "pre-AP 2013 Model S has no CAN-commandable throttle and no "
@@ -826,7 +883,7 @@ def build():
         "tesla_control.py v4.3.3 still runs exactly as before. v5 is "
         "an additional way to drive the same rack, not a replacement."))
 
-    story.append(heading("12. References", size=12))
+    story.append(heading("13. References", size=12))
     story.append(body(
         "openpilot tools/joystick: "
         "<font color='#1e6fd9'>github.com/commaai/openpilot/blob/master/tools/joystick/joystickd.py</font><br/>"

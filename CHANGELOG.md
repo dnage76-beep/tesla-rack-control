@@ -7,6 +7,61 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [5.0.0-rc3] -- 2026-05-17  (channel polarity fixes + signal-loss detection)
+
+### Changed (channel polarities per Derek's DX8 layout)
+
+- **AUX1 (R/N/D) inverted**: switch DOWN (low PWM, ~1000 us) now
+  selects D, switch CENTER stays N, switch UP (high PWM, ~2000 us)
+  now selects R. Previously rc2 had the opposite.
+- **GEAR (P button) polarity flipped**: the DX8 GEAR toggle is mapped
+  so that -100% travel (~1000 us) means PRESSED, and 0% or above
+  (~1500 us+) means RELEASED. Previously rc2 treated high PWM as
+  pressed. Now `RC_P_PRESS_THRESH_US = 1250` and the comparison is
+  `w_p <= threshold` instead of `>=`.
+
+### Added (signal-loss detection)
+
+Spektrum receivers hold-last on transmitter power-off (SmartSafe).
+Without explicit detection, a dead TX looks identical to a stationary
+stick. v5 now surfaces this two ways:
+
+- **NO SERIAL pill**: no COBS frame received for > `RC_SERIAL_TIMEOUT_MS`
+  (200 ms default). Trips if the Arduino dies, USB stalls, or cable
+  unplugs.
+- **TX LOST pill**: aileron PWM has not changed by more than
+  `RC_FROZEN_STICK_TOLERANCE_US` (2 us) within
+  `RC_FROZEN_STICK_TIMEOUT_S` (3 s). Catches Spektrum's hold-last on
+  TX power loss.
+- **LIVE pill (green)**: both conditions clear.
+
+The SIGNAL pill is the third cell in the RC INPUT panel (after PORT
+and before FRAMES). By default the indicator does not interrupt
+operation -- it just shows state. A new **"auto-disengage on signal
+loss"** checkbox in the same panel opts in to dropping
+`ctrl.engaged` on the next UI tick if either SIGNAL condition fires.
+This is not an E-STOP; the user can re-engage when signal returns.
+
+### Updated (PDF guide)
+
+- Section 7 (PRND switch mapping) reflects the new polarity, with
+  separate tables for AUX1 (D-low/N-center/R-high) and GEAR (PRESSED
+  at low PWM).
+- New Section 10 (Signal-loss detection) explains both indicators
+  and the auto-disengage opt-in.
+- Sections 10-12 renumbered to 11-13.
+- Troubleshooting table adds two new rows for SIGNAL pill issues.
+- Operating sequence step 8 reflects the new channel polarities.
+
+### Verified
+
+- Unit smoke test: `_rnd_pwm_to_gear` returns "D" at 1000 us, "N" at
+  1500 us, "R" at 2000 us.
+- P-button polarity: `1000 us <= 1250` => pressed; `1500 us <= 1250`
+  => not pressed; `2000 us <= 1250` => not pressed.
+- PDF builds (27 KB, 9 pages, all sections render cleanly).
+- `py_compile` and import-chain still clean.
+
 ## [5.0.0-rc2] -- 2026-05-17  (RC steering feel + PDF guide)
 
 ### Changed (steering math: now openpilot-faithful)
