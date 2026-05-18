@@ -5,3 +5,6 @@ python-can>=4.0
 # wheel image. The widget falls back to a vector drawing if Pillow
 # is unavailable, so this is technically optional.
 Pillow>=9.0
+# pyserial is only required by tesla_control_rc.py (v5 RC variant).
+# The non-RC tesla_control.py does not import pyserial.
+pyserial>=3.5

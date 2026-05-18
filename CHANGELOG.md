@@ -7,6 +7,98 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [5.0.0-rc1] -- 2026-05-17  (RC variant)
+
+### Added (new file: `tesla_control_rc.py`)
+
+The RC variant of the program. Same GUI, same CAN protocol, same
+safety code as v4.3.3, plus an RC input pipeline that takes steering
+and shift commands from a Spektrum DX8 transmitter via an AR6200
+receiver and an Arduino Nano bridge.
+
+`tesla_control.py` is **unchanged at v4.3.3**. The RC variant
+subclasses `App` and imports the v4.3.3 program as a library. Run
+`python tesla_control.py` for the original; `python tesla_control_rc.py
+--rc-port <port>` for the RC variant. Both share the same CAN worker,
+safety architecture, and session logs.
+
+#### Hardware chain
+
+```
+DX8 (DSMX air) -> AR6200 (DSM2 air, 6 PWM ch) -> Arduino Nano (PCINT,
+COBS, USB-CDC) -> tesla_control_rc.py -> CanWorker (v4.3.3 unchanged)
+-> SYS TEC USB-CAN -> Tesla EPAS rack
+```
+
+#### Added (Arduino firmware: `arduino/tesla_rc_bridge/tesla_rc_bridge.ino`)
+
+- 3-channel PWM reader using pin-change interrupts (PCINT2 group on
+  PORTD, pins D2/D3/D4). Standard RCArduino-style ISR pattern, ~50
+  lines.
+- COBS framing per Cheshire & Baker (1999) for robust delimiting over
+  USB CDC.
+- CRC-8/ITU (poly 0x07, init 0x00) over the 9-byte payload.
+- 100 Hz output rate. Each frame is `[seq][steer_us:u16][p_us:u16]
+  [rnd_us:u16][flags][crc]` raw, COBS-encoded, terminated by 0x00.
+
+#### Added (Python: `tesla_control_rc.py`)
+
+- `RcReader` thread owns the pyserial port. Reads COBS-delimited
+  bytes, decodes payloads, validates CRC, updates `RcInput` shared
+  state.
+- `RcApp(base.App)` subclass adds the RC INPUT panel showing port
+  state, frame count, live channel widths, selected gear, watchdog
+  state, and CRC/gap error counts.
+- Steering: aileron stick (AR6200 ch2) maps to `ctrl.target_angle_deg`
+  via a piecewise-linear function with a +/-25 us deadband. Full
+  deflection = +/- `HARD_ANGLE_LIMIT_DEG` (360 deg from v4.3.0).
+- PRND: AUX1 3-position switch (ch6) selects R / N / D via PWM-width
+  hysteresis (<1250 -> R, 1250..1750 -> N, >1750 -> D). The program
+  only fires a shift on EDGE -- holding the switch in D doesn't spam
+  `request_shift`. P latch: gear toggle switch (ch5) held above 1750
+  us for 200 ms fires a P shift, with a 1-second cooldown against
+  double-fire.
+- Watchdogs: stick-jitter arm requires aileron travel of at least 50
+  us before any RC angle command is applied (Spektrum receivers hold-
+  last on signal loss, so a stale width alone is not proof of live
+  control). Serial-frame timeout, CRC errors, sequence-gap counter
+  all visible in the UI.
+
+#### Added (docs: `docs/RC_SETUP.md`)
+
+- AR6200 binding procedure with primary-source link to Spektrum's
+  PDF manual.
+- Channel-to-pin map with wiring diagram for the Nano.
+- Flash instructions for arduino-cli.
+- Calibration steps for non-default DX8 EPA.
+- Troubleshooting matrix.
+
+#### Added (dep: `requirements.txt`)
+
+- `pyserial>=3.5` (only needed by the RC variant; the original
+  `tesla_control.py` does not import it).
+
+#### Verified
+
+- COBS encode/decode round-trip on representative payloads (all-zero,
+  embedded zeros across boundaries, mixed payloads). Smoke test passes.
+- CRC-8/ITU matches between Arduino and Python implementations.
+- `py_compile` on `tesla_control_rc.py` clean.
+- Import of `tesla_control_rc` correctly loads `tesla_control` v4.3.3
+  as `base`.
+
+#### Status notes at release
+
+- **NOT field-tested in-car.** Bench-test on jacks first per SAFETY.md.
+- **Hardware binding constraint discovered during planning.** The
+  Spektrum SLT3 surface transmitter does not bind to the AR6200 (DSM2
+  air) or the SR515 (DSMR surface) that the user had on hand --
+  protocol families don't cross. v5.0.0-rc1 ships against the
+  **DX8 + AR6200** stack (both are DSM2 air, they bind), which is the
+  hardware Derek already has. If a later revision wants to use a
+  surface radio for the wheel/trigger ergonomic, the swap is one
+  receiver (SR315) with no Python code change.
+
 ## [4.3.3] -- 2026-05-09 (later)
 
 ### Added (image wheel)
