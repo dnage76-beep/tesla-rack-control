@@ -1,25 +1,25 @@
 /*
- * tesla_rc_bridge.ino  --  Arduino Nano firmware
+ * tesla_rc_bridge.ino  --  Arduino Nano firmware (SLT3 / SR315 variant)
  *
- * Reads 3 PWM channels from a Spektrum AR6200 (or any PWM receiver),
- * frames them with COBS + CRC8, sends them to the laptop at 115200 baud
- * over USB CDC.
+ * Reads 3 PWM channels from a Spektrum SR315 surface receiver bound to
+ * a Spektrum SLT3 wheel/trigger transmitter, frames them with COBS +
+ * CRC8, and sends them to the laptop at 115200 baud over USB CDC.
  *
  * Pin map (Arduino Nano, ATmega328P):
- *   D2  (PCINT18, PD2)  AR6200 channel 2 / aileron       -> STEERING
- *   D3  (PCINT19, PD3)  AR6200 channel 5 / gear switch   -> P latch
- *   D4  (PCINT20, PD4)  AR6200 channel 6 / aux1          -> R/N/D
+ *   D2  (PCINT18, PD2)  SR315 ch1 STR (wheel)    -> STEERING
+ *   D3  (PCINT19, PD3)  SR315 ch2 THR (trigger)  -> P button (gesture)
+ *   D4  (PCINT20, PD4)  SR315 ch3 AUX1 (rocker)  -> R/N/D selector
  *
  * Wiring:
- *   AR6200 servo lead negative (black) -> Nano GND
- *   AR6200 servo lead positive (red)   -> Nano 5V (powers Rx; current is fine)
- *   AR6200 servo lead signal (white)   -> Nano D2 / D3 / D4
- *   Nano USB                           -> laptop
+ *   SR315 servo lead negative (black) -> Nano GND
+ *   SR315 servo lead positive (red)   -> Nano 5V (powers Rx; current is fine)
+ *   SR315 servo lead signal (white)   -> Nano D2 / D3 / D4
+ *   Nano USB                          -> laptop
  *
- * Standard Spektrum/RC PWM: 1000-2000 us pulse, ~50 Hz frame rate.
- * AR6200 holds last value on signal loss (SmartSafe / preset failsafe),
- * so the bridge does NOT detect signal loss from PWM width alone.
- * The Python program enforces a stick-jitter watchdog at startup.
+ * Standard Spektrum surface PWM: 1000-2000 us pulse, 5.5-22 ms frame
+ * rate. SR315 holds last value on signal loss (SmartSafe), same as
+ * any other Spektrum surface receiver. Signal-loss detection happens
+ * on the Python side (NO SERIAL pill + TX LOST stick-frozen heuristic).
  *
  * Output framing (COBS-encoded, terminated by 0x00):
  *   [seq:u8][ch_steer:u16 LE][ch_p:u16 LE][ch_rnd:u16 LE][flags:u8][crc8:u8]
@@ -31,6 +31,10 @@
  * Send rate: 100 Hz. Latency budget: 10 ms RC frame + 10 ms USB transit.
  *
  * Build target: Arduino Nano, ATmega328P (Old Bootloader if needed).
+ *
+ * NOTE: this firmware is byte-identical to the AR6200 variant on
+ * dev/v5-rc except for the channel-source comments above. The Nano
+ * doesn't know which receiver feeds it; it just reads PWM widths.
  */
 
 #include <avr/interrupt.h>

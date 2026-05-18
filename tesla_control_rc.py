@@ -1,10 +1,10 @@
 """
-Tesla Rack Control RC  --  v5.0.3
+Tesla Rack Control RC  --  v5.1.0 (SLT3 + SR315)
 =====================================
 
 Variant of tesla_control.py v4.3.3 that takes its steering and shift
-input from a Spektrum receiver wired through an Arduino Nano bridge
-instead of from the on-screen slider and keyboard.
+input from a Spektrum SR315 surface receiver bound to a Spektrum SLT3
+wheel/trigger transmitter, wired through an Arduino Nano bridge.
 
 This file imports the v4.3.3 program as a library and adds an RC input
 mode on top. All CAN protocol code, safety guards, EAC bounce watchdog,
@@ -12,17 +12,19 @@ real-motion auto-disengage, park-to-engage gate, RX-timeout watchdog,
 and 30 MPH MODE interlocks come from tesla_control.py UNCHANGED.
 
 HARDWARE CHAIN
-    Spektrum DX8 (DSMX air, SPMR8000) -> AR6200 (DSM2 air, SPMAR6200,
-    6-channel PWM out) -> Arduino Nano (PCINT PWM reader, COBS framing,
-    USB CDC) -> this program -> CanWorker -> SYS TEC USB-CAN -> Tesla rack.
+    Spektrum SLT3 (SLT FHSS, wheel + trigger + AUX rocker) ->
+    SR315 (DSMR/SLT, 3-channel surface, SPMSR315) ->
+    Arduino Nano (PCINT PWM reader, COBS framing, USB CDC) ->
+    this program -> CanWorker -> SYS TEC USB-CAN -> Tesla rack.
 
-    See docs/RC_SETUP.md and docs/build/RC_IMPLEMENTATION_GUIDE.pdf for
-    binding procedure and wiring diagram.
+    See docs/build/RC_IMPLEMENTATION_GUIDE_SLT3.pdf for binding
+    procedure and wiring diagram.
 
-CHANNEL MAP (AR6200 channel labels)
-    Channel 2 AILE (right stick X)        -> STEERING angle
-    Channel 5 GEAR (gear toggle switch)   -> Park latch
-    Channel 6 AUX1 (3-position switch)    -> R / N / D
+CHANNEL MAP (SR315 channel labels, SLT3 control)
+    Channel 1 STR  (wheel)         -> STEERING angle
+    Channel 2 THR  (trigger)       -> P button gesture (full brake
+                                       push held > 200 ms)
+    Channel 3 AUX1 (rocker switch) -> R / N / D selector
 
 STEERING MATH
     Following openpilot's tools/joystick/joystickd.py:
@@ -73,7 +75,7 @@ except ImportError:
 import tesla_control as base
 
 
-__version__ = "5.0.3"
+__version__ = "5.1.0"
 
 
 # ============================================================================
@@ -95,20 +97,25 @@ RC_BOOT_STEER_MIN_US    = 1100
 RC_BOOT_STEER_CENTER_US = 1500
 RC_BOOT_STEER_MAX_US    = 1900
 
-# 3-position switch thresholds for AUX1 -> D / N / R. Spektrum 3-pos
-# switches travel ~1000 / ~1500 / ~2000 us. Wide hysteresis bands so a
-# wobbling stick doesn't flip-flop the selected gear.
+# 3-position switch thresholds for AUX1 -> D / N / R. The SLT3's AUX
+# rocker reads as a 3-position switch in PWM (~1000 / ~1500 / ~2000 us).
+# Wide hysteresis bands so a wobbling switch doesn't flip-flop the
+# selected gear.
 #
-# Convention: switch DOWN (low PWM) = D, center = N, switch UP (high
-# PWM) = R. This matches the user's DX8 layout. To invert, swap the
-# returns in _rnd_pwm_to_gear.
+# Convention: rocker HIGH (high PWM) = R (per Derek's spec), center =
+# N, rocker LOW (low PWM) = D. To invert if your SLT3's rocker is
+# wired backwards, swap the returns in _rnd_pwm_to_gear.
 RC_RND_LOW_THRESH_US  = 1250   # below this -> D
 RC_RND_HIGH_THRESH_US = 1750   # above this -> R
                                # in-between -> N
 
-# Park "button" on the GEAR channel. The DX8's GEAR toggle is mapped
-# so that -100% (~1000 us) means PRESSED and anything at 0% or above
-# (~1500 us+) means RELEASED. Press = low PWM, release = high PWM.
+# Park "button" on the SLT3 trigger. The trigger spring-returns to
+# center (~1500 us). Pushing it forward (full BRAKE direction) drops
+# the PWM toward 1000 us. We treat anything below RC_P_PRESS_THRESH_US
+# as "P button pressed" and require it held for RC_P_LATCH_HOLD_MS to
+# fire a Park shift. The trigger's natural rest at ~1500 us reads as
+# RELEASED, exactly the same comparison as the DX8 GEAR toggle on the
+# AR6200 variant -- the logic is unchanged.
 RC_P_PRESS_THRESH_US  = 1250   # below this -> P button considered pressed
 RC_P_LATCH_HOLD_MS    = 200    # debounce: must stay pressed this long
 RC_P_LATCH_COOLDOWN_S = 1.0    # min interval between P fires
@@ -394,9 +401,11 @@ class RcApp(base.App):
                 self.rc.last_shift_gear = gear
                 self.request_shift(gear)
 
-        # ---- GEAR channel -> P button (pressed when PWM is LOW) ----
-        # DX8 GEAR toggle is mapped such that -100% (~1000 us) means the
-        # P button is pressed; 0% or above (~1500 us+) means released.
+        # ---- Trigger channel -> P button (pressed when PWM is LOW) ----
+        # SLT3 trigger pushed forward (full brake direction) reads as
+        # low PWM (~1000 us) and counts as P button pressed. Trigger at
+        # rest center (~1500 us) reads as released. Same comparison
+        # logic as the AR6200 variant's GEAR toggle.
         now = time.monotonic()
         if w_p > 0 and w_p <= RC_P_PRESS_THRESH_US:
             if self.rc._p_low_since is None:
@@ -553,7 +562,7 @@ class RcApp(base.App):
 
 def parse_args():
     p = argparse.ArgumentParser(
-        description="Tesla Rack Control RC -- DX8 + AR6200 + Arduino bridge")
+        description="Tesla Rack Control RC -- SLT3 + SR315 + Arduino bridge")
     p.add_argument("--rc-port", required=True,
                    help="Serial port for the Arduino bridge "
                         "(e.g. COM5, /dev/cu.usbserial-XXX)")
@@ -564,7 +573,7 @@ def banner_rc(port: str):
     print("=" * 72)
     print(f" Tesla Rack Control RC v{__version__}  "
           f"(core v{base.__version__})")
-    print(f" Spektrum DX8 -> AR6200 -> Arduino Nano @ {port} -> CAN")
+    print(f" Spektrum SLT3 -> SR315 -> Arduino Nano @ {port} -> CAN")
     print("=" * 72)
     print(f" RC baud                  : {RC_BAUD}")
     print(f" RC expo                  : 0.4 * x^3 + 0.6 * x "

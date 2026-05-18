@@ -7,6 +7,76 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [5.1.0] -- 2026-05-17  (SLT3 + SR315 variant)
+
+### Added (new branch: dev/v5-slt3)
+
+The SLT3 variant of the v5 RC bridge. Uses a Spektrum SLT3
+wheel/trigger surface transmitter bound to a Spektrum SR315
+dual-protocol surface receiver, instead of the DX8 + AR6200 air
+combo from v5.0.x. Both versions of the RC bridge are maintained:
+
+- `dev/v5-rc` ships v5.0.3 (DX8 + AR6200)
+- `dev/v5-slt3` ships v5.1.0 (SLT3 + SR315)
+
+The Arduino firmware, Python program, COBS framing, expo curve,
+signal-loss detection, and v4.3.3 base are otherwise identical.
+
+### Changed (channel source)
+
+| Function | v5.0.3 (DX8 + AR6200) | v5.1.0 (SLT3 + SR315) |
+|---|---|---|
+| Steering | AR6200 ch2 AILE (right stick X) | SR315 ch1 STR (wheel) |
+| P button | AR6200 ch5 GEAR (toggle to -100%) | SR315 ch2 THR (trigger pushed forward) |
+| R/N/D | AR6200 ch6 AUX1 (3-pos switch) | SR315 ch3 AUX1 (rocker) |
+
+Arduino pin assignments unchanged (still D2/D3/D4). The firmware is
+receiver-agnostic -- it just reads PWM widths and frames them. Only
+the channel-source comments change.
+
+### Added (Spektrum SLT3 binding procedure)
+
+The SR315 uses a bind button, not a bind plug. The SLT3 transmits
+SLT FHSS only; the SR315 supports both DSMR and SLT and auto-detects
+the protocol. Important: failsafe positions are captured at bind
+time, so the wheel must be centered and the trigger at rest when
+powering on the SLT3. Documented in PDF section 3.
+
+Sources:
+- [SR315 SLT bind slip sheet](https://www.horizonhobby.com/on/demandware.static/-/Sites-horizon-master/default/dwf2158035/Manuals/SPMSR315-Slip_Sheet.pdf)
+- [SLT3 user guide (SPMSLT300)](https://www.horizonhobby.com/on/demandware.static/-/Sites-horizon-master/default/dw83be92cc/Manuals/SPMSLT300-manual-en.pdf)
+
+### Added (PDF: docs/build/RC_IMPLEMENTATION_GUIDE_SLT3.pdf)
+
+Sibling to RC_IMPLEMENTATION_GUIDE.pdf. Same structure, same visual
+style. Sections that differ from the AR6200 version:
+
+- Section 1: scope notes (SLT3 variant)
+- Section 2: hardware list (SLT3 + SR315 instead of DX8 + AR6200)
+- Section 3: binding (bind button + auto-protocol detection + failsafe
+  capture warning)
+- Section 4: wiring diagram (SR315 channel layout, ch1/ch2/ch3 instead
+  of ch2/ch5/ch6)
+- Section 5: pin-by-pin table (SR315 channels)
+- Section 7: PRND mapping (AUX1 rocker + trigger gesture instead of
+  AUX1 switch + GEAR toggle)
+- Section 11: troubleshooting (rebind text says SR315, troubleshoot
+  trigger-fires-P-at-rest)
+- Section 13: references (SR315 + SLT3 manuals)
+
+Visual diagram verification: pinout wiring has no crossings, no
+false connections. Verified by rendering the PDF and inspecting page 3.
+
+Regenerate with `python docs/build/build_rc_guide_slt3.py`.
+
+### Verified
+
+- AUX1 gear mapping returns D/N/R at 1000/1500/2000 us.
+- P-button (trigger) trips at <=1250 us.
+- `py_compile` clean.
+- Import chain still loads tesla_control v4.3.3 cleanly as base.
+- PDF builds (27 KB, 9 pages).
+
 ## [5.0.3] -- 2026-05-17  (channel polarity fixes + signal-loss detection)
 
 ### Changed (channel polarities per Derek's DX8 layout)

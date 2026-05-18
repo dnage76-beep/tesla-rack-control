@@ -110,7 +110,7 @@ For debugging, read [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 ├── requirements.txt           pip dependencies
 │
 ├── tesla_control.py           the live CAN-bus control program (v4.3.3)
-├── tesla_control_rc.py        v5.0.0-rc1 RC variant (DX8 + AR6200 + Arduino)
+├── tesla_control_rc.py        v5 RC variant (lives on dev/v5-rc and dev/v5-slt3)
 ├── arduino/tesla_rc_bridge/   Arduino Nano firmware for the RC bridge
 ├── app.py                     desktop suite shell (sidebar, logs viewer, etc.)
 ├── launcher.py                update-checker (HTTP/zip), then loads app.py
@@ -207,7 +207,8 @@ dependency.
 
 | Version | Status        | File                                                | Headline                                       |
 |---------|---------------|-----------------------------------------------------|------------------------------------------------|
-| v5.0.3  | **current**   | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/`  | RC bridge: DX8 + AR6200 + Arduino Nano, expo curve, signal-loss detection |
+| v5.1.0  | **current**   | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/` (branch dev/v5-slt3) | RC bridge: **SLT3 + SR315** + Arduino Nano (wheel/trigger variant) |
+| v5.0.3  | **current**   | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/` (branch dev/v5-rc) | RC bridge: **DX8 + AR6200** + Arduino Nano (plane-stick variant) |
 | v4.3.3  | **current**   | `tesla_control.py`                                  | Image wheel + PRND keys while steering         |
 | v4.3.0  | superseded    | `tesla_control.py` @ tag v4.3.0                     | HARD_ANGLE_LIMIT_DEG raised to 360 (lock-to-lock) |
 | v4.2.1  | superseded    | `tesla_control.py` @ tag v4.2.1                     | Non-blocking shift burst, fixes EPAS_d039_kfc_reset |
