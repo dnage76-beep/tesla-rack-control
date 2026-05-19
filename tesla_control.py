@@ -1,10 +1,20 @@
 """
-Tesla Rack Control  --  v4.3.3 (image wheel + PRND while steering)
+Tesla Rack Control  --  v5.0.4 (remove EAC auto-disengage)
 ==================================================================
 
 Single-program steering control for the patched 2013 Tesla Model S EPAS
 rack. Drives the rack from a SYS TEC USB-CANmodul1 (model 3204001) on
 Windows, with NO comma 3X required.
+
+WHAT IS NEW IN v5.0.4 (vs v4.3.3)
+    - All EAC auto-disengage behaviours removed. The rack will no
+      longer drop engagement automatically due to:
+        * EAC-bounce watchdog (was: E-STOP if > 5 EAC transitions/s)
+        * Real-motion auto-disengage (was: disengage if |DI speed| > 1 mph)
+        * Gear-out-of-park auto-disengage (was: disengage if gear != P)
+      The operator is now fully responsible for deciding when to
+      disengage. Manual DISENGAGE, ESC, Q, and the window-close
+      E-STOP paths remain in place.
 
 WHAT IS NEW IN v4.3.3 (vs v4.3.0)
     - Steering wheel widget can now show a real photographed wheel
@@ -66,15 +76,9 @@ WHAT IS NEW IN v4.2 (vs v4.1)
     - **30 MPH MODE mid-session auto-disable**. If real ESP traffic
       appears while 30 MPH MODE is on, it disables itself within one
       tick.
-    - **Auto-disengage on gear-out-of-P**. If engaged and the gear
-      leaves Park, the worker disengages on the next tick.
-    - **Auto-disengage on real motion**. If DI_vehicleSpeed (the
-      car's own estimate, NOT our spoof) goes above 1 mph, the worker
-      disengages. Any real motion of the car means we should not be
-      commanding the rack.
-    - **EAC-bounce watchdog**. If we see more than 5 EAC status
-      transitions in 1 second, auto-E-STOP. Catches the May 2026
-      flicker pattern automatically.
+    - **EAC-bounce watchdog**, **real-motion auto-disengage**, and
+      **gear-out-of-park auto-disengage** were introduced in v4.2 and
+      removed in v5.0.4. See v5.0.4 release notes above.
 
 WHAT IS NEW IN v4.1 (vs v4)
     - **30 MPH MODE toggle button in the GUI.** Starts OFF. When the
@@ -211,7 +215,7 @@ from datetime import datetime
 from tkinter import font
 from typing import Optional
 
-__version__ = "4.3.3"
+__version__ = "5.0.4"
 
 
 # ============================================================================
@@ -311,15 +315,9 @@ ESP_PREFLIGHT_REFUSE_HZ = 1.0
 # above this threshold (real ESP came alive), auto-disable.
 ESP_AUTO_DISABLE_HZ = 5.0
 
-# EAC-bounce watchdog. If we observe more than this many EAC status
-# transitions in one second, auto-E-STOP. Catches the May 2026 flicker
-# pattern automatically.
-EAC_BOUNCE_LIMIT_PER_SEC = 5
-
-# Real-motion watchdog. If DI_vehicleSpeed (the car's own estimate,
-# unaffected by our 0x155 spoof) goes above this, auto-disengage. Any
-# real motion of the car means the rack should not be under remote
-# control -- we are bench-and-jacks-only.
+# Speed threshold used by the shift gate to refuse R/D commands while
+# the car is moving. Not an auto-disengage trigger (v5.0.4: all
+# auto-disengage behaviours removed).
 REAL_MOTION_AUTO_DISENGAGE_MPH = 1.0
 
 # Bus diagnostic panel: which IDs we want to display rates for, and
@@ -506,9 +504,7 @@ class RackStatus:
     # Brake (from 0x118 also). brake_pedal: 0/1 boolean. brake_state: enum.
     brake_pedal: int = -1
     brake_state: int = -1
-    # EAC transition timestamps for the bounce watchdog. Worker
-    # appends; the bounce check reads. Bounded to keep memory finite.
-    eac_transition_times: deque = field(default_factory=lambda: deque(maxlen=64))
+
 
 
 @dataclass
@@ -809,7 +805,6 @@ class CanWorker(threading.Thread):
             self.log(f"EAC: {EAC_STATUS_NAMES.get(prev_status,'?')} -> "
                      f"{EAC_STATUS_NAMES.get(eac_status,'?')} "
                      f"(err={EAC_ERROR_CODES.get(eac_err,'?')})")
-            self.status.eac_transition_times.append(time.monotonic())
             if self.logger:
                 self.logger.sample(self.ctrl, self.status,
                                    event=f"eac_transition:{EAC_STATUS_NAMES.get(eac_status,'?')}")
@@ -847,38 +842,6 @@ class CanWorker(threading.Thread):
             if dt_ms > (PERIOD_DAS_MS + LOOP_OVERRUN_LIMIT_MS):
                 self.trigger_estop(f"loop overrun {dt_ms:.0f} ms")
                 return
-
-        # v4.2 -- EAC bounce watchdog. Count transitions in the last
-        # second; if too many, the rack is flickering and we E-STOP
-        # rather than letting the user keep commanding into the chaos.
-        recent = sum(1 for t in self.status.eac_transition_times
-                     if now - t < 1.0)
-        if recent > EAC_BOUNCE_LIMIT_PER_SEC:
-            self.trigger_estop(
-                f"EAC bounce: {recent} transitions in last second")
-            return
-
-        # v4.2 -- real-motion auto-disengage. DI_vehicleSpeed is the
-        # car's own estimate, unaffected by our 0x155 spoof. Any real
-        # motion means we should not be commanding the rack.
-        if (self.ctrl.engaged
-                and self.status.di_torque2_rx_count > 0
-                and abs(self.status.di_vehicle_speed_mph) > REAL_MOTION_AUTO_DISENGAGE_MPH):
-            self.log(f"AUTO-DISENGAGE: real motion detected "
-                     f"({self.status.di_vehicle_speed_mph:+.1f} mph)")
-            self.ctrl.engaged = False
-            return
-
-        # v4.2 -- gear-out-of-park auto-disengage. If we engaged in P
-        # and the gear changes to anything else, drop engagement.
-        if (self.ctrl.engaged
-                and self.status.di_torque2_rx_count > 0
-                and self.status.gear != DI_GEAR_PARK
-                and self.status.gear >= 0):
-            gear_name = DI_GEAR_NAMES.get(self.status.gear, "?")
-            self.log(f"AUTO-DISENGAGE: gear left Park (now {gear_name})")
-            self.ctrl.engaged = False
-            return
 
         # v4.2 -- mid-session ESP contention auto-disable for 30 MPH MODE.
         # If the real ESP comes alive (or comes back) while we're in
@@ -2389,10 +2352,7 @@ def banner():
           f"{ESP_PREFLIGHT_REFUSE_HZ:.0f} Hz")
     print(f" 30 MPH MODE auto-disable : if 0x155 RX > "
           f"{ESP_AUTO_DISABLE_HZ:.0f} Hz mid-session")
-    print(f" EAC bounce watchdog      : E-STOP if > "
-          f"{EAC_BOUNCE_LIMIT_PER_SEC} EAC transitions / second")
-    print(f" Real-motion auto-disengage: if |DI speed| > "
-          f"{REAL_MOTION_AUTO_DISENGAGE_MPH:.1f} mph")
+    print(f" EAC auto-disengage       : DISABLED (v5.0.4)")
     print(f" Log dir                  : {LOG_DIR}")
     print("=" * 72)
 
