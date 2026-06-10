@@ -178,6 +178,10 @@ dependency.
 - [V5_PLAN.md](V5_PLAN.md) -- detailed plan for v5 (full vehicle
   control: throttle, brake, gear, steering). On
   `dev/v5-longitudinal` branch.
+- [v6/](v6/README.md) -- the v6 track: comma 3X + openpilot fork
+  on the car. **Separate from rack control** -- see
+  [v6/V6_PLAN.md](v6/V6_PLAN.md) and
+  [v6/INSTALL_GUIDE.md](v6/INSTALL_GUIDE.md).
 - [docs/build/ROADMAP.pdf](docs/build/ROADMAP.pdf) -- printable
   professional version of the roadmap with wiring diagrams and
   flowcharts. Regenerate with `python docs/build/build_pdf.py`.
