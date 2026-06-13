@@ -10,8 +10,8 @@ Facts are sourced from v6/V6_PLAN.md, v6/ANALYSIS_PROMPT1.md and
 PROJECT_MEMORY.md; commercial numbers are estimates and are
 labelled as such on the page.
 
-Run: python v6/build/build_v6_pdf.py
-Output: v6/build/V6_OPENPILOT_PLAN.pdf
+Run: python docs/build/build_v6_pdf.py
+Output: docs/build/V6_OPENPILOT_PLAN.pdf (lives next to ROADMAP.pdf)
 """
 
 import math
@@ -440,7 +440,8 @@ def build():
         wrapped = []
         for r, row in enumerate(data):
             st = cell_head if (header and r == 0) else cell_style
-            wrapped.append([Paragraph(str(cell).replace("\n", "<br/>"), st)
+            wrapped.append([cell if isinstance(cell, Paragraph)
+                            else Paragraph(str(cell).replace("\n", "<br/>"), st)
                             for cell in row])
         data = wrapped
         t = Table(data, colWidths=widths, repeatRows=1 if header else 0)
@@ -709,6 +710,72 @@ def build():
         "product line. The honest framing: v6 is worth doing for our "
         "car and for the project's openpilot end-goal — not for "
         "revenue.", body))
+
+    # ---- 6. References ----
+    story.append(PageBreak())
+    story.append(Paragraph("6. Links — who solved this, and our paper trail", h1))
+    story.append(Paragraph(
+        "Our issue, in one line: we tried to install the legacy "
+        "BogGyver/Tinkla software by downgrading AGNOS (using the "
+        "nonexistent installer.comma.ai/commaai/agnos8 URL, based on a "
+        "miscited GitHub issue) — when the actual blocker was that the "
+        "legacy project is abandoned and was never the current path. "
+        "The people who solved pre-AP Model S on a comma 3X are the "
+        "xnor / Loetkolben project, which rebuilt the hardware and "
+        "harnesses from scratch after BogGyver left and maintains the "
+        "software today. Their links come first.", body))
+
+    def linkrow(label, url):
+        return [Paragraph(label, cell_style),
+                Paragraph(f'<link href="{url}" color="#1e6fd9">{url}'
+                          f'</link>', cell_style)]
+
+    story.append(Paragraph("The solution (xnor / Loetkolben)", h2))
+    story.append(table(
+        [["What", "Link"],
+         linkrow("Maintained openpilot fork (the successor; branches "
+                 "active 2026)", "https://github.com/xnor-tech/openpilot"),
+         linkrow("Wiki — install docs incl. Tesla preAP",
+                 "https://wiki.xnor.shop/"),
+         linkrow("Shop — Model S (preAP) OBD-C harness kit for comma 3X",
+                 "https://xnor.shop/products/model-s-preap-kit"),
+         linkrow("Discord — confirm the current pre-AP 3X build + "
+                 "installer URL here FIRST", "https://discord.xnor.shop/"),
+         linkrow("Maintainer (Loetkolben)", "https://loetkolben.org/")],
+        [2.4 * inch, 4.5 * inch]))
+
+    story.append(Paragraph("The legacy project (BogGyver / Tinkla — frozen Jan 2024)", h2))
+    story.append(table(
+        [["What", "Link"],
+         linkrow("Fork source for the fallback spike (branch "
+                 "tesla_unity_releaseC3; AGNOS 9.1 pin in launch_env.sh)",
+                 "https://github.com/BogGyver/openpilot/tree/"
+                 "tesla_unity_releaseC3"),
+         linkrow("Panda safety code (CRC + 0x488 behavior we verified "
+                 "against)", "https://github.com/BogGyver/panda"),
+         linkrow("Tinkla site (2022-era docs; harnesses no longer sold)",
+                 "https://tinkla.us")],
+        [2.4 * inch, 4.5 * inch]))
+
+    story.append(Paragraph("Context and prerequisites", h2))
+    story.append(table(
+        [["What", "Link"],
+         linkrow("commaai community wiki, Tesla page (updated May 2026; "
+                 "lists pre-AP S on comma 3X via xnor)",
+                 "https://github.com/commaai/openpilot/wiki/tesla"),
+         linkrow("EPAS firmware patch (already flashed on our rack — do "
+                 "not re-flash)",
+                 "https://github.com/gregjhogan/tesla-pre-ap-epas-patch"),
+         linkrow("comma 3X hardware", "https://comma.ai/shop/comma-3x"),
+         linkrow("Device recovery if an install attempt strands the 3X",
+                 "https://flash.comma.ai"),
+         linkrow("This project (branch with all v6 docs)",
+                 "https://github.com/dnage76-beep/tesla-rack-control")],
+        [2.4 * inch, 4.5 * inch]))
+    story.append(Paragraph(
+        "Markdown companions in the repo: v6/V6_PLAN.md, "
+        "v6/INSTALL_GUIDE.md, v6/ANALYSIS_PROMPT1.md (all carry the "
+        "same links with verification dates).", small))
 
     doc = SimpleDocTemplate(
         OUT_PATH, pagesize=letter,

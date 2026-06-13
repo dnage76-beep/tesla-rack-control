@@ -185,6 +185,11 @@ dependency.
 - [docs/build/ROADMAP.pdf](docs/build/ROADMAP.pdf) -- printable
   professional version of the roadmap with wiring diagrams and
   flowcharts. Regenerate with `python docs/build/build_pdf.py`.
+- [docs/build/V6_OPENPILOT_PLAN.pdf](docs/build/V6_OPENPILOT_PLAN.pdf)
+  -- printable v6 plan: comma 3X connection diagrams, install
+  flowchart, test plan, commercial analysis, and links to the
+  xnor/Loetkolben project. Regenerate with
+  `python docs/build/build_v6_pdf.py`.
 - [docs/GUIDE.md](docs/GUIDE.md) -- setup, operating procedure,
   configuration, mode reference.
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) -- symptom
