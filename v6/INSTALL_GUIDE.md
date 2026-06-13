@@ -20,7 +20,7 @@ on the comma setup screen; the pattern is
 | Option | URL | AGNOS it flashes | Status |
 |---|---|---|---|
 | xnor pre-AP build | **ask the [xnor Discord](https://discord.xnor.shop/)** — the public repo has no `tesla-unity` branch yet; do not guess | 12.8 (xnor-c3) | Actively maintained, advertises 3X + pre-AP |
-| BogGyver fallback | `installer.comma.ai/BogGyver/tesla_unity_releaseC3` | 9.1 (pinned in the branch) | Frozen Jan 2024; 3X compatibility **unverified** |
+| BogGyver fallback | `installer.comma.ai/BogGyver/tesla_unity_releaseC3` — source: [github.com/BogGyver/openpilot @ tesla_unity_releaseC3](https://github.com/BogGyver/openpilot/tree/tesla_unity_releaseC3) (AGNOS pin in [`launch_env.sh`](https://github.com/BogGyver/openpilot/blob/tesla_unity_releaseC3/launch_env.sh)) | 9.1 (pinned in the branch) | Frozen Jan 2024; 3X compatibility **unverified** |
 
 > **Do not use `installer.comma.ai/commaai/agnos8`.** That branch
 > does not exist on commaai/openpilot (verified 2026-06-10), and

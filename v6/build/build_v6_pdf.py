@@ -551,7 +551,11 @@ def build():
         "launch_env.sh and flashes it automatically on first boot "
         "(BogGyver C3 pins 9.1; xnor-c3 pins 12.8). The device "
         "currently runs stock AGNOS 18.4, which is fine: the installer "
-        "handles the transition.", body))
+        "handles the transition. The BogGyver installer URL is built "
+        "from github.com/BogGyver/openpilot, branch "
+        "tesla_unity_releaseC3 — that branch is the source of the "
+        "AGNOS pin and the place to read the code before installing.",
+        body))
     story.append(InstallFlowchart())
 
     # ---- 4. Test plan ----

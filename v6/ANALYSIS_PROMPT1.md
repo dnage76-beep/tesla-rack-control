@@ -49,9 +49,10 @@ cost estimate changes with them:
    points at a branch that does not exist on commaai/openpilot
    (verified via `git ls-remote`, 2026-06-10), which is why that
    attempt went nowhere. The correct legacy attempt is simply
-   `installer.comma.ai/BogGyver/tesla_unity_releaseC3` — the
-   installer itself handles the AGNOS 18.4 → 9.1 transition (or
-   fails trying, see Option 1 risks).
+   `installer.comma.ai/BogGyver/tesla_unity_releaseC3` (built from
+   [github.com/BogGyver/openpilot @ tesla_unity_releaseC3](https://github.com/BogGyver/openpilot/tree/tesla_unity_releaseC3))
+   — the installer itself handles the AGNOS 18.4 → 9.1 transition
+   (or fails trying, see Option 1 risks).
 3. **The harness problem has a current commercial answer.** Tinkla
    is gone, but the xnor shop sells a
    [pre-AP Model S OBD-C harness kit](https://xnor.shop/products/model-s-preap-kit)
