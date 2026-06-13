@@ -312,54 +312,54 @@ class InstallFlowchart(Flowable):
         cx = 0.3 * inch  # left column x
 
         _box(c, cx, 3.8 * inch, W, H,
-             "Ask xnor Discord for the\ncurrent pre-AP 3X build + URL",
+             "Install installer.comma.ai/\nxnor-tech/tesla-unity",
              fill=PANEL, stroke=ACCENT, bold=True, font_size=8)
         _arrow(c, cx + W / 2, 3.8 * inch, cx + W / 2, 3.35 * inch,
                color=DIM)
         _box(c, cx, 2.8 * inch, W, H,
-             "URL confirmed?\n(diamond decision)",
+             "Boots + sees CAN +\nfingerprints the car?",
              fill=WHITE, stroke=HEAD, bold=True, font_size=8)
 
         # YES branch (down)
         _arrow(c, cx + W / 2, 2.8 * inch, cx + W / 2, 2.35 * inch,
                color=GREEN, label="yes", label_dy=2)
         _box(c, cx, 1.8 * inch, W, H,
-             "Factory-reset 3X, enter URL\nat Custom Software screen",
+             "Proceed to test plan\n(T1 acceptance met)",
              fill=PANEL, stroke=GREEN, font_size=8)
         _arrow(c, cx + W / 2, 1.8 * inch, cx + W / 2, 1.35 * inch,
                color=GREEN)
         _box(c, cx, 0.8 * inch, W, H,
-             "Fork flashes its own AGNOS,\nboots -- proceed to test plan",
+             "Confirm on xnor Discord that\ntesla-unity is still current",
              fill=PANEL, stroke=GREEN, bold=True, font_size=8)
 
         # NO branch (right): BogGyver spike
         bx = 3.1 * inch
         _arrow(c, cx + W, 3.07 * inch, bx, 3.07 * inch,
-               color=YELLOW, label="not yet", label_dy=5)
+               color=YELLOW, label="bootloop", label_dy=5)
         _box(c, bx, 2.8 * inch, W, H,
-             "Try installer.comma.ai/\nBogGyver/tesla_unity_releaseC3",
+             "flash.comma.ai reflash;\ndocument exact failure",
              fill=WHITE, stroke=YELLOW, font_size=8)
         _arrow(c, bx + W / 2, 2.8 * inch, bx + W / 2, 2.35 * inch,
                color=DIM)
         _box(c, bx, 1.8 * inch, W, H,
-             "Boots + sees CAN +\nfingerprints the car?",
+             "Ask xnor Discord: AGNOS 9.1\non recent 3X hardware?",
              fill=WHITE, stroke=HEAD, bold=True, font_size=8)
         _arrow(c, bx + W / 2, 1.8 * inch, bx + W / 2, 1.35 * inch,
-               color=GREEN, label="yes", label_dy=2)
+               color=GREEN, label="answer", label_dy=2)
         _box(c, bx, 0.8 * inch, W, H,
-             "Interim baseline (frozen 0.9.6)\n-- still migrate to xnor later",
+             "Retry per Discord guidance\nor escalate with our logs",
              fill=PANEL, stroke=GREEN, font_size=8)
 
         # Bootloop branch (far right)
         fx = 5.5 * inch
         _arrow(c, bx + W, 2.07 * inch, fx, 2.07 * inch,
-               color=RED, label="no", label_dy=5)
+               color=RED, label="stuck", label_dy=7)
         _box(c, fx - 0.1 * inch, 1.8 * inch, 1.45 * inch, H,
-             "flash.comma.ai\nreflash, back to stock",
+             "Device always recoverable\nat flash.comma.ai",
              fill=WHITE, stroke=RED, font_size=7.5)
         c.setFillColor(DIM)
         c.setFont("Helvetica-Oblique", 7.5)
-        c.drawString(fx - 0.1 * inch, 1.55 * inch, "question answered, $0 lost")
+        c.drawString(fx - 0.1 * inch, 1.55 * inch, "worst case: back to stock, $0 lost")
 
         # Never box
         c.setFillColor(RED)
@@ -543,20 +543,19 @@ def build():
     # ---- 3. Software install ----
     story.append(Paragraph("3. Software install", h1))
     story.append(Paragraph(
-        "Decision flow from ANALYSIS_PROMPT1.md. The recommended target "
-        "is the actively maintained xnor/Loetkolben build (the commaai "
-        "community wiki's documented path for pre-AP Model S on a comma "
-        "3X); the frozen BogGyver branch is a zero-cost spike worth one "
-        "afternoon, never two days. No manual AGNOS step exists "
-        "anywhere in this flow — every fork pins its AGNOS version in "
-        "launch_env.sh and flashes it automatically on first boot "
-        "(BogGyver C3 pins 9.1; xnor-c3 pins 12.8). The device "
-        "currently runs stock AGNOS 18.4, which is fine: the installer "
-        "handles the transition. The BogGyver installer URL is built "
-        "from github.com/BogGyver/openpilot, branch "
-        "tesla_unity_releaseC3 — that branch is the source of the "
-        "AGNOS pin and the place to read the code before installing.",
-        body))
+        "The install target is now confirmed (verified 2026-06-13): "
+        "installer.comma.ai/xnor-tech/tesla-unity, built from "
+        "github.com/xnor-tech/openpilot branch tesla-unity — Tesla "
+        "Unity 0.9.6-Beta63 (BogGyver's final beta) rehosted and "
+        "maintained by Loetkolben, with explicit PREAP_MODELS support "
+        "and an AGNOS 9.1 pin in launch_env.sh. This is the commaai "
+        "community wiki's documented path for pre-AP Model S on a "
+        "comma 3X. No manual AGNOS step exists anywhere in this flow — "
+        "the fork flashes its pinned AGNOS automatically on first "
+        "boot; the device's current stock AGNOS 18.4 is irrelevant. "
+        "Remaining risk: whether AGNOS 9.1 boots a recently "
+        "manufactured 3X — if it bootloops, recover at flash.comma.ai "
+        "and take the documented failure to the xnor Discord.", body))
     story.append(InstallFlowchart())
 
     # ---- 4. Test plan ----
@@ -733,14 +732,18 @@ def build():
     story.append(Paragraph("The solution (xnor / Loetkolben)", h2))
     story.append(table(
         [["What", "Link"],
-         linkrow("Maintained openpilot fork (the successor; branches "
-                 "active 2026)", "https://github.com/xnor-tech/openpilot"),
+         linkrow("THE INSTALL BRANCH — tesla-unity (Tesla Unity "
+                 "0.9.6-Beta63, PREAP_MODELS, AGNOS 9.1). Install URL: "
+                 "installer.comma.ai/xnor-tech/tesla-unity",
+                 "https://github.com/xnor-tech/openpilot/tree/tesla-unity"),
+         linkrow("Maintained openpilot fork (org; other branches active "
+                 "2026)", "https://github.com/xnor-tech/openpilot"),
          linkrow("Wiki — install docs incl. Tesla preAP",
                  "https://wiki.xnor.shop/"),
          linkrow("Shop — Model S (preAP) OBD-C harness kit for comma 3X",
                  "https://xnor.shop/products/model-s-preap-kit"),
-         linkrow("Discord — confirm the current pre-AP 3X build + "
-                 "installer URL here FIRST", "https://discord.xnor.shop/"),
+         linkrow("Discord — support; confirm tesla-unity is still "
+                 "current + AGNOS 9.1 on recent 3X hardware", "https://discord.xnor.shop/"),
          linkrow("Maintainer (Loetkolben)", "https://loetkolben.org/")],
         [2.4 * inch, 4.5 * inch]))
 

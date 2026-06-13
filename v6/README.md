@@ -52,8 +52,12 @@ are **mutually exclusive on the bus**:
       is **already done** on this car.
 - [x] comma 3X in hand (removed from the bus since v4). Currently
       runs stock AGNOS 18.4 (per Charlie, prompt1.md).
-- [ ] Software fork chosen and verified bootable on the 3X (see
-      V6_PLAN.md Section 2 — this is the open decision).
+- [x] Software fork identified (2026-06-13):
+      `installer.comma.ai/xnor-tech/tesla-unity` — Tesla Unity
+      0.9.6-Beta63 rehosted by Loetkolben with explicit
+      `PREAP_MODELS` support (V6_PLAN.md §2b).
+- [ ] Fork verified bootable on our 3X (AGNOS 9.1 vs recent
+      hardware revision is the remaining risk).
 - [ ] Harness path confirmed (OBD2 pins 1/9 populated? else X437
       tap) — see V6_PLAN.md Section 3.
 - [ ] Device installs, boots, sees chassis CAN, fingerprints the car.

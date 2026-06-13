@@ -68,34 +68,38 @@ Verified directly against `github.com/xnor-tech/openpilot` (git,
   with device = "**comma 3X (NOT comma four)**", via the xnor
   ecosystem, using the [xnor preAP OBD-C harness kit](https://xnor.shop/products/model-s-preap-kit),
   "requires one-time EPAS patch, vision-based ACC 18+ MPH."
-- **Catch (verified)**: the wiki links pre-AP support to an
-  `xnor-tech/openpilot` branch `tesla-unity` that **does not
-  currently exist publicly** (`git ls-remote` shows only `master`,
-  `xnor`, `xnor-dev`, `xnor-c3`, `xnor-c3-dev`, `rx*`). A shallow
-  clone of `xnor-c3` shows its Tesla port covers HW1 (2014-16)
-  through HW4 — `LEGACY_CARS` in
-  `opendbc_repo/opendbc/car/tesla/values.py` starts at
-  `TESLA_MODEL_S_HW1` ("Model S (with HW1) 2014-16") and there is
-  **no pre-AP (2012–Oct 2014) car entry** in that branch. The
-  pre-AP branch is presumably private, renamed, or distributed
-  another way. **Resolve in the xnor Discord
-  (https://discord.xnor.shop/) before relying on it.**
+- **The pre-AP branch (resolved 2026-06-13)**: the wiki's
+  `tesla-unity` link was a dead end on 2026-06-10 but the branch
+  **now exists**:
+  [xnor-tech/openpilot @ tesla-unity](https://github.com/xnor-tech/openpilot/tree/tesla-unity).
+  Verified by shallow clone: `selfdrive/car/tesla/values.py`
+  defines `PREAP_MODELS = 'TESLA PREAP MODEL S'`; version is
+  **0.9.6-Beta63** (i.e. BogGyver's final Tesla Unity beta,
+  rehosted and continued by Loetkolben — last commit 2025-07-16,
+  author lukasloetkolben); `launch_env.sh` pins **AGNOS 9.1**.
+  Install URL: `installer.comma.ai/xnor-tech/tesla-unity`.
+  Note this is the frozen 0.9.6-era codebase under an active
+  maintainer, NOT a port to the modern 0.10.x `xnor-c3` base —
+  `xnor-c3`'s own Tesla port starts at HW1 (2014-16) with no
+  pre-AP entry. Remaining question for the Discord: does AGNOS
+  9.1 boot recent 3X hardware revisions.
 
 ### 2c. Decision
 
 Recommended order of attack:
 
-1. **Ask the xnor Discord** for the current pre-AP install URL and
-   branch for a comma 3X. The wiki + shop say this configuration
-   is supported *today*; only the exact branch name is unconfirmed.
-   This is the actively-maintained path and the one to bet on.
-2. **In parallel, try BogGyver `tesla_unity_releaseC3` on the 3X**
-   (installer URL in INSTALL_GUIDE.md). Cost is one
-   install/factory-reset cycle. If it boots, sees CAN, and
-   fingerprints the car, we have a working baseline while the
-   xnor question resolves. If it fails on 3X hardware (likely
-   failure modes: AGNOS 9.1 vs 3X hardware support, panda firmware
-   mismatch), that's the answer in an afternoon and nothing is lost.
+1. **Install `installer.comma.ai/xnor-tech/tesla-unity`** (found
+   and verified 2026-06-13, see §2b). This is the wiki-documented
+   pre-AP path under the active maintainer. Cost is one
+   install/factory-reset cycle; if it bootloops on our 3X
+   (AGNOS 9.1 vs recent hardware revisions is the open risk),
+   recover via flash.comma.ai and take the question to the
+   Discord with the exact failure documented.
+2. **Use the xnor Discord for confirmation and support**, not
+   discovery: confirm `tesla-unity` is still current for a 3X and
+   ask about AGNOS 9.1 on recent hardware. The original BogGyver
+   branch is now historical-reference only — same codebase, dead
+   repo.
 
 Not viable: upstream commaai/openpilot (supports Model 3/Y
 HW3/HW4 only) and SunnyPilot-TeslaHW1 (AP1 cars, not pre-AP).
@@ -207,10 +211,12 @@ no EAC complaints from the rack.
 
 ## 6. Open questions (ranked)
 
-1. **What branch/URL is the current xnor pre-AP build?** Wiki says
-   it exists; the public repo doesn't show it. → xnor Discord.
-2. **Does BogGyver tesla_unity_releaseC3 boot on a comma 3X at
-   all?** Cheap to test, currently unknown.
+1. ~~What branch/URL is the current xnor pre-AP build?~~
+   **Resolved 2026-06-13**: `xnor-tech/openpilot @ tesla-unity` →
+   `installer.comma.ai/xnor-tech/tesla-unity` (§2b).
+2. **Does the tesla-unity build (AGNOS 9.1) boot on a recent
+   comma 3X hardware revision?** Cheap to test; also ask the
+   Discord.
 3. **Are OBD2 pins 1/9 populated on this post-May-31 2013 build?**
    → physical check, decides harness.
 4. **Does the fork's EPAS-patch detection accept our

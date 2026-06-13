@@ -19,8 +19,13 @@ on the comma setup screen; the pattern is
 
 | Option | URL | AGNOS it flashes | Status |
 |---|---|---|---|
-| xnor pre-AP build | **ask the [xnor Discord](https://discord.xnor.shop/)** — the public repo has no `tesla-unity` branch yet; do not guess | 12.8 (xnor-c3) | Actively maintained, advertises 3X + pre-AP |
-| BogGyver fallback | `installer.comma.ai/BogGyver/tesla_unity_releaseC3` — source: [github.com/BogGyver/openpilot @ tesla_unity_releaseC3](https://github.com/BogGyver/openpilot/tree/tesla_unity_releaseC3) (AGNOS pin in [`launch_env.sh`](https://github.com/BogGyver/openpilot/blob/tesla_unity_releaseC3/launch_env.sh)) | 9.1 (pinned in the branch) | Frozen Jan 2024; 3X compatibility **unverified** |
+| xnor pre-AP build **(use this)** | `installer.comma.ai/xnor-tech/tesla-unity` — source: [github.com/xnor-tech/openpilot @ tesla-unity](https://github.com/xnor-tech/openpilot/tree/tesla-unity) (verified 2026-06-13: contains `PREAP_MODELS`, v0.9.6-Beta63, last commit 2025-07-16) | 9.1 (pinned in the branch) | BogGyver's final Tesla Unity beta, rehosted + maintained by Loetkolben; the commaai wiki's documented pre-AP path for comma 3X |
+| BogGyver original (historical) | `installer.comma.ai/BogGyver/tesla_unity_releaseC3` — source: [github.com/BogGyver/openpilot @ tesla_unity_releaseC3](https://github.com/BogGyver/openpilot/tree/tesla_unity_releaseC3) (AGNOS pin in [`launch_env.sh`](https://github.com/BogGyver/openpilot/blob/tesla_unity_releaseC3/launch_env.sh)) | 9.1 (pinned in the branch) | Frozen Jan 2024; superseded by the xnor-tech rehost above — only useful for comparison |
+
+Sanity question for the [xnor Discord](https://discord.xnor.shop/)
+before install day (no longer blocking): confirm `tesla-unity` is
+still the current pre-AP branch for a comma 3X, and whether AGNOS
+9.1 boots recent 3X hardware revisions.
 
 > **Do not use `installer.comma.ai/commaai/agnos8`.** That branch
 > does not exist on commaai/openpilot (verified 2026-06-10), and
