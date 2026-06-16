@@ -22,6 +22,7 @@ Last updated: 2026-06-10.
 | [INSTALL_GUIDE.md](INSTALL_GUIDE.md) | Step-by-step comma 3X setup: flashing, installer URL, harness, first power-on checks. |
 | [prompt1.md](prompt1.md) | Charlie's request (2026-06-10): cost-benefit analysis of the possible v6 paths. |
 | [ANALYSIS_PROMPT1.md](ANALYSIS_PROMPT1.md) | The requested analysis: four options compared, with premise corrections (the AGNOS 8 claim) and a recommendation. |
+| [V6_OPENPILOT_FORK_PLAN.md](V6_OPENPILOT_FORK_PLAN.md) | Plan for forking modern openpilot as the *brain* while our laptop code transmits `0x488`, engaged on the cruise stalk. Verified seam (`steeringAngleDeg` ↔ `target_angle_deg`), three architectures, code-reuse map, staged milestones. |
 | [../docs/build/V6_OPENPILOT_PLAN.pdf](../docs/build/V6_OPENPILOT_PLAN.pdf) | Printable plan, filed next to ROADMAP.pdf: architecture + connection diagrams, install flowchart, gated test plan (T0-T4), commercial cost analysis, and a links page crediting the xnor/Loetkolben project. Regenerate with `python docs/build/build_v6_pdf.py` (needs `reportlab`). |
 
 ---
