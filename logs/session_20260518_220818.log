@@ -1,0 +1,12 @@
+[2026-05-18 22:08:18.129] session start (20260518_220818)
+[2026-05-18 22:08:18.200] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-18 22:08:18.201] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-18 22:08:18.248] EAC: INHIBITED -> AVAILABLE (err=HANDS_ON)
+[2026-05-18 22:08:18.921] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 22:08:58.654] err -> OUT_OF_RANGE
+[2026-05-18 22:08:58.934] EAC: ACTIVE -> INHIBITED (err=OUT_OF_RANGE)
+[2026-05-18 22:09:00.917] E-STOP: no 0x370 for 502 ms
+[2026-05-20 20:24:37.619] rc: RC read error: ClearCommError failed (OSError(22, 'Incorrect function.', None, 1))
+[2026-05-20 20:24:41.081] rc: RC port closed
+[2026-05-20 20:26:25.064] CAN closed
+[2026-05-20 20:26:25.065] disconnect; closing log

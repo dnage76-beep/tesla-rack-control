@@ -1,0 +1,10 @@
+[2026-05-20 21:00:57.657] session start (20260520_210057)
+[2026-05-20 21:00:57.736] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-20 21:00:57.736] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-20 21:00:57.798] EAC: INHIBITED -> AVAILABLE (err=HANDS_ON)
+[2026-05-20 21:00:58.286] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-20 21:01:23.884] rc: RC read error: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+[2026-05-20 21:01:23.884] rc: RC port closed
+[2026-05-20 21:04:48.315] err -> OUT_OF_RANGE
+[2026-05-20 21:04:48.661] EAC: ACTIVE -> INHIBITED (err=OUT_OF_RANGE)
+[2026-05-20 21:04:50.628] E-STOP: no 0x370 for 519 ms

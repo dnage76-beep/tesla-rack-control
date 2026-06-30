@@ -1,0 +1,8 @@
+[2026-05-21 19:04:36.802] session start (20260521_190436)
+[2026-05-21 19:04:36.907] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-21 19:04:36.907] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-21 19:04:36.968] EAC: INHIBITED -> AVAILABLE (err=HANDS_ON)
+[2026-05-21 19:04:37.573] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-21 19:05:48.755] E-STOP: disconnect requested
+[2026-05-21 19:05:48.762] CAN closed
+[2026-05-21 19:05:48.763] disconnect; closing log

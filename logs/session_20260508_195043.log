@@ -1,0 +1,32 @@
+[2026-05-08 19:50:43.383] session start (20260508_195043)
+[2026-05-08 19:50:43.446] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-08 19:50:43.447] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-08 19:50:43.448] EAC: AVAILABLE -> INHIBITED (err=OUT_OF_RANGE)
+[2026-05-08 19:50:43.448] err -> OUT_OF_RANGE
+[2026-05-08 19:50:43.508] EAC: INHIBITED -> AVAILABLE (err=OUT_OF_RANGE)
+[2026-05-08 19:50:44.599] mode change: slider
+[2026-05-08 19:50:51.090] brake: PRESSED
+[2026-05-08 19:50:54.792] shift requested: P
+[2026-05-08 19:50:54.810] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-08 19:50:55.210] SHIFT post-burst gear: P (requested P)
+[2026-05-08 19:51:06.449] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-08 19:51:06.449] shift requested: D
+[2026-05-08 19:51:06.483] gear: P -> D
+[2026-05-08 19:51:06.848] SHIFT post-burst gear: D (requested D)
+[2026-05-08 19:51:14.939] shift requested: N
+[2026-05-08 19:51:14.949] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-08 19:51:15.233] gear: D -> N
+[2026-05-08 19:51:15.349] SHIFT post-burst gear: N (requested N)
+[2026-05-08 19:51:17.354] shift requested: R
+[2026-05-08 19:51:17.373] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-08 19:51:17.413] gear: N -> R
+[2026-05-08 19:51:17.773] SHIFT post-burst gear: R (requested R)
+[2026-05-08 19:51:24.394] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-08 19:51:24.394] shift requested: P
+[2026-05-08 19:51:24.753] gear: R -> P
+[2026-05-08 19:51:24.794] SHIFT post-burst gear: P (requested P)
+[2026-05-08 19:51:26.353] brake: released
+[2026-05-08 19:51:49.076] E-STOP: RX exception: unhashable type
+[2026-05-08 23:23:29.527] mode change: keyboard
+[2026-05-08 23:23:43.587] CAN closed
+[2026-05-08 23:23:43.590] disconnect; closing log

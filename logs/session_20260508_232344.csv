@@ -1,0 +1,2 @@
+wall_time,monotonic,event,mode,engaged,estop,target_deg,commanded_deg,measured_deg,eac_status,eac_error,rx_count_0x370,bus_errors,gear,gear_request,di_vehicle_speed_mph,brake_pedal,brake_state
+2026-05-08 23:24:09.105,24.4247,estop:disconnect requested,keyboard,0,1,0.00,-0.00,-16.60,AVAILABLE,OUT_OF_RANGE,0,0,P,P,0.00,released,RELEASED

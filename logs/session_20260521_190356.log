@@ -1,0 +1,9 @@
+[2026-05-21 19:03:56.776] session start (20260521_190356)
+[2026-05-21 19:03:56.846] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-21 19:03:56.846] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-21 19:04:21.325] gear: P -> SNA
+[2026-05-21 19:04:21.344] gear: SNA -> P
+[2026-05-21 19:04:21.848] EAC: INHIBITED -> AVAILABLE (err=NONE)
+[2026-05-21 19:04:27.630] E-STOP: disconnect requested
+[2026-05-21 19:04:27.636] CAN closed
+[2026-05-21 19:04:27.636] disconnect; closing log

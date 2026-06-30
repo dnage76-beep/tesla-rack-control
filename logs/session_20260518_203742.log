@@ -1,0 +1,65 @@
+[2026-05-18 20:37:42.342] session start (20260518_203742)
+[2026-05-18 20:37:42.724] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-18 20:37:42.724] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-18 20:37:42.725] err -> OUT_OF_RANGE
+[2026-05-18 20:37:42.785] EAC: INHIBITED -> AVAILABLE (err=OUT_OF_RANGE)
+[2026-05-18 20:37:50.614] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 20:37:51.029] rc: RND switch -> N, queuing shift
+[2026-05-18 20:37:52.960] brake: PRESSED
+[2026-05-18 20:37:53.373] rc: RND switch -> D, queuing shift
+[2026-05-18 20:37:53.402] shift requested: D
+[2026-05-18 20:37:53.420] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:37:53.459] gear: P -> D
+[2026-05-18 20:37:53.460] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-18 20:37:53.495] EAC: ACTIVE -> AVAILABLE (err=NONE)
+[2026-05-18 20:37:53.820] SHIFT post-burst gear: D (requested D)
+[2026-05-18 20:37:58.143] rc: RND switch -> N, queuing shift
+[2026-05-18 20:37:58.146] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:37:58.147] shift requested: N
+[2026-05-18 20:37:58.287] rc: RND switch -> R, queuing shift
+[2026-05-18 20:37:58.432] gear: D -> N
+[2026-05-18 20:37:58.553] SHIFT post-burst gear: N (requested N)
+[2026-05-18 20:38:00.207] rc: RND switch -> N, queuing shift
+[2026-05-18 20:38:00.213] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:00.214] shift requested: N
+[2026-05-18 20:38:00.430] rc: RND switch -> R, queuing shift
+[2026-05-18 20:38:00.614] SHIFT post-burst gear: N (requested N)
+[2026-05-18 20:38:01.334] rc: RND switch -> N, queuing shift
+[2026-05-18 20:38:01.338] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:01.338] shift requested: N
+[2026-05-18 20:38:01.418] rc: RND switch -> D, queuing shift
+[2026-05-18 20:38:01.738] SHIFT post-burst gear: N (requested N)
+[2026-05-18 20:38:02.378] rc: RND switch -> N, queuing shift
+[2026-05-18 20:38:02.379] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:02.380] shift requested: N
+[2026-05-18 20:38:02.693] rc: RND switch -> R, queuing shift
+[2026-05-18 20:38:02.782] SHIFT post-burst gear: N (requested N)
+[2026-05-18 20:38:03.281] rc: RND switch -> N, queuing shift
+[2026-05-18 20:38:03.282] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:03.285] shift requested: N
+[2026-05-18 20:38:03.311] rc: RND switch -> D, queuing shift
+[2026-05-18 20:38:03.681] SHIFT post-burst gear: N (requested N)
+[2026-05-18 20:38:05.215] rc: RND switch -> N, queuing shift
+[2026-05-18 20:38:05.222] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:05.241] shift requested: N
+[2026-05-18 20:38:05.622] SHIFT post-burst gear: N (requested N)
+[2026-05-18 20:38:05.815] rc: RND switch -> R, queuing shift
+[2026-05-18 20:38:05.816] shift requested: R
+[2026-05-18 20:38:05.822] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:05.861] gear: N -> R
+[2026-05-18 20:38:06.222] SHIFT post-burst gear: R (requested R)
+[2026-05-18 20:38:09.921] rc: RND switch -> N, queuing shift
+[2026-05-18 20:38:09.923] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:09.964] shift requested: N
+[2026-05-18 20:38:10.224] gear: R -> N
+[2026-05-18 20:38:10.325] SHIFT post-burst gear: N (requested N)
+[2026-05-18 20:38:10.840] rc: RND switch -> D, queuing shift
+[2026-05-18 20:38:10.842] shift requested: D
+[2026-05-18 20:38:10.845] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 20:38:10.881] gear: N -> D
+[2026-05-18 20:38:11.250] SHIFT post-burst gear: D (requested D)
+[2026-05-18 20:38:27.841] gear: D -> P
+[2026-05-18 20:38:29.140] brake: released
+[2026-05-18 20:40:30.050] E-STOP: disconnect requested
+[2026-05-18 20:40:30.069] CAN closed
+[2026-05-18 20:40:30.069] disconnect; closing log

@@ -1,0 +1,2336 @@
+[2026-05-21 17:58:56.326] session start (20260521_175856)
+[2026-05-21 17:58:56.540] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-21 17:58:56.540] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-21 17:58:56.544] err -> OUT_OF_RANGE
+[2026-05-21 17:58:56.622] EAC: INHIBITED -> AVAILABLE (err=OUT_OF_RANGE)
+[2026-05-21 17:58:57.615] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-21 17:59:45.465] brake: PRESSED
+[2026-05-21 17:59:48.987] rc: RND switch -> N, queuing shift
+[2026-05-21 17:59:49.014] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-21 17:59:49.015] shift requested: N
+[2026-05-21 17:59:49.040] gear: P -> N
+[2026-05-21 17:59:49.041] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.041] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.045] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.045] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.050] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.050] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.053] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.053] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.055] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.055] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.061] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.061] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.065] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.065] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.065] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.065] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.070] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.070] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.073] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.073] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.075] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.075] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.080] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.080] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.085] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.085] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.090] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.090] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.093] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.094] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.095] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.095] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.100] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.100] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.105] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.105] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.110] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.110] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.114] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.114] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.115] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.115] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.120] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.120] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.125] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.125] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.130] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.130] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.133] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.133] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.135] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.135] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.140] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.140] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.145] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.145] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.150] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.150] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.154] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.154] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.155] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.155] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.160] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.160] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.165] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.165] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.165] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.165] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.170] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.170] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.173] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.173] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.175] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.175] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.180] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.180] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.185] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.185] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.190] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.190] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.193] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.193] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.195] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.195] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.201] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.201] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.205] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.205] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.210] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.210] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.213] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.213] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.235] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.235] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.255] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.256] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.265] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.265] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.273] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.273] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.296] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.296] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.316] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.316] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.337] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.356] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.356] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.365] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.365] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.376] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.376] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.396] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.396] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.416] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.416] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.416] SHIFT post-burst gear: N (requested N)
+[2026-05-21 17:59:49.436] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.436] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.456] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.456] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.465] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.465] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.476] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.476] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.496] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.496] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.516] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.537] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.556] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.556] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.565] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.565] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.576] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.576] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.596] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.596] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.617] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.637] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.656] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.656] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.665] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.665] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.676] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.676] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.696] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.696] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.717] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.737] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.756] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.756] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.765] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.765] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.776] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.776] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.796] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.796] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.817] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.837] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.856] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.857] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.865] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.876] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.876] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.897] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.897] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.916] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.938] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.938] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.956] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.965] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.965] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.976] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.976] Husby was here, and we are ready to go
+[2026-05-21 17:59:49.996] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:49.996] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.017] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.037] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.037] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.057] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.057] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.065] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.076] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.076] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.096] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.117] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.137] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.156] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.165] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.176] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.176] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.196] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.196] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.217] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.237] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.256] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.265] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.265] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.276] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.276] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.296] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.296] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.317] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.337] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.356] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.356] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.365] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.365] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.376] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.376] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.396] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.396] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.417] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.437] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.457] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.465] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.465] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.476] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.476] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.496] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.496] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.517] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.537] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.556] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.556] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.565] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.565] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.576] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.576] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.596] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.596] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.617] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.637] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.656] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.656] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.665] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.676] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.676] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.696] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.696] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.717] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.737] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.756] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.756] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.765] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.776] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.776] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.796] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.796] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.817] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.838] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.838] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.858] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.858] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.866] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.877] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.877] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.896] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.896] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.918] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.918] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.937] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.957] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.965] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.976] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.976] Husby was here, and we are ready to go
+[2026-05-21 17:59:50.997] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:50.997] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.017] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.038] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.038] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.057] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.057] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.065] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.076] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.077] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.096] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.096] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.117] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.137] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.156] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.165] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.165] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.176] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.176] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.196] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.196] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.217] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.237] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.256] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.265] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.276] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.276] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.297] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.316] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.316] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.337] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.357] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.366] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.376] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.376] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.396] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.396] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.417] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.437] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.457] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.465] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.465] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.476] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.476] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.497] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.517] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.537] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.557] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.565] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.576] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.576] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.597] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.617] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.637] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.657] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.665] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.676] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.696] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.696] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.717] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.737] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.757] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.765] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.765] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.776] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.776] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.796] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.796] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.817] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.837] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.856] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.856] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.865] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.876] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.876] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.896] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.896] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.916] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.937] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.956] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.965] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.976] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.976] Husby was here, and we are ready to go
+[2026-05-21 17:59:51.996] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:51.996] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.017] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.037] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.037] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.057] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.057] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.066] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.076] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.076] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.097] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.117] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.137] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.157] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.165] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.165] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.176] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.176] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.197] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.197] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.217] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.237] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.256] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.256] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.265] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.276] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.276] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.296] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.296] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.317] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.337] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.357] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.365] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.365] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.376] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.376] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.396] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.417] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.437] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.457] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.465] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.476] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.476] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.497] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.517] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.537] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.557] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.565] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.577] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.577] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.596] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.596] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.617] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.637] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.657] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.665] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.676] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.676] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.697] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.717] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.737] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.757] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.766] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.776] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.776] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.796] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.816] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.837] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.857] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.857] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.865] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.876] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.876] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.896] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.896] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.916] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.937] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.956] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.965] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.976] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.976] Husby was here, and we are ready to go
+[2026-05-21 17:59:52.996] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:52.996] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.017] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.037] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.037] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.057] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.057] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.066] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.076] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.076] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.096] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.116] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.116] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.137] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.157] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.165] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.176] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.176] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.196] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.196] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.217] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.237] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.257] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.265] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.276] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.276] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.297] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.317] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.337] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.357] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.366] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.376] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.377] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.397] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.417] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.437] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.457] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.466] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.477] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.477] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.497] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.517] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.537] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.557] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.565] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.576] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.577] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.597] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.617] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.637] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.657] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.666] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.677] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.697] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.717] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.737] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.757] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.766] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.776] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.777] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.797] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.817] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.837] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.857] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.857] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.866] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.876] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.876] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.897] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.897] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.917] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.937] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.957] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.966] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.977] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.977] Husby was here, and we are ready to go
+[2026-05-21 17:59:53.997] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:53.997] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.017] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.037] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.038] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.058] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.058] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.066] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.076] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.076] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.097] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.117] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.137] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.157] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.165] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.176] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.177] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.196] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.197] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.218] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.218] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.237] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.257] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.266] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.276] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.276] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.297] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.317] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.337] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.357] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.365] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.377] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.377] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.397] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.417] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.437] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.457] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.465] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.476] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.476] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.497] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.517] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.537] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.557] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.565] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.576] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.576] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.597] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.617] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.637] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.657] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.666] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.676] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.696] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.717] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.737] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.757] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.765] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.776] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.776] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.796] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.818] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.818] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.837] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.857] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.857] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.866] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.876] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.876] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.897] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.897] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.917] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.937] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.957] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.966] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.977] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.977] Husby was here, and we are ready to go
+[2026-05-21 17:59:54.997] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:54.997] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.017] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.038] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.038] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.057] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.057] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.066] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.076] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.076] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.097] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.117] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.118] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.137] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.157] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.166] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.176] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.176] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.197] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.197] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.217] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.237] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.257] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.266] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.277] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.277] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.297] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.317] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.337] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.357] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.366] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.376] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.377] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.397] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.418] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.418] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.437] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.457] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.466] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.476] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.477] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.497] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.517] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.537] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.557] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.566] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.577] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.577] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.597] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.617] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.637] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.657] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.666] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.677] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.690] rc: RND switch -> R, queuing shift
+[2026-05-21 17:59:55.694] shift requested: R
+[2026-05-21 17:59:55.697] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.697] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-21 17:59:55.701] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.701] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.706] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.706] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.713] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.713] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.716] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.716] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.717] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.722] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.722] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.727] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 17:59:55.727] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.732] gear: N -> R
+[2026-05-21 17:59:55.733] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.733] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.737] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.737] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.742] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.743] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.747] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.747] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.753] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.753] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.756] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.756] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.757] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.762] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.762] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.765] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.765] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.767] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.767] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.772] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.773] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.776] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.776] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.777] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.777] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.782] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.783] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.787] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.787] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.792] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.792] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.796] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.796] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.797] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.802] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.802] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.807] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.807] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.813] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.813] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.816] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.816] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.817] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.822] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.822] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.827] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.827] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.833] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.833] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.837] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.837] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.842] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.842] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.847] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.847] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.852] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.852] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.857] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.857] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.857] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.857] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.862] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.862] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.865] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.865] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.867] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.867] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.872] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.872] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.876] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.876] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.877] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.877] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.882] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.882] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.887] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.887] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.892] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.892] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.896] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.896] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.917] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.937] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.957] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.965] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.977] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.977] Husby was here, and we are ready to go
+[2026-05-21 17:59:55.997] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:55.997] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.017] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.038] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.038] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.059] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.059] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.066] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.077] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.077] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.097] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.097] SHIFT post-burst gear: R (requested R)
+[2026-05-21 17:59:56.117] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.137] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.157] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.165] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.176] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.177] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.197] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.197] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.217] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.237] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.257] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.266] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.277] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.277] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.297] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.317] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.337] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.337] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.357] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.365] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.377] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.377] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.397] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.417] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.418] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.437] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.457] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.466] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.477] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.477] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.497] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.517] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.537] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.557] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.566] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.577] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.577] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.597] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.617] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.637] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.657] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.666] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.677] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.697] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.717] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.737] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.757] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.766] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.777] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.777] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.797] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.817] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.837] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.858] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.858] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.866] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.877] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.877] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.897] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.897] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.917] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.937] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.957] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.965] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.965] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.977] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.977] Husby was here, and we are ready to go
+[2026-05-21 17:59:56.997] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:56.997] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.017] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.037] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.037] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.058] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.058] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.066] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.077] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.077] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.097] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.117] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.137] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.137] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.157] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.166] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.177] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.177] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.197] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.197] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.217] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.238] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.238] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.257] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.265] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.265] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.277] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.277] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.297] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.317] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.337] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.338] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.357] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.366] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.377] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.377] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.397] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.417] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.437] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.457] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.466] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.477] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.477] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.497] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.517] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.537] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.557] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.566] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.577] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.577] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.597] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.617] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.637] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.657] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.666] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.677] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.697] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.717] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.737] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.737] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.757] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.766] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.777] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.777] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.797] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.817] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.838] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.838] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.857] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.857] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.865] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.865] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.877] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.877] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.897] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.897] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.917] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.938] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.938] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.957] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.966] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.977] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.977] Husby was here, and we are ready to go
+[2026-05-21 17:59:57.997] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:57.997] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.017] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.038] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.038] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.059] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.059] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.066] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.077] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.077] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.097] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.117] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.138] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.138] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.157] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.166] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.177] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.177] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.197] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.197] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.217] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.237] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.237] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.257] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.257] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.266] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.277] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.277] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.297] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.317] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.337] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.338] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.357] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.366] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.377] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.377] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.397] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.417] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.437] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.437] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.457] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.457] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.466] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.477] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.477] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.497] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.517] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.537] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.537] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.557] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.566] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.577] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.577] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.597] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.617] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.637] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.637] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.657] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.657] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.666] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.677] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.697] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.717] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.737] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.738] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.757] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.757] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.766] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.777] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.777] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.797] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.817] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.837] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.837] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.858] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.858] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.866] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.877] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.877] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.897] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.897] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.917] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.937] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.937] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.957] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.966] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.977] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.977] Husby was here, and we are ready to go
+[2026-05-21 17:59:58.997] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:58.997] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.017] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.017] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.038] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.038] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.058] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.058] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.066] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.066] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.077] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.077] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.097] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.097] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.117] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.117] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.138] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.138] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.157] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.157] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.166] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.166] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.177] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.177] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.197] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.197] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.217] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.217] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.238] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.238] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.258] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.258] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.266] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.266] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.277] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.277] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.297] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.297] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.317] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.317] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.338] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.338] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.357] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.357] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.366] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.366] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.377] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.377] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.397] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.397] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.417] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.417] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.438] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.438] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.457] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.458] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.466] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.466] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.477] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.477] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.497] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.497] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.517] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.517] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.538] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.539] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.557] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.557] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.566] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.566] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.577] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.577] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.597] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.597] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.617] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.617] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.638] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.638] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.657] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.658] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.666] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.666] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.677] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.677] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.697] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.697] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.717] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.717] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.738] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.738] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.758] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.758] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.766] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.766] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.777] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.777] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.797] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.797] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.817] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.817] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.838] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.838] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.857] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.858] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.866] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.866] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.877] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.877] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.897] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.897] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.917] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.917] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.938] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.938] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.957] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.957] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.966] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.966] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.977] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.977] Husby was here, and we are ready to go
+[2026-05-21 17:59:59.997] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 17:59:59.997] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.017] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.018] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.037] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.038] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.058] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.058] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.066] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.066] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.077] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.077] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.097] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.097] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.117] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.117] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.138] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.138] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.157] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.157] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.166] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.166] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.177] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.177] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.197] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.197] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.217] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.217] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.238] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.238] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.257] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.257] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.266] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.266] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.277] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.277] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.297] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.297] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.317] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.318] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.338] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.338] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.357] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.358] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.366] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.366] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.377] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.377] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.397] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.397] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.410] rc: RND switch -> N, queuing shift
+[2026-05-21 18:00:00.417] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.417] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.428] shift requested: N
+[2026-05-21 18:00:00.438] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.438] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.438] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-21 18:00:00.442] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.442] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.447] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.447] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.452] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.452] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.457] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.457] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.457] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.457] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.463] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.463] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.465] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.465] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.467] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.467] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.473] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.473] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.477] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.477] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.477] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.477] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.483] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.483] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.487] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.488] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.493] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.493] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.497] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.497] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.497] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.497] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.503] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.503] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.508] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.508] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.513] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.513] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.517] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.517] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.517] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.517] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.523] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.523] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.527] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.528] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.533] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.533] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.537] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.537] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.537] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.537] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.543] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.543] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.547] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.548] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.553] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.553] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.557] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.557] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.557] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.557] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.563] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.563] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.565] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.565] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.567] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.567] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.573] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.573] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.577] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.577] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.577] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.577] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.583] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.583] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.588] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.588] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.593] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.593] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.597] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.597] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.597] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.597] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.603] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.603] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.608] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.608] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.613] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.613] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.617] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.617] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.617] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.617] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.623] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.623] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.628] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.628] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.633] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.633] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.637] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.637] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.658] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.658] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.666] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.666] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.677] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.677] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.697] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.697] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.717] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-21 18:00:00.717] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.737] gear: R -> N
+[2026-05-21 18:00:00.738] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.738] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.758] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.758] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.766] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.766] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.777] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.777] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.797] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.797] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.817] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.817] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.838] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.838] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.838] SHIFT post-burst gear: N (requested N)
+[2026-05-21 18:00:00.857] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.858] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.866] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.866] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.877] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.877] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.897] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.898] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.917] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.917] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.938] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.938] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.958] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.958] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.966] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.966] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.977] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.977] Husby was here, and we are ready to go
+[2026-05-21 18:00:00.997] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:00.997] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.017] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.017] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.039] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.039] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.058] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.058] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.066] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.066] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.077] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.077] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.097] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.097] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.117] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.117] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.139] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.139] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.159] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.159] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.166] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.166] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.177] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.177] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.198] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.198] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.219] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.220] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.238] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.239] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.257] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.258] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.266] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.266] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.277] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.277] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.297] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.298] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.310] rc: RND switch -> D, queuing shift
+[2026-05-21 18:00:01.317] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.317] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.319] shift requested: D
+[2026-05-21 18:00:01.338] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.339] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.339] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-21 18:00:01.342] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.342] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.347] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.347] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.352] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.352] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.357] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.357] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.357] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.357] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.363] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.363] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.365] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.365] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.367] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-21 18:00:01.367] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.372] gear: N -> D
+[2026-05-21 18:00:01.372] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.372] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.377] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.377] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.377] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.377] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.382] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.383] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.387] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.387] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.393] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.393] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.397] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.397] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.397] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.397] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.403] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.403] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.407] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.407] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.413] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.413] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.417] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.417] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.417] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.417] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.423] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.423] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.427] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.427] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.433] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.433] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.437] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.437] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.437] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.437] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.443] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.443] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.447] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.447] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.453] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.453] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.457] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.457] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.457] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.457] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.463] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.463] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.465] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.466] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.467] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.467] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.473] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.473] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.477] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.477] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.477] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.477] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.483] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.483] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.487] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.487] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.493] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.493] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.497] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.497] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.497] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.497] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.503] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.503] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.507] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.507] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.512] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.512] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.517] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.517] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.517] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.517] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.523] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.523] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.527] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.527] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.533] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.533] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.537] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.537] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.557] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.557] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.566] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.566] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.577] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.577] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.597] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.597] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.617] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.617] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.637] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.637] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.657] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.657] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.666] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.666] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.677] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.677] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.697] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.697] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.717] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.717] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.738] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.738] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.738] SHIFT post-burst gear: D (requested D)
+[2026-05-21 18:00:01.757] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.757] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.766] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.766] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.777] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.777] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.797] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.797] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.817] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.817] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.838] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.838] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.857] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.857] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.866] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.866] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.877] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.877] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.897] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.897] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.917] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.917] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.938] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.938] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.957] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.958] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.966] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.966] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.977] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.977] Husby was here, and we are ready to go
+[2026-05-21 18:00:01.997] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:01.997] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.018] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.018] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.038] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.038] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.058] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.058] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.066] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.066] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.077] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.077] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.097] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.097] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.117] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.117] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.138] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.138] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.157] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.157] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.166] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.166] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.177] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.177] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.197] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.197] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.218] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.218] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.237] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.237] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.257] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.257] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.266] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.266] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.277] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.277] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.298] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.298] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.317] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.317] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.338] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.338] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.357] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.357] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.366] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.366] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.377] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.377] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.397] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.398] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.417] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.417] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.438] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.438] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.457] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.457] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.466] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.466] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.477] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.477] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.497] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.497] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.517] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.518] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.538] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.538] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.557] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.557] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.566] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.566] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.577] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.577] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.597] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.597] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.617] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.617] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.638] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.638] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.657] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.657] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.666] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.666] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.677] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.677] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.697] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.698] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.717] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.718] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.739] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.739] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.757] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.758] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.766] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.766] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.777] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.777] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.797] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.797] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.817] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.818] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.838] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.838] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.858] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.858] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.866] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.866] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.877] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.877] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.897] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.898] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.917] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.917] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.938] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.938] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.957] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.957] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.966] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.966] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.977] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.977] Husby was here, and we are ready to go
+[2026-05-21 18:00:02.997] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:02.997] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.017] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.017] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.038] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.038] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.058] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.058] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.066] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.066] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.077] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.077] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.097] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.097] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.117] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.117] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.138] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.138] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.157] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.157] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.166] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.166] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.177] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.177] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.197] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.197] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.217] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.217] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.238] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.238] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.257] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.258] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.266] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.266] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.277] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.277] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.297] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.297] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.317] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.318] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.338] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.338] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.357] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.357] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.366] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.366] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.377] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.377] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.397] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.397] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.418] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.418] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.438] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.439] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.457] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.457] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.466] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.466] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.477] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.477] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.498] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.498] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.517] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.517] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.538] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.538] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.557] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.557] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.566] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.566] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.577] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.578] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.598] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.598] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.618] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.618] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.638] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.638] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.658] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.658] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.667] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.667] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.677] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.677] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.697] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.698] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.718] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.718] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.739] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.739] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.757] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.757] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.766] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.766] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.777] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.777] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.797] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.797] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.818] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.818] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.838] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.838] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.857] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.858] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.866] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.866] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.877] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.877] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.897] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.898] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.917] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.917] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.938] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.938] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.957] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.958] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.966] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.966] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.977] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.977] Husby was here, and we are ready to go
+[2026-05-21 18:00:03.997] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:03.998] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.018] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.018] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.039] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.039] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.058] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.058] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.066] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.066] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.077] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.077] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.098] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.098] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.118] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.118] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.139] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.139] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.157] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.157] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.166] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.166] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.177] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.177] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.198] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.198] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.217] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.218] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.238] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.238] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.257] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.258] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.266] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.266] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.277] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.277] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.297] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.297] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.317] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.317] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.338] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.338] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.357] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.357] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.366] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.366] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.377] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.377] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.397] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.398] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.418] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.418] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.438] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.438] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.458] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.458] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.466] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.466] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.477] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.477] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.497] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.497] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.517] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.517] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.538] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.538] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.551] rc: P button pressed
+[2026-05-21 18:00:04.554] shift requested: P
+[2026-05-21 18:00:04.557] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.557] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.557] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-21 18:00:04.562] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.562] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.565] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.565] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.567] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.567] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.572] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.572] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.577] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.577] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.577] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.578] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.583] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.583] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.587] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.588] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.593] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.593] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.597] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.597] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.597] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.597] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.603] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.603] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.608] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.608] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.613] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.613] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.617] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.617] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.617] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.617] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.623] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.623] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.628] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.628] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.633] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.633] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.637] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.637] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.638] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.638] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.643] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.643] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.648] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.648] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.653] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.653] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.657] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.657] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.658] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.658] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.663] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.663] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.665] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.665] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.668] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.668] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.673] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.673] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.677] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.677] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.678] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.678] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.683] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.683] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.688] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.688] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.693] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.693] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.697] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.697] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.698] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.698] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.703] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.703] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.708] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.708] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.713] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.713] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.717] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.717] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.718] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.718] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.723] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.723] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.728] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.728] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.734] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.734] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.737] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.737] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.738] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.738] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.743] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.743] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.748] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.748] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.753] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.753] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.757] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.757] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.766] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.766] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.778] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.778] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.797] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.797] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.817] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.817] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.838] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.838] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.858] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.858] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.866] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.866] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.877] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.877] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.897] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.897] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.917] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-21 18:00:04.918] Husby was here, and we are ready to go
+[2026-05-21 18:00:04.937] gear: D -> P
+[2026-05-21 18:00:04.958] SHIFT post-burst gear: P (requested P)
+[2026-05-21 18:00:14.860] rc: P button pressed
+[2026-05-21 18:00:14.865] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-21 18:00:14.867] shift requested: P
+[2026-05-21 18:00:15.265] SHIFT post-burst gear: P (requested P)
+[2026-05-21 18:00:15.998] rc: P button pressed
+[2026-05-21 18:00:16.009] shift requested: P
+[2026-05-21 18:00:16.025] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-21 18:00:16.425] SHIFT post-burst gear: P (requested P)
+[2026-05-21 18:00:16.884] brake: released
+[2026-05-21 18:01:40.739] EAC: ACTIVE -> INHIBITED (err=HANDS_ON)
+[2026-05-21 18:01:40.740] err -> HANDS_ON
+[2026-05-21 18:02:41.000] E-STOP: no 0x370 for 503 ms
+[2026-05-21 18:02:42.781] EAC: INHIBITED -> AVAILABLE (err=HANDS_ON)
+[2026-05-21 18:02:43.096] EAC: AVAILABLE -> INHIBITED (err=HANDS_ON)
+[2026-05-21 18:02:58.606] CAN closed
+[2026-05-21 18:02:58.607] disconnect; closing log

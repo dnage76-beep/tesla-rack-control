@@ -1,0 +1,174 @@
+[2026-05-18 18:49:30.380] session start (20260518_184930)
+[2026-05-18 18:49:30.566] CAN open: SYS TEC dev=0 ch=0 500 kbps
+[2026-05-18 18:49:30.566] keepalive plan: GTW=False EPB=True 30MPH=False
+[2026-05-18 18:49:30.568] err -> OUT_OF_RANGE
+[2026-05-18 18:49:30.627] EAC: INHIBITED -> AVAILABLE (err=OUT_OF_RANGE)
+[2026-05-18 18:49:36.190] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 18:52:49.713] brake: PRESSED
+[2026-05-18 18:52:57.269] rc: RND switch -> D, queuing shift
+[2026-05-18 18:52:57.288] shift requested: D
+[2026-05-18 18:52:57.295] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:52:57.334] gear: P -> D
+[2026-05-18 18:52:57.335] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-18 18:52:57.374] EAC: ACTIVE -> AVAILABLE (err=NONE)
+[2026-05-18 18:52:57.695] SHIFT post-burst gear: D (requested D)
+[2026-05-18 18:53:02.296] rc: RND switch -> N, queuing shift
+[2026-05-18 18:53:02.297] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:53:02.316] shift requested: N
+[2026-05-18 18:53:02.596] gear: D -> N
+[2026-05-18 18:53:02.696] SHIFT post-burst gear: N (requested N)
+[2026-05-18 18:53:04.532] rc: RND switch -> R, queuing shift
+[2026-05-18 18:53:04.533] shift requested: R
+[2026-05-18 18:53:04.536] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:53:04.572] gear: N -> R
+[2026-05-18 18:53:04.936] SHIFT post-burst gear: R (requested R)
+[2026-05-18 18:53:08.071] rc: RND switch -> N, queuing shift
+[2026-05-18 18:53:08.077] shift requested: N
+[2026-05-18 18:53:08.078] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:53:08.377] gear: R -> N
+[2026-05-18 18:53:08.477] SHIFT post-burst gear: N (requested N)
+[2026-05-18 18:53:11.617] rc: RND switch -> R, queuing shift
+[2026-05-18 18:53:11.618] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:53:11.618] shift requested: R
+[2026-05-18 18:53:11.663] gear: N -> R
+[2026-05-18 18:53:12.018] SHIFT post-burst gear: R (requested R)
+[2026-05-18 18:53:15.859] rc: RND switch -> N, queuing shift
+[2026-05-18 18:53:15.860] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:53:15.879] shift requested: N
+[2026-05-18 18:53:16.159] gear: R -> N
+[2026-05-18 18:53:16.259] SHIFT post-burst gear: N (requested N)
+[2026-05-18 18:53:20.138] rc: P button pressed
+[2026-05-18 18:53:20.140] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:53:20.140] shift requested: P
+[2026-05-18 18:53:20.265] gear: N -> P
+[2026-05-18 18:53:20.541] SHIFT post-burst gear: P (requested P)
+[2026-05-18 18:53:21.300] brake: released
+[2026-05-18 18:54:53.721] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 18:54:59.436] rc: RND switch -> D, queuing shift
+[2026-05-18 18:55:02.283] brake: PRESSED
+[2026-05-18 18:55:07.158] rc: RND switch -> N, queuing shift
+[2026-05-18 18:55:07.161] shift requested: N
+[2026-05-18 18:55:07.165] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:55:07.200] gear: P -> N
+[2026-05-18 18:55:07.200] AUTO-DISENGAGE: gear left Park (now N)
+[2026-05-18 18:55:07.235] EAC: ACTIVE -> AVAILABLE (err=NONE)
+[2026-05-18 18:55:07.565] SHIFT post-burst gear: N (requested N)
+[2026-05-18 18:55:26.029] rc: P button pressed
+[2026-05-18 18:55:26.030] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:55:26.044] shift requested: P
+[2026-05-18 18:55:26.079] gear: N -> P
+[2026-05-18 18:55:26.430] SHIFT post-burst gear: P (requested P)
+[2026-05-18 18:55:26.969] brake: released
+[2026-05-18 18:55:56.396] brake: PRESSED
+[2026-05-18 18:56:04.537] brake: released
+[2026-05-18 18:56:14.100] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 18:56:31.924] brake: PRESSED
+[2026-05-18 18:56:39.880] rc: RND switch -> R, queuing shift
+[2026-05-18 18:56:39.897] shift requested: R
+[2026-05-18 18:56:39.907] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:56:39.937] gear: P -> R
+[2026-05-18 18:56:39.937] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-18 18:56:40.012] EAC: ACTIVE -> AVAILABLE (err=NONE)
+[2026-05-18 18:56:40.307] SHIFT post-burst gear: R (requested R)
+[2026-05-18 18:56:41.227] brake: released
+[2026-05-18 18:56:52.629] brake: PRESSED
+[2026-05-18 18:56:53.245] rc: RND switch -> N, queuing shift
+[2026-05-18 18:56:53.246] shift requested: N
+[2026-05-18 18:56:53.249] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:56:53.529] gear: R -> N
+[2026-05-18 18:56:53.650] SHIFT post-burst gear: N (requested N)
+[2026-05-18 18:56:54.529] rc: RND switch -> R, queuing shift
+[2026-05-18 18:56:54.530] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:56:54.531] shift requested: R
+[2026-05-18 18:56:54.560] gear: N -> R
+[2026-05-18 18:56:54.769] brake: released
+[2026-05-18 18:56:54.930] SHIFT post-burst gear: R (requested R)
+[2026-05-18 18:56:55.310] brake: PRESSED
+[2026-05-18 18:56:55.684] rc: RND switch -> N, queuing shift
+[2026-05-18 18:56:55.685] shift requested: N
+[2026-05-18 18:56:55.690] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:56:55.970] gear: R -> N
+[2026-05-18 18:56:56.090] SHIFT post-burst gear: N (requested N)
+[2026-05-18 18:56:58.470] brake: released
+[2026-05-18 18:57:02.571] brake: PRESSED
+[2026-05-18 18:57:02.611] rc: RND switch -> D, queuing shift
+[2026-05-18 18:57:02.612] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:57:02.612] shift requested: D
+[2026-05-18 18:57:02.642] gear: N -> D
+[2026-05-18 18:57:03.011] SHIFT post-burst gear: D (requested D)
+[2026-05-18 18:57:05.032] brake: released
+[2026-05-18 18:57:13.147] rc: P button pressed
+[2026-05-18 18:57:18.415] brake: PRESSED
+[2026-05-18 18:57:21.949] rc: P button pressed
+[2026-05-18 18:57:21.950] shift requested: P
+[2026-05-18 18:57:21.956] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:57:22.255] gear: D -> P
+[2026-05-18 18:57:22.357] SHIFT post-burst gear: P (requested P)
+[2026-05-18 18:57:26.272] rc: RND switch -> N, queuing shift
+[2026-05-18 18:57:26.274] shift requested: N
+[2026-05-18 18:57:26.276] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:57:26.307] gear: P -> N
+[2026-05-18 18:57:26.677] SHIFT post-burst gear: N (requested N)
+[2026-05-18 18:57:28.977] rc: P button pressed
+[2026-05-18 18:57:28.978] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:57:28.978] shift requested: P
+[2026-05-18 18:57:29.047] brake: released
+[2026-05-18 18:57:29.097] gear: N -> P
+[2026-05-18 18:57:29.378] SHIFT post-burst gear: P (requested P)
+[2026-05-18 18:58:15.307] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 18:58:17.468] EAC: ACTIVE -> AVAILABLE (err=NONE)
+[2026-05-18 18:58:30.992] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 18:58:55.417] brake: PRESSED
+[2026-05-18 18:58:55.637] brake: released
+[2026-05-18 18:58:57.517] brake: PRESSED
+[2026-05-18 18:59:17.176] rc: RND switch -> D, queuing shift
+[2026-05-18 18:59:17.194] shift requested: D
+[2026-05-18 18:59:17.202] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:59:17.242] gear: P -> D
+[2026-05-18 18:59:17.242] AUTO-DISENGAGE: gear left Park (now D)
+[2026-05-18 18:59:17.282] EAC: ACTIVE -> AVAILABLE (err=NONE)
+[2026-05-18 18:59:17.532] rc: RND switch -> N, queuing shift
+[2026-05-18 18:59:17.602] SHIFT post-burst gear: D (requested D)
+[2026-05-18 18:59:30.645] rc: P button pressed
+[2026-05-18 18:59:30.646] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 18:59:30.660] shift requested: P
+[2026-05-18 18:59:30.965] gear: D -> P
+[2026-05-18 18:59:31.045] SHIFT post-burst gear: P (requested P)
+[2026-05-18 18:59:33.365] brake: released
+[2026-05-18 18:59:57.371] EAC: AVAILABLE -> ACTIVE (err=NONE)
+[2026-05-18 19:00:20.096] brake: PRESSED
+[2026-05-18 19:00:25.952] rc: RND switch -> R, queuing shift
+[2026-05-18 19:00:25.957] shift requested: R
+[2026-05-18 19:00:25.957] SHIFT: requesting R via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 19:00:25.997] gear: P -> R
+[2026-05-18 19:00:25.997] AUTO-DISENGAGE: gear left Park (now R)
+[2026-05-18 19:00:26.047] EAC: ACTIVE -> AVAILABLE (err=NONE)
+[2026-05-18 19:00:26.357] SHIFT post-burst gear: R (requested R)
+[2026-05-18 19:00:35.276] rc: RND switch -> N, queuing shift
+[2026-05-18 19:00:35.277] shift requested: N
+[2026-05-18 19:00:35.281] SHIFT: requesting N via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 19:00:35.580] gear: R -> N
+[2026-05-18 19:00:35.680] SHIFT post-burst gear: N (requested N)
+[2026-05-18 19:00:42.458] rc: RND switch -> D, queuing shift
+[2026-05-18 19:00:42.461] shift requested: D
+[2026-05-18 19:00:42.462] SHIFT: requesting D via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 19:00:42.486] gear: N -> D
+[2026-05-18 19:00:42.861] SHIFT post-burst gear: D (requested D)
+[2026-05-18 19:00:51.100] rc: P button pressed
+[2026-05-18 19:00:51.103] SHIFT: requesting P via 0x6D burst (30 active + 10 idle frames at 200 Hz)
+[2026-05-18 19:00:51.103] shift requested: P
+[2026-05-18 19:00:51.482] gear: D -> P
+[2026-05-18 19:00:51.503] SHIFT post-burst gear: P (requested P)
+[2026-05-18 19:00:53.303] brake: released
+[2026-05-18 19:01:06.739] rc: RND switch -> N, queuing shift
+[2026-05-18 19:15:52.398] EAC: AVAILABLE -> INHIBITED (err=OUT_OF_RANGE)
+[2026-05-18 19:15:52.399] err -> OUT_OF_RANGE
+[2026-05-18 19:15:54.660] E-STOP: no 0x370 for 501 ms
+[2026-05-18 19:47:24.452] gear: P -> SNA
+[2026-05-18 19:47:24.453] brake: PRESSED
+[2026-05-18 19:47:24.497] EAC: INHIBITED -> SNA (err=NONE)
+[2026-05-18 19:47:24.509] gear: SNA -> P
+[2026-05-18 19:47:24.541] err -> OUT_OF_RANGE
+[2026-05-18 19:47:32.764] brake: released
+[2026-05-18 19:57:42.143] CAN closed
+[2026-05-18 19:57:42.143] disconnect; closing log
