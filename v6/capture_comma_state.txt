@@ -1,0 +1,45 @@
+{
+echo "######## A. AGNOS / SLOT / UPTIME ########"
+echo "VERSION: $(cat /VERSION)"
+cat /proc/cmdline | tr ' ' '\n' | grep -i slot
+sudo abctl --boot_slot
+uname -a; uptime
+
+echo; echo "######## B. OPENPILOT VERSION / GIT ########"
+cd /data/openpilot
+git log -1 --format='%H%n%ci%n%s'
+echo "--- status ---"; git status -s
+echo "--- branch -vv ---"; git branch -vv
+echo "--- remote ---"; git remote -v
+echo "--- versions ---"; grep -i version common/version.h; cat common/tinkla_version.h 2>/dev/null
+grep AGNOS_VERSION launch_env.sh
+
+echo; echo "######## C. WHY IT REBOOTED / WHAT CHANGED ########"
+echo "--- tinkla splash flag (one-time fork self-reboot marker) ---"
+ls -la /usr/comma/.tinkla_splash 2>/dev/null || echo "NO .tinkla_splash (splash reboot not yet done)"
+echo "--- boot history (count + timing of reboots) ---"
+sudo journalctl --list-boots 2>/dev/null | tail -12
+echo "--- updater staging ---"
+ls -la /data/safe_staging/ 2>/dev/null
+ls -la /data/safe_staging/finalized/.overlay_consistent 2>/dev/null || echo "no finalized overlay"
+echo "--- agnos/updater/swap/reboot this boot ---"
+sudo journalctl -b 0 2>/dev/null | grep -iE 'agnos|updater|swap|abctl|finaliz|overlay|reboot|panic|watchdog' | tail -60
+echo "--- end of PREVIOUS boot (right before the reboot) ---"
+sudo journalctl -b -1 -n 80 2>/dev/null
+
+echo; echo "######## D. PARAMS (the working config) ########"
+for f in TinklaAPForceFingerprint GitBranch GitCommit GitRemote Version UpdaterState LastUpdateTime UpdateAvailable UpdateFailedCount DongleId IsOnroad OpenpilotEnabledToggle CompletedTrainingVersion; do
+  echo "$f = $(cat /data/params/d/$f 2>/dev/null)"
+done
+echo "--- all Tinkla* params ---"
+for f in $(ls /data/params/d/ 2>/dev/null | grep -i tinkla); do echo "$f = $(cat /data/params/d/$f 2>/dev/null)"; done
+
+echo; echo "######## E. RUNNING / PANDA / CAR / FINGERPRINT ########"
+ps aux | grep -iE 'manager|controlsd|card|pandad|boardd|selfdrived|ui' | grep -v grep
+echo "--- panda/car/fingerprint from this boot's log ---"
+sudo journalctl -b 0 2>/dev/null | grep -iE 'panda|fingerprint|EPAS|tesla|controlsAllowed|safetyModel|recognized' | tail -40
+echo "--- launch_log tail ---"
+tail -80 /tmp/launch_log 2>/dev/null
+} 2>&1 | tee /data/comma_state_2.txt
+
+echo; echo "DONE -> /data/comma_state_2.txt"
