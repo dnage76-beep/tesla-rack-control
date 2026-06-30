@@ -1,0 +1,140 @@
+######## A. AGNOS / SLOT / UPTIME ########
+VERSION: 9.1
+androidboot.slot_suffix=_b
+_b
+
+Linux comma-878bf3fc 4.9.103+ #1 SMP PREEMPT Tue Dec 5 13:45:09 PST 2023 aarch64 aarch64 aarch64 GNU/Linux
+ 21:21:02 up 5 min,  2 users,  load average: 3.13, 3.20, 1.64
+
+######## B. OPENPILOT VERSION / GIT ########
+5fc42b869e378e27aceec60f59996e998289c80e
+2025-07-16 21:51:20 +0200
+replace tinkla logo
+--- status ---
+ M selfdrive/ui/translations/main_ar.ts
+ M selfdrive/ui/translations/main_de.ts
+ M selfdrive/ui/translations/main_fr.ts
+ M selfdrive/ui/translations/main_ja.ts
+ M selfdrive/ui/translations/main_ko.ts
+ M selfdrive/ui/translations/main_pt-BR.ts
+ M selfdrive/ui/translations/main_th.ts
+ M selfdrive/ui/translations/main_tr.ts
+ M selfdrive/ui/translations/main_zh-CHS.ts
+ M selfdrive/ui/translations/main_zh-CHT.ts
+?? private_key.asc
+?? selfdrive/car/modules/qt/moc_txt_param.cc
+?? selfdrive/car/modules/radarFlasher/flasher
+?? selfdrive/car/modules/teslaEpasFlasher/9e51ddd80606fbdaaf604c73c8dde0d1.modified.bin
+?? selfdrive/car/modules/teslaEpasFlasher/epas-firmware-0x7000-0x45fff.bin
+?? selfdrive/car/modules/teslaEpasFlasher/flasher
+?? selfdrive/car/tesla/pedal_calibrator/flasher
+--- branch -vv ---
+  release-tizi a1af07d9 [origin/release-tizi] openpilot v0.11.0
+* tesla-unity  5fc42b86 [origin/tesla-unity] replace tinkla logo
+--- remote ---
+origin	https://github.com/xnor-tech/openpilot.git (fetch)
+origin	git@github.com:xnor-tech/openpilot.git (push)
+--- versions ---
+#define COMMA_VERSION "0.9.6-Beta63"
+#define TINKLA_VERSION "0.9.6-63"
+if [ -z "$AGNOS_VERSION" ]; then
+  export AGNOS_VERSION="9.1"
+
+######## C. WHY IT REBOOTED / WHAT CHANGED ########
+--- tinkla splash flag (one-time fork self-reboot marker) ---
+NO .tinkla_splash (splash reboot not yet done)
+--- boot history (count + timing of reboots) ---
+ 0 125ee18d48bb41ae964a77eecf3d1487 Mon 2023-03-27 12:54:06 CDT—Mon 2026-06-29 21:21:04 CDT
+--- updater staging ---
+total 20
+drwxr-xr-x  5 comma comma 4096 Mar 27  2023 .
+drwxr-xr-x 16 comma comma 4096 Jun 29 21:21 ..
+drwxr-xr-x  2 comma comma 4096 Mar 27  2023 merged
+drwxr-xr-x  3 comma comma 4096 Mar 27  2023 metadata
+drwxr-xr-x  2 comma comma 4096 Mar 27  2023 upper
+no finalized overlay
+--- agnos/updater/swap/reboot this boot ---
+Mar 27 12:54:06 comma kernel: msm_watchdog 17980000.qcom,wdt: wdog absent resource not present
+Mar 27 12:54:06 comma kernel: msm_watchdog 17980000.qcom,wdt: No need to allocate memory for scandumps
+Mar 27 12:54:06 comma kernel: msm_watchdog 17980000.qcom,wdt: MSM Watchdog Initialized
+Mar 27 12:54:06 comma kernel: [drm:sde_dbg_init:3445] evtlog_status: enable:3, panic:1, dump:2
+Mar 27 12:54:06 comma kernel: [drm:sde_dbg_init:3445] evtlog_status: enable:3, panic:1, dump:2
+Mar 27 12:54:06 comma kernel: sde_rotator_evtlog_create_debugfs: evtlog_status: enable:1, panic:1, dump:2
+Mar 27 12:54:06 comma systemd[1]: Reached target Swap.
+Mar 27 12:54:08 comma systemd[1]: Mounting /home overlay...
+Mar 27 12:54:08 comma systemd[1]: Mounted /home overlay.
+Mar 27 12:54:08 comma cron[2021]: (CRON) INFO (Running @reboot jobs)
+Mar 27 12:54:08 comma systemd[1]: Condition check resulted in Ubuntu Pro reboot cmds being skipped.
+Mar 27 12:54:09 comma-878bf3fc kernel: wlan: Loading driver v5.1.1.63E ( +PANIC_ON_BUG)
+Mar 27 12:54:10 comma-878bf3fc weston[4124]: [12:54:10.949] warning: EGL_EXT_swap_buffers_with_damage not supported. Performance could be affected.
+Mar 27 12:54:11 comma-878bf3fc weston[4124]:                swap interval range: 0 - 1
+Mar 27 12:54:12 comma-878bf3fc sudo[7606]:    comma : TTY=pts/0 ; PWD=/data/openpilot ; USER=root ; COMMAND=/usr/sbin/abctl --set_success
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.021004] [modem0] creating serial ports context for SIM hot swap...
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.021113] [modem0] setup SIM hot swap (1/8): registering for slot status indications...
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.053923] [modem0] setup SIM hot swap (2/8): checking slot status support...
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.084674] [modem0] setup SIM hot swap (3/8): monitoring slot status indications...
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.084725] [modem0] setup SIM hot swap (4/8): registering for all refresh events...
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.116438] [modem0] setup SIM hot swap (5/8): no need to register for SIM ICCID refresh events
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.116473] [modem0] setup SIM hot swap (6/8): no need to register for SIM IMSI refresh events...
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.116506] [modem0] setup SIM hot swap (7/8): monitoring refresh indications...
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <dbg> [1679939675.116572] [modem0] setup SIM hot swap (8/8): successfully finished
+Mar 27 12:54:35 comma-878bf3fc ModemManager[2296]: <inf> [1679939675.116621] [modem0] SIM hot swap setup succeeded
+Mar 27 12:54:36 comma-878bf3fc ModemManager[2296]: <inf> [1679939676.172513] [modem0] checking if SIM was swapped...
+Jun 29 21:21:02 comma-878bf3fc sudo[51942]:    comma : TTY=pts/2 ; PWD=/data ; USER=root ; COMMAND=/usr/sbin/abctl --boot_slot
+--- end of PREVIOUS boot (right before the reboot) ---
+
+######## D. PARAMS (the working config) ########
+TinklaAPForceFingerprint = 
+GitBranch = tesla-unity
+GitCommit = 5fc42b869e378e27aceec60f59996e998289c80e
+GitRemote = https://github.com/xnor-tech/openpilot.git
+Version = 0.9.6-Beta63
+UpdaterState = 
+LastUpdateTime = 2023-03-27T18:00:03.945825
+UpdateAvailable = 
+UpdateFailedCount = 
+DongleId = UnregisteredDevice
+IsOnroad = 1
+OpenpilotEnabledToggle = 1
+CompletedTrainingVersion = 0.2.0
+--- all Tinkla* params ---
+
+######## E. RUNNING / PANDA / CAR / FINGERPRINT ########
+root        2296  0.5  0.3 321924 11808 ?        Ssl  21:15   0:01 /usr/sbin/ModemManager --filter-policy=strict --debug
+root        2302  0.3  0.3 338456 13756 ?        Ssl  21:15   0:01 /usr/sbin/NetworkManager --no-daemon
+comma      51193  0.3  1.3 113716 50900 pts/0    S+   21:15   0:01 /usr/local/pyenv/versions/3.11.4/bin/python3 ./manager.py
+comma      51252  1.8  2.5 430808 93040 pts/1    Ssl+ 21:15   0:05 /usr/local/pyenv/versions/3.11.4/bin/python3 ./manager.py
+comma      51317 14.2  3.5 960724 131068 pts/1   Sl+  21:15   0:44 ./_ui
+comma      51345  0.0  1.9 438736 72832 pts/1    Sl+  21:15   0:00 selfdrive.boardd.pandad
+comma      51425  8.8  0.7 534328 26784 pts/1    Sl+  21:15   0:27 ./boardd 260014001051333038363231
+comma      51610  2.5  2.3 526604 87460 pts/1    Sl+  21:15   0:07 selfdrive.ui.soundd
+comma      51618 23.2  4.1 960452 153256 pts/1   Sl+  21:15   1:11 selfdrive.controls.controlsd
+--- panda/car/fingerprint from this boot's log ---
+Mar 27 12:54:09 comma-878bf3fc kernel: SELinux: unrecognized netlink message: protocol=0 nlmsg_type=106 sclass=netlink_route_socket pig=2345 comm=systemd-network
+Mar 27 12:54:10 comma-878bf3fc python[2086]: panda time: 2000-01-01 00:15:55
+Mar 27 12:54:10 comma-878bf3fc python[2086]: panda time invalid
+--- launch_log tail ---
+waiting for weston
+weston ready after 3s
+/data/openpilot has been modified, skipping overlay update installation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

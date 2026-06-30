@@ -1,0 +1,123 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260629193917
+Username: DESKTOP-CN0AQ6T\jorda
+RunAs User: DESKTOP-CN0AQ6T\jorda
+Configuration Name: 
+Machine: DESKTOP-CN0AQ6T (Microsoft Windows NT 10.0.19045.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 12732
+PSVersion: 5.1.19041.6456
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.6456
+BuildVersion: 10.0.19041.6456
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is v6\AGNOS_9.1_RESULTS_terminal_output.txt
+PS C:\Users\jorda\tesla-rack-control> ssh comma@172.20.10.2
+                      .~ssos+.
+                    +8888888888i,
+                   {888888888888o.
+                   h8888888888888k
+                   t888888888s888k
+                    `t88888d/ h88k
+                       ```    h88l
+                             ,88k`
+                            .d8h`
+                           +d8h
+                        _+d8h`
+                      ;y8h+`
+                      |-`
+
+
+Welcome to AGNOS (GNU/Linux 4.9.103+ aarch64)
+
+Here are some useful commands:
+  Enter the tmux session where the comma service runs
+  (note: tmux prefix key has been configured to backtick)
+    └── tmux a
+
+  Install Ubuntu packages
+    └── sudo apt update && sudo apt install <pkg>
+
+  Install Python packages
+    └── pip install <pkg>
+
+When modifying AGNOS, keep in mind that the system partition isn't
+particularly large. /data/ is the largest partition, and unlike the
+rest of the partitions, it will persist across AGNOS updates.
+
+Want a clean slate? Reflash AGNOS with https://flash.comma.ai.
+
+Last login: Mon Jun 29 19:33:33 2026 from 172.20.10.4
+no server running on /tmp/tmux-1000/default
+comma@comma-878bf3fc:~$ tmux a
+no sessions
+comma@comma-878bf3fc:~$
+comma@comma-878bf3fc:~$ client_loop: send disconnect: Connection reset
+PS C:\Users\jorda\tesla-rack-control> ssh comma@172.20.10.2
+                      .~ssos+.
+                    +8888888888i,
+                   {888888888888o.
+                   h8888888888888k
+                   t888888888s888k
+                    `t88888d/ h88k
+                       ```    h88l
+                             ,88k`
+                            .d8h`
+                           +d8h
+                        _+d8h`
+                      ;y8h+`
+                      |-`
+
+
+Welcome to AGNOS (GNU/Linux 4.9.103+ aarch64)
+
+Here are some useful commands:
+  Enter the tmux session where the comma service runs
+  (note: tmux prefix key has been configured to backtick)
+    └── tmux a
+
+  Install Ubuntu packages
+    └── sudo apt update && sudo apt install <pkg>
+
+  Install Python packages
+    └── pip install <pkg>
+
+When modifying AGNOS, keep in mind that the system partition isn't
+particularly large. /data/ is the largest partition, and unlike the
+rest of the partitions, it will persist across AGNOS updates.
+
+Want a clean slate? Reflash AGNOS with https://flash.comma.ai.
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+comma@comma-878bf3fc:/data/openpilot$ cat /VERSION
+9.1comma@comma-878bf3fc:/data/openpilot$ grep AGNOS_VERSION /data/openpilot/launch_env.sh
+if [ -z "$AGNOS_VERSION" ]; then
+  export AGNOS_VERSION="9.1"
+comma@comma-878bf3fc:/data/openpilot$ cd /data/openpilot && git log -1 --oneline && git remote -v && git branch
+5fc42b86 (HEAD -> tesla-unity, origin/tesla-unity) replace tinkla logo
+origin  https://github.com/xnor-tech/openpilot.git (fetch)
+origin  git@github.com:xnor-tech/openpilot.git (push)
+  release-tizi
+* tesla-unity
+comma@comma-878bf3fc:/data/openpilot$ cat /data/openpilot/common/version.h | grep -i version
+#define COMMA_VERSION "0.9.6-Beta63"
+comma@comma-878bf3fc:/data/openpilot$ exit
+logout
+Connection to 172.20.10.2 closed.
+PS C:\Users\jorda\tesla-rack-control> Stop-Transcript
+**********************
+Windows PowerShell transcript end
+End time: 20260629194936
+**********************
