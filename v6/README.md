@@ -25,6 +25,8 @@ Last updated: 2026-06-10.
 | [V6_OPENPILOT_FORK_PLAN.md](V6_OPENPILOT_FORK_PLAN.md) | Plan for forking modern openpilot as the *brain* while our laptop code transmits `0x488`, engaged on the cruise stalk. Verified seam (`steeringAngleDeg` ↔ `target_angle_deg`), three architectures, code-reuse map, staged milestones. |
 | [comma/](comma/README.md) | **The bridge code (M0/M1).** `comma/comma_steer_forward.py` runs on the 3X and forwards `steeringAngleDeg` over TCP; `../tesla_control_comma.py` feeds it into `ctrl.target_angle_deg`. Engages by following openpilot's `latActive` (the cruise-stalk pull). |
 | [AGNOS_9.1_RUNBOOK.md](AGNOS_9.1_RUNBOOK.md) | Field runbook: command-by-command diagnosis of why the 3X won't land on AGNOS 9.1 (the fork pins 9.1 and *downgrades* from 18.x — it never forces 18), with decision branches and how to force/verify 9.1. |
+| [AGNOS_9.1_RESULTS.md](AGNOS_9.1_RESULTS.md) | Results of running the runbook (2026-06-29): device is already on AGNOS 9.1 running tesla-unity 0.9.6 — premise disproven, goal achieved. |
+| [capture_comma_state.sh](capture_comma_state.sh) | Run on the 3X to back up params + commit and dump full AGNOS/openpilot/params/panda state to a file (for recording an unexplained working state and making a restore point). |
 | [../docs/build/V6_OPENPILOT_PLAN.pdf](../docs/build/V6_OPENPILOT_PLAN.pdf) | Printable plan, filed next to ROADMAP.pdf: architecture + connection diagrams, install flowchart, gated test plan (T0-T4), commercial cost analysis, and a links page crediting the xnor/Loetkolben project. Regenerate with `python docs/build/build_v6_pdf.py` (needs `reportlab`). |
 
 ---
