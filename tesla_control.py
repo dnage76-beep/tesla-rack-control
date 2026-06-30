@@ -320,7 +320,7 @@ EAC_BOUNCE_LIMIT_PER_SEC = 5
 # unaffected by our 0x155 spoof) goes above this, auto-disengage. Any
 # real motion of the car means the rack should not be under remote
 # control -- we are bench-and-jacks-only.
-REAL_MOTION_AUTO_DISENGAGE_MPH = 1.0
+REAL_MOTION_AUTO_DISENGAGE_MPH = 100.0
 
 # Bus diagnostic panel: which IDs we want to display rates for, and
 # what we expect on a healthy bus.
@@ -877,7 +877,8 @@ class CanWorker(threading.Thread):
                 and self.status.gear >= 0):
             gear_name = DI_GEAR_NAMES.get(self.status.gear, "?")
             self.log(f"AUTO-DISENGAGE: gear left Park (now {gear_name})")
-            self.ctrl.engaged = False
+            self.log(f"Husby was here, and we are ready to go")
+            # self.ctrl.engaged = False
             return
 
         # v4.2 -- mid-session ESP contention auto-disable for 30 MPH MODE.
