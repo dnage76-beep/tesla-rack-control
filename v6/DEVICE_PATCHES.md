@@ -54,46 +54,61 @@ Undo (re-enable, only if you ever add a real iBooster):
 
 ---
 
-## Patch 2 — Run driver-monitoring on the CPU instead of the DSP
+## Patch 2 — Run the DSP models (driver-monitoring + navigation) on the CPU
 
 **In plain terms:** The 3X has a special AI chip (the "DSP") that's
-supposed to run the driver-watching camera model. On our old software +
-newer 3X, that chip never turns on, so the driver-monitoring program
-keeps crashing ("dmonitoringmodeld process not running"). The driving
-model runs on the graphics chip (GPU), which works fine — only the
-driver-monitoring piece needs the dead chip. The fix tells that one
-program to use the regular CPU instead of the DSP so it stops crashing.
+supposed to run two of the smaller AI models — the driver-watching
+camera model and the navigation model. On our old software + newer 3X,
+that chip never turns on, so those programs keep crashing
+("dmonitoringmodeld process not running", then "navmodeld process not
+running" when you engage). The main driving model runs on the graphics
+chip (GPU), which works fine — only these two need the dead chip. The
+fix tells them to use the regular CPU instead. **These are the only two
+DSP models**, so patching both ends the crashing.
 
-**Fix:** change one word in `dmonitoringmodeld.py` — `Runtime.DSP` →
-`Runtime.CPU`.
+- `dmonitoringmodeld` runs all the time → its error shows immediately.
+- `navmodeld` runs only when engaged (`only_onroad`) → its error shows
+  when you engage.
+
+**Fix:** change `Runtime.DSP` → `Runtime.CPU` in both files (one word each):
 
 ```bash
 ssh comma@172.20.10.2
-cp /data/openpilot/selfdrive/modeld/dmonitoringmodeld.py /data/dmonitoringmodeld.py.bak
-sed -i 's/self.output, Runtime.DSP, True, None/self.output, Runtime.CPU, True, None/' \
-    /data/openpilot/selfdrive/modeld/dmonitoringmodeld.py
-grep -n "ModelRunner(MODEL_PATHS" /data/openpilot/selfdrive/modeld/dmonitoringmodeld.py
+for f in dmonitoringmodeld navmodeld; do
+  cp /data/openpilot/selfdrive/modeld/$f.py /data/$f.py.bak
+  sed -i 's/self.output, Runtime.DSP, True, None/self.output, Runtime.CPU, True, None/' \
+      /data/openpilot/selfdrive/modeld/$f.py
+  grep -n "ModelRunner(MODEL_PATHS" /data/openpilot/selfdrive/modeld/$f.py
+done
 ```
 
-Test before rebooting (should load and wait for the camera instead of
-"Aborted"):
+Test before rebooting — the key is that neither **"Aborted (core
+dumped)" / `isRuntimeAvailable` assert** appears:
 ```bash
 cd /data/openpilot
-PYTHONPATH=/data/openpilot python -m selfdrive.modeld.dmonitoringmodeld
-# Ctrl-C once it stops aborting, then:
+PYTHONPATH=/data/openpilot python -m selfdrive.modeld.dmonitoringmodeld   # loads, waits for camera
+PYTHONPATH=/data/openpilot python -m selfdrive.modeld.navmodeld           # reaches "models loaded, navmodeld starting"
+# Ctrl-C each once it's past the assert, then:
 sudo reboot
 ```
+(`navmodeld` will hang waiting for the map video stream when run by hand
+— that's fine; success = it got past the DSP assert to "models loaded".)
 
-**If CPU still errors** (the DSP model file won't run on CPU), switch
-that program to the ONNX model instead:
+**If CPU still errors** (a quantized `.dlc` won't run on CPU), switch
+that program to the ONNX model instead (same idea for either file):
 ```bash
 python -c "import onnxruntime; print('onnx ok')"   # must succeed first
-# then edit /data/openpilot/selfdrive/modeld/dmonitoringmodeld.py:
-#   delete the line   ModelRunner.SNPE: Path(__file__).parent / 'models/dmonitoring_model_q.dlc',
-#   leaving only the  ModelRunner.ONNX: ... line in MODEL_PATHS
+# then in the offending file's MODEL_PATHS dict, delete the
+#   ModelRunner.SNPE: ...'models/<name>_q.dlc',   line,
+# leaving only the ModelRunner.ONNX: ...'.onnx' line, then reboot.
 sudo reboot
 ```
-Undo: `cp /data/dmonitoringmodeld.py.bak /data/openpilot/selfdrive/modeld/dmonitoringmodeld.py`.
+Undo either patch: `cp /data/<name>.py.bak /data/openpilot/selfdrive/modeld/<name>.py`.
+
+**Optional (later):** since we don't use navigation, `navmodeld` (and
+`mapsd`/`navd`) could instead be disabled to save CPU rather than run on
+CPU. That's a `process_config.py` change — do it only after the CPU
+patch has the system stable.
 
 **Note:** getting the process to *run* is step one. Driver-attention
 *enforcement* is separate — on CPU it may lag, and openpilot will still
