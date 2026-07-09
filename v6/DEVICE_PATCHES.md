@@ -124,6 +124,56 @@ transmitter.
 
 ---
 
+## Patch 3 — Stop "Communication Issue Between Processes" from blocking engagement
+
+**In plain terms:** Now that the driver-monitoring and navigation models
+run on the slow CPU (and nav has no map to look at), they don't send
+their status messages fast enough. openpilot has a watchdog that expects
+every message on time; when `driverMonitoringState` and `navModel` show
+up late/never, it throws *"Communication Issue Between Processes"* — which
+is a blocking error, so you can't engage. The fix tells that watchdog not
+to require those two messages.
+
+**Why (verified):** `controlsd.py` builds a SubMaster and each cycle calls
+`all_alive()`; a missing service → `commIssue` event, which is
+`NO_ENTRY`+`SOFT_DISABLE` (blocks/disengages). `navModel` and
+`driverMonitoringState` aren't in the `ignore_alive` list, so their
+CPU-induced lateness trips it.
+
+**Fix:** add both to `controlsd`'s ignore list (line ~79, the `ignore`
+that feeds `ignore_alive`):
+
+```bash
+ssh comma@172.20.10.2
+cd /data/openpilot
+cp selfdrive/controls/controlsd.py /data/controlsd.py.bak
+sed -i "s/ignore = self.sensor_packets + \['testJoystick'\]/ignore = self.sensor_packets + ['testJoystick', 'navModel', 'driverMonitoringState']/" \
+    selfdrive/controls/controlsd.py
+grep -n "ignore = self.sensor_packets" selfdrive/controls/controlsd.py
+sudo reboot
+```
+Undo: `cp /data/controlsd.py.bak selfdrive/controls/controlsd.py`.
+
+**Safety note:** ignoring `navModel` is harmless (nav unused). Ignoring
+`driverMonitoringState` **relaxes openpilot's check that driver-monitoring
+is communicating** — DM still runs and its attention events still apply,
+but a slow/stalled DM is no longer treated as a fault. Acceptable for an
+operator-supervised research vehicle; make it a conscious choice.
+
+**Cleaner alternative (frees CPU):** since nav is unused and `navmodeld`
+on CPU steals cycles from DM, disable the nav stack instead — add
+`, enabled=False` to the `navmodeld`, `navd`, and `mapsd` entries in
+`selfdrive/manager/process_config.py`. You still need `navModel` in
+`ignore_alive` (controlsd subscribes to it regardless), but the freed CPU
+may let `driverMonitoringState` keep up so you don't have to ignore it.
+Try `ignore` with only `'navModel'` first, then disable the nav stack,
+and see if DM stays green.
+
+**Pattern:** each of Patches 2–3 is another symptom of running frozen
+0.9.6 on a 3X whose compute-DSP is dead. They keep tesla-unity usable now;
+the durable path remains the `v6/comma/` bridge (modern openpilot brain,
+our CAN transmitter).
+
 ## Restore points
 
 - Back up the toggles before changing them:
