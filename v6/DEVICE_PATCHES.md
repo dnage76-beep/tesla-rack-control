@@ -140,34 +140,50 @@ to require those two messages.
 `driverMonitoringState` aren't in the `ignore_alive` list, so their
 CPU-induced lateness trips it.
 
-**Fix:** add both to `controlsd`'s ignore list (line ~79, the `ignore`
-that feeds `ignore_alive`):
+**Diagnosis (verified from the `commIssue` cloudlog, `controlsd.py:384`):**
+the log's `invalid` / `not_alive` / `not_freq_ok` lists showed
+`driverMonitoringState` failing **all three** checks every cycle
+(`navModel` too, but it's already ignored). `accelerometer`/`gyroscope`
+also showed up in `not_freq_ok` — watch for those as a follow-up.
 
+**Step 1 — free CPU by disabling the unused nav stack** (add
+`, enabled=False` to `navmodeld`, `navd`, `mapsd` in
+`selfdrive/manager/process_config.py`):
 ```bash
 ssh comma@172.20.10.2
 cd /data/openpilot
+cp selfdrive/manager/process_config.py /data/process_config.py.bak
+sed -i 's/PythonProcess("navmodeld", "selfdrive.modeld.navmodeld", only_onroad)/PythonProcess("navmodeld", "selfdrive.modeld.navmodeld", only_onroad, enabled=False)/' selfdrive/manager/process_config.py
+sed -i 's|NativeProcess("mapsd", "selfdrive/navd", \["\./mapsd"\], only_onroad)|NativeProcess("mapsd", "selfdrive/navd", ["./mapsd"], only_onroad, enabled=False)|' selfdrive/manager/process_config.py
+sed -i 's/PythonProcess("navd", "selfdrive.navd.navd", only_onroad)/PythonProcess("navd", "selfdrive.navd.navd", only_onroad, enabled=False)/' selfdrive/manager/process_config.py
+grep -nE '"(navmodeld|mapsd|navd)"' selfdrive/manager/process_config.py   # all three -> enabled=False
+```
+
+**Step 2 — exempt `driverMonitoringState` from all three comm checks**
+(freeing CPU alone did NOT fix it — DM is `invalid`+slow, not just late):
+```bash
 cp selfdrive/controls/controlsd.py /data/controlsd.py.bak
-sed -i "s/ignore = self.sensor_packets + \['testJoystick'\]/ignore = self.sensor_packets + ['testJoystick', 'navModel', 'driverMonitoringState']/" \
-    selfdrive/controls/controlsd.py
-grep -n "ignore = self.sensor_packets" selfdrive/controls/controlsd.py
+# alive-ignore (line ~79) -- add navModel + driverMonitoringState:
+sed -i "s/ignore = self.sensor_packets + \['testJoystick'\]/ignore = self.sensor_packets + ['testJoystick', 'navModel', 'driverMonitoringState']/" selfdrive/controls/controlsd.py
+# valid-ignore + avg-freq-ignore (line ~86):
+sed -i "s/ignore_avg_freq=\['radarState', 'testJoystick'\]/ignore_avg_freq=['radarState', 'testJoystick', 'driverMonitoringState']/" selfdrive/controls/controlsd.py
+sed -i "s/ignore_valid=\['testJoystick','navModel'\]/ignore_valid=['testJoystick','navModel','driverMonitoringState']/" selfdrive/controls/controlsd.py
+grep -nE "ignore = self.sensor_packets|ignore_alive=ignore" selfdrive/controls/controlsd.py  # confirm driverMonitoringState in all three
 sudo reboot
 ```
 Undo: `cp /data/controlsd.py.bak selfdrive/controls/controlsd.py`.
 
 **Safety note:** ignoring `navModel` is harmless (nav unused). Ignoring
-`driverMonitoringState` **relaxes openpilot's check that driver-monitoring
-is communicating** — DM still runs and its attention events still apply,
-but a slow/stalled DM is no longer treated as a fault. Acceptable for an
-operator-supervised research vehicle; make it a conscious choice.
+`driverMonitoringState` on all three checks **turns off openpilot's
+guarantee that driver-monitoring is working** — DM still renders and its
+attention events still apply when they arrive, but a stalled/invalid DM
+is no longer treated as a fault. Deliberate trade for an
+operator-supervised research vehicle only.
 
-**Cleaner alternative (frees CPU):** since nav is unused and `navmodeld`
-on CPU steals cycles from DM, disable the nav stack instead — add
-`, enabled=False` to the `navmodeld`, `navd`, and `mapsd` entries in
-`selfdrive/manager/process_config.py`. You still need `navModel` in
-`ignore_alive` (controlsd subscribes to it regardless), but the freed CPU
-may let `driverMonitoringState` keep up so you don't have to ignore it.
-Try `ignore` with only `'navModel'` first, then disable the nav stack,
-and see if DM stays green.
+**Possible next issue:** if you then see *"Communication Issue - Average
+Frequency"* naming `accelerometer`/`gyroscope`, that's a separate
+sensor-rate problem (likely another 3X/AGNOS-9.1 quirk, or startup ramp).
+Capture the `commIssue` log again and address it then.
 
 **Pattern:** each of Patches 2–3 is another symptom of running frozen
 0.9.6 on a 3X whose compute-DSP is dead. They keep tesla-unity usable now;
