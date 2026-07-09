@@ -27,6 +27,7 @@ Last updated: 2026-06-10.
 | [AGNOS_9.1_RUNBOOK.md](AGNOS_9.1_RUNBOOK.md) | Field runbook: command-by-command diagnosis of why the 3X won't land on AGNOS 9.1 (the fork pins 9.1 and *downgrades* from 18.x — it never forces 18), with decision branches and how to force/verify 9.1. |
 | [AGNOS_9.1_RESULTS.md](AGNOS_9.1_RESULTS.md) | Results of running the runbook (2026-06-29): device is already on AGNOS 9.1 running tesla-unity 0.9.6 — premise disproven, goal achieved. |
 | [capture_comma_state.sh](capture_comma_state.sh) | Run on the 3X to back up params + commit and dump full AGNOS/openpilot/params/panda state to a file (for recording an unexplained working state and making a restore point). |
+| [DEVICE_PATCHES.md](DEVICE_PATCHES.md) | Fixes made directly on the 3X: turn off the iBooster toggle, move driver-monitoring off the dead DSP onto the CPU, and the `/data/params` vs `/data/params/d` gotcha. |
 | [../docs/build/V6_OPENPILOT_PLAN.pdf](../docs/build/V6_OPENPILOT_PLAN.pdf) | Printable plan, filed next to ROADMAP.pdf: architecture + connection diagrams, install flowchart, gated test plan (T0-T4), commercial cost analysis, and a links page crediting the xnor/Loetkolben project. Regenerate with `python docs/build/build_v6_pdf.py` (needs `reportlab`). |
 
 ---
