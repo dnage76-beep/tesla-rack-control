@@ -10,9 +10,15 @@ Tesla Model S electric power-steering rack. Designed for racks
 already flashed with
 [gregjhogan's pre-AP EPAS firmware patch](https://github.com/gregjhogan/tesla-pre-ap-epas-patch).
 
-The current program is `tesla_control.py` (v4.2.1). It needs only
+The current program is `tesla_control.py` (v4.3.3). It needs only
 a SYS TEC USB-CAN adapter and the patched rack. **No comma 3X is
 required.**
+
+**New in v5.0.0-rc1**: `tesla_control_rc.py` adds a Spektrum DX8 +
+AR6200 + Arduino Nano RC bridge that drives the same rack from the
+right-stick of the transmitter, with the AUX1 switch selecting R/N/D.
+See [`docs/RC_SETUP.md`](docs/RC_SETUP.md) for binding and wiring.
+The non-RC `tesla_control.py` is unchanged.
 
 > **Read [SAFETY.md](SAFETY.md) before running anything.** This is
 > hardware control code. Bugs have physical consequences.
@@ -103,7 +109,9 @@ For debugging, read [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 ├── LICENSE                    MIT
 ├── requirements.txt           pip dependencies
 │
-├── tesla_control.py           the live CAN-bus control program (v4.2.1)
+├── tesla_control.py           the live CAN-bus control program (v4.3.3)
+├── tesla_control_rc.py        v5.0.0-rc1 RC variant (DX8 + AR6200 + Arduino)
+├── arduino/tesla_rc_bridge/   Arduino Nano firmware for the RC bridge
 ├── app.py                     desktop suite shell (sidebar, logs viewer, etc.)
 ├── launcher.py                update-checker (HTTP/zip), then loads app.py
 ├── launcher.bat               Windows double-click wrapper for launcher.py
@@ -115,7 +123,8 @@ For debugging, read [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 ├── docs/
 │   ├── GUIDE.md               operating guide
 │   ├── TROUBLESHOOTING.md     symptom-driven debugging
-│   └── PROTOCOL.md            CAN protocol reference
+│   ├── PROTOCOL.md            CAN protocol reference
+│   └── RC_SETUP.md            v5: Spektrum + Arduino bridge wiring + binding
 │
 ├── archive/
 │   ├── legacy/                v1, v2, v3, v4 programs (see archive/legacy/README.md)
@@ -207,7 +216,10 @@ dependency.
 
 | Version | Status        | File                                                | Headline                                       |
 |---------|---------------|-----------------------------------------------------|------------------------------------------------|
-| v4.2.1  | **current**   | `tesla_control.py`                                  | Non-blocking shift burst, fixes EPAS_d039_kfc_reset (field-validated 2026-05-08) |
+| v5.0.3  | **current**   | `tesla_control_rc.py` + `arduino/tesla_rc_bridge/`  | RC bridge: DX8 + AR6200 + Arduino Nano, expo curve, signal-loss detection |
+| v4.3.3  | **current**   | `tesla_control.py`                                  | Image wheel + PRND keys while steering         |
+| v4.3.0  | superseded    | `tesla_control.py` @ tag v4.3.0                     | HARD_ANGLE_LIMIT_DEG raised to 360 (lock-to-lock) |
+| v4.2.1  | superseded    | `tesla_control.py` @ tag v4.2.1                     | Non-blocking shift burst, fixes EPAS_d039_kfc_reset |
 | v4.2.0  | superseded    | `tesla_control.py` @ tag v4.2.0                     | PRND shift, brake read, vitals strip, save-to-GitHub |
 | v4.1.0  | superseded    | `tesla_control.py` @ tag v4.1.0                     | Adds runtime 30 MPH MODE toggle                |
 | v4.0    | superseded    | `archive/legacy/tesla_control_v4.py`                | First no-3X version, unified GUI               |

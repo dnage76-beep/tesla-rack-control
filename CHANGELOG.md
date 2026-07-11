@@ -7,6 +7,236 @@ project follows a loose semantic-versioning scheme (see
 
 ## [Unreleased]
 
+## [5.0.3] -- 2026-05-17  (channel polarity fixes + signal-loss detection)
+
+### Changed (channel polarities per Derek's DX8 layout)
+
+- **AUX1 (R/N/D) inverted**: switch DOWN (low PWM, ~1000 us) now
+  selects D, switch CENTER stays N, switch UP (high PWM, ~2000 us)
+  now selects R. Previously rc2 had the opposite.
+- **GEAR (P button) polarity flipped**: the DX8 GEAR toggle is mapped
+  so that -100% travel (~1000 us) means PRESSED, and 0% or above
+  (~1500 us+) means RELEASED. Previously rc2 treated high PWM as
+  pressed. Now `RC_P_PRESS_THRESH_US = 1250` and the comparison is
+  `w_p <= threshold` instead of `>=`.
+
+### Added (signal-loss detection)
+
+Spektrum receivers hold-last on transmitter power-off (SmartSafe).
+Without explicit detection, a dead TX looks identical to a stationary
+stick. v5 now surfaces this two ways:
+
+- **NO SERIAL pill**: no COBS frame received for > `RC_SERIAL_TIMEOUT_MS`
+  (200 ms default). Trips if the Arduino dies, USB stalls, or cable
+  unplugs.
+- **TX LOST pill**: aileron PWM has not changed by more than
+  `RC_FROZEN_STICK_TOLERANCE_US` (2 us) within
+  `RC_FROZEN_STICK_TIMEOUT_S` (3 s). Catches Spektrum's hold-last on
+  TX power loss.
+- **LIVE pill (green)**: both conditions clear.
+
+The SIGNAL pill is the third cell in the RC INPUT panel (after PORT
+and before FRAMES). By default the indicator does not interrupt
+operation -- it just shows state. A new **"auto-disengage on signal
+loss"** checkbox in the same panel opts in to dropping
+`ctrl.engaged` on the next UI tick if either SIGNAL condition fires.
+This is not an E-STOP; the user can re-engage when signal returns.
+
+### Updated (PDF guide)
+
+- Section 7 (PRND switch mapping) reflects the new polarity, with
+  separate tables for AUX1 (D-low/N-center/R-high) and GEAR (PRESSED
+  at low PWM).
+- New Section 10 (Signal-loss detection) explains both indicators
+  and the auto-disengage opt-in.
+- Sections 10-12 renumbered to 11-13.
+- Troubleshooting table adds two new rows for SIGNAL pill issues.
+- Operating sequence step 8 reflects the new channel polarities.
+
+### Verified
+
+- Unit smoke test: `_rnd_pwm_to_gear` returns "D" at 1000 us, "N" at
+  1500 us, "R" at 2000 us.
+- P-button polarity: `1000 us <= 1250` => pressed; `1500 us <= 1250`
+  => not pressed; `2000 us <= 1250` => not pressed.
+- PDF builds (27 KB, 9 pages, all sections render cleanly).
+- `py_compile` and import-chain still clean.
+
+## [5.0.0-rc2] -- 2026-05-17  (RC steering feel + PDF guide)
+
+### Changed (steering math: now openpilot-faithful)
+
+Per code review against openpilot's `tools/joystick/joystickd.py`,
+the stick-to-angle mapping is now byte-for-byte the same as what
+commaai ships in production for joystick control:
+
+- **Expo curve**: replaced the prior linear-with-deadband mapping
+  with the openpilot cubic blend `output = 0.4 * x^3 + 0.6 * x`.
+  Result: small stick movements give gentle wheel corrections, large
+  movements still reach full ±360° lock-to-lock. Feels natural across
+  the entire range instead of twitchy at the extremes.
+- **Runtime endpoint calibration**: replaced the hardcoded
+  1000/2000 µs endpoints with a running min/max envelope. The first
+  full stick sweep records the actual endpoints (which vary with EPA
+  trim) and the program uses them from then on. Matches openpilot's
+  `np.interp` pattern.
+- **Deadband**: now 3% normalized (matches openpilot), applied after
+  calibration. Replaces the 25 µs raw deadband from rc1.
+
+Sources: openpilot `tools/joystick/joystickd.py`, `EXPO = 0.4`,
+deadband 0.03 normalized.
+
+### Removed (per Derek's request: v4.3.3 watchdogs are enough)
+
+- Stick-jitter armer (the "wiggle to enable" requirement before the
+  rack would accept RC input). v4.3.3 already has RX-timeout watchdog
+  (500 ms on rack side), EAC-bounce watchdog, real-motion auto-
+  disengage, park-to-engage gate, and four E-STOP paths. Adding a
+  layered jitter armer made the program awkward to use without
+  buying meaningful additional safety.
+- Serial-frame timeout watchdog.
+- Consecutive-CRC-error counter.
+- Sequence-gap detection logging.
+
+The RC reader now silently drops malformed frames and waits for the
+next good one. Frame count is still surfaced in the UI for sanity.
+
+### Added (docs: printable PDF guide)
+
+`docs/build/RC_IMPLEMENTATION_GUIDE.pdf` -- six-page implementation
+guide in the same style as `ROADMAP.pdf`. Sections:
+
+1. System block diagram (DX8 → AR6200 → Nano → Laptop → SYS TEC → Tesla)
+2. Hardware list (everything needed including what is "already owned")
+3. AR6200 ↔ DX8 binding procedure
+4. **Pinout wiring diagram, visually verified for no wire crossings
+   and no false-connection visual artifacts.** Three SIG wires
+   (STEER / P latch / R/N/D) cross the page as clean L-shapes.
+   Power (+5V) and ground exit the receiver through a dedicated drop
+   column to the left of all channel pins, then run along a power
+   rail under the receiver to the Nano's 5V and GND.
+5. Pin-by-pin table
+6. Expo curve plot + full stick-travel-to-wheel-angle table
+7. PRND switch mapping (AUX1 + GEAR)
+8. Arduino-CLI flash instructions
+9. Standard operating sequence (numbered, 9 steps)
+10. Troubleshooting table
+
+Regenerate with `python docs/build/build_rc_guide.py`.
+
+### Self-graded against openpilot
+
+Honest assessment included in commit message. Summary: steering math
+is openpilot-grade (matches production line-for-line); bridge framing
+(COBS + CRC8) is industry standard; missing source-change ramp-in;
+no TX-loss detection (by Derek's request -- explicit scope choice,
+flagged in code comments).
+
+### Verified
+
+- Cubic-blend expo curve is monotonic across [-1, 1].
+- `apply_expo(0.5) = 0.35`, `apply_expo(1.0) = 1.0`, `apply_expo(-1.0)
+  = -1.0` (curve passes through exactly the openpilot reference
+  points).
+- Runtime calibration handles asymmetric endpoints (e.g. trimmed
+  sticks where center isn't 1500 µs).
+- All previous v5.0.0-rc1 smoke tests (COBS round-trip, CRC match
+  between Arduino C and Python) still pass.
+- PDF builds cleanly (24 KB, 6 pages, all diagrams render).
+- Pinout diagram visually verified across three rebuild iterations.
+
+## [5.0.0-rc1] -- 2026-05-17  (RC variant)
+
+### Added (new file: `tesla_control_rc.py`)
+
+The RC variant of the program. Same GUI, same CAN protocol, same
+safety code as v4.3.3, plus an RC input pipeline that takes steering
+and shift commands from a Spektrum DX8 transmitter via an AR6200
+receiver and an Arduino Nano bridge.
+
+`tesla_control.py` is **unchanged at v4.3.3**. The RC variant
+subclasses `App` and imports the v4.3.3 program as a library. Run
+`python tesla_control.py` for the original; `python tesla_control_rc.py
+--rc-port <port>` for the RC variant. Both share the same CAN worker,
+safety architecture, and session logs.
+
+#### Hardware chain
+
+```
+DX8 (DSMX air) -> AR6200 (DSM2 air, 6 PWM ch) -> Arduino Nano (PCINT,
+COBS, USB-CDC) -> tesla_control_rc.py -> CanWorker (v4.3.3 unchanged)
+-> SYS TEC USB-CAN -> Tesla EPAS rack
+```
+
+#### Added (Arduino firmware: `arduino/tesla_rc_bridge/tesla_rc_bridge.ino`)
+
+- 3-channel PWM reader using pin-change interrupts (PCINT2 group on
+  PORTD, pins D2/D3/D4). Standard RCArduino-style ISR pattern, ~50
+  lines.
+- COBS framing per Cheshire & Baker (1999) for robust delimiting over
+  USB CDC.
+- CRC-8/ITU (poly 0x07, init 0x00) over the 9-byte payload.
+- 100 Hz output rate. Each frame is `[seq][steer_us:u16][p_us:u16]
+  [rnd_us:u16][flags][crc]` raw, COBS-encoded, terminated by 0x00.
+
+#### Added (Python: `tesla_control_rc.py`)
+
+- `RcReader` thread owns the pyserial port. Reads COBS-delimited
+  bytes, decodes payloads, validates CRC, updates `RcInput` shared
+  state.
+- `RcApp(base.App)` subclass adds the RC INPUT panel showing port
+  state, frame count, live channel widths, selected gear, watchdog
+  state, and CRC/gap error counts.
+- Steering: aileron stick (AR6200 ch2) maps to `ctrl.target_angle_deg`
+  via a piecewise-linear function with a +/-25 us deadband. Full
+  deflection = +/- `HARD_ANGLE_LIMIT_DEG` (360 deg from v4.3.0).
+- PRND: AUX1 3-position switch (ch6) selects R / N / D via PWM-width
+  hysteresis (<1250 -> R, 1250..1750 -> N, >1750 -> D). The program
+  only fires a shift on EDGE -- holding the switch in D doesn't spam
+  `request_shift`. P latch: gear toggle switch (ch5) held above 1750
+  us for 200 ms fires a P shift, with a 1-second cooldown against
+  double-fire.
+- Watchdogs: stick-jitter arm requires aileron travel of at least 50
+  us before any RC angle command is applied (Spektrum receivers hold-
+  last on signal loss, so a stale width alone is not proof of live
+  control). Serial-frame timeout, CRC errors, sequence-gap counter
+  all visible in the UI.
+
+#### Added (docs: `docs/RC_SETUP.md`)
+
+- AR6200 binding procedure with primary-source link to Spektrum's
+  PDF manual.
+- Channel-to-pin map with wiring diagram for the Nano.
+- Flash instructions for arduino-cli.
+- Calibration steps for non-default DX8 EPA.
+- Troubleshooting matrix.
+
+#### Added (dep: `requirements.txt`)
+
+- `pyserial>=3.5` (only needed by the RC variant; the original
+  `tesla_control.py` does not import it).
+
+#### Verified
+
+- COBS encode/decode round-trip on representative payloads (all-zero,
+  embedded zeros across boundaries, mixed payloads). Smoke test passes.
+- CRC-8/ITU matches between Arduino and Python implementations.
+- `py_compile` on `tesla_control_rc.py` clean.
+- Import of `tesla_control_rc` correctly loads `tesla_control` v4.3.3
+  as `base`.
+
+#### Status notes at release
+
+- **NOT field-tested in-car.** Bench-test on jacks first per SAFETY.md.
+- **Hardware binding constraint discovered during planning.** The
+  Spektrum SLT3 surface transmitter does not bind to the AR6200 (DSM2
+  air) or the SR515 (DSMR surface) that the user had on hand --
+  protocol families don't cross. v5.0.0-rc1 ships against the
+  **DX8 + AR6200** stack (both are DSM2 air, they bind), which is the
+  hardware Derek already has. If a later revision wants to use a
+  surface radio for the wheel/trigger ergonomic, the swap is one
+  receiver (SR315) with no Python code change.
+
 ## [4.3.3] -- 2026-05-09 (later)
 
 ### Added (image wheel)
